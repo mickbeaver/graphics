@@ -1,0 +1,52 @@
+cmake_minimum_required(VERSION 2.8.12)
+
+project(opengles2 C)
+
+if(UNIX)
+  if(Clang STREQUAL ${CMAKE_C_COMPILER_ID})
+    add_definitions(-Werror -Weverything -Wno-padded -Wno-documentation -std=c11)
+  elseif(GNU STREQUAL ${CMAKE_C_COMPILER_ID})
+    add_definitions(-Werror -Wall -Wextra -pedantic-errors -std=c11)
+  else()
+    message(FATAL_ERROR "Unknown compiler. Please add your identifier and flags")
+  endif()
+  if (armv6l STREQUAL ${CMAKE_HOST_SYSTEM_PROCESSOR})
+    message(STATUS "CPU is armv6l. Assuming Raspberry Pi and OpenGL ES 2.")
+    set(OPENGL_LIBRARIES GLESv2)
+    include_directories(glsys/opengles/include)
+    set(PLATFORM_SRCS glsys/opengles/src/glsys.c)
+  else()
+    include_directories(glsys/opengl/include)
+    set(PLATFORM_SRCS glsys/opengl/src/glsys.c)
+    find_package(OpenGL REQUIRED)
+  endif()
+  find_package(PkgConfig)
+  pkg_check_modules(SDL2_PC REQUIRED sdl2)
+  add_compile_options(${SDL2_PC_CFLAGS})
+  set(SDL2_LIBRARIES ${SDL2_PC_LDFLAGS})
+else()
+  message(FATAL_ERROR "Only Unix systems are supported.")
+endif()
+
+add_subdirectory(shaders)
+add_subdirectory(../graphics_math ${CMAKE_CURRENT_BINARY_DIR}/graphics_math)
+include_directories(../graphics_math/include)
+
+add_executable(sdl_gl_info sdl_gl_info.c ${PLATFORM_SRCS})
+target_link_libraries(sdl_gl_info graphics_math ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES})
+
+add_executable(sdl_gl_test sdl_gl_test.c ${PLATFORM_SRCS})
+target_link_libraries(sdl_gl_test ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES})
+
+add_executable(chapter_04 chapter_04.c ${PLATFORM_SRCS})
+add_dependencies(chapter_04 shaders)
+target_link_libraries(chapter_04 ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES})
+
+add_executable(chapter_06 chapter_06.c ${PLATFORM_SRCS})
+add_dependencies(chapter_06 shaders)
+target_link_libraries(chapter_06 ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES})
+
+add_executable(chapter_06-buffer_objects chapter_06-buffer_objects.c ${PLATFORM_SRCS})
+add_dependencies(chapter_06-buffer_objects shaders)
+target_link_libraries(chapter_06-buffer_objects ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES})
+
