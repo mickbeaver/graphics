@@ -21,6 +21,8 @@ PFNGLSHADERSOURCEPROC			glShaderSource;
 PFNGLUSEPROGRAMPROC			glUseProgram;
 PFNGLVERTEXATTRIBPOINTERPROC		glVertexAttribPointer;
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
 void
 glsys_load_extensions(void)
 {
@@ -44,3 +46,4 @@ glsys_load_extensions(void)
         glUseProgram = (PFNGLUSEPROGRAMPROC)SDL_GL_GetProcAddress("glUseProgram");
 	glVertexAttribPointer = (PFNGLVERTEXATTRIBPOINTERPROC)SDL_GL_GetProcAddress("glVertexAttribPointer");
 }
+#pragma GCC diagnostic pop

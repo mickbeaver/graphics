@@ -80,7 +80,7 @@ print_sorted_gl_exts(const GLubyte *gl_exts)
 		++num_extensions;
 
 	while (*current_char != '\0') {
-		if (isspace(*current_char))
+		if (isspace((int)*current_char))
 			++num_extensions;
 		++current_char;
 	}
