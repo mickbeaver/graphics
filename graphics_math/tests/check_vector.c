@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <check.h>
 #include "vector.h"
@@ -10,6 +11,18 @@ START_TEST(test_vec2_add)
 	vec2_add(&sum, &addend_one, &addend_two);
 	ck_assert(sum.x == 2.0f);
 	ck_assert(sum.y == 2.0f);
+}
+END_TEST
+
+START_TEST(test_vec3_cross_1)
+{
+	VEC3 x_axis, y_axis, z_axis;
+	x_axis = (VEC3){.x=1.0f, .y=0.0f, .z=0.0f};
+	y_axis = (VEC3){.x=0.0f, .y=1.0f, .z=0.0f};
+	vec3_cross(&z_axis, &x_axis, &y_axis);
+	ck_assert_msg(z_axis.x == 1.0f, "z_axis.x=%f", z_axis.x);
+	ck_assert(z_axis.y == 0.0f);
+	ck_assert(z_axis.z == 1.0f);
 }
 END_TEST
 
@@ -30,6 +43,10 @@ main(int argc, char *argv[])
 	tcase_add_test(test_case, test_vec2_add);
 	suite_add_tcase(suite, test_case);
 
+	test_case = tcase_create("vec3_cross_1");
+	tcase_add_test(test_case, test_vec3_cross_1);
+	suite_add_tcase(suite, test_case);
+	
 	suite_runner = srunner_create(suite);
 	srunner_run_all(suite_runner, CK_NORMAL);
 	number_failed = srunner_ntests_failed(suite_runner);
