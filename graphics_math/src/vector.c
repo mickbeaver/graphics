@@ -12,6 +12,18 @@ vec2_add(VEC2 *dest, const VEC2 *p, const VEC2 *q)
 }
 
 scalar
+vec2_distance(const VEC2 *p, const VEC2 *q)
+{
+	VEC2 displacement;
+	scalar magnitude_of_displacement;
+
+	vec2_sub(&displacement, p, q);
+	magnitude_of_displacement = vec2_length(&displacement);
+
+	return (magnitude_of_displacement);
+}
+
+scalar
 vec2_dot(const VEC2 *p, const VEC2 *q)
 {
 	scalar result;
@@ -44,6 +56,20 @@ vec2_normalize(VEC2 *dest, const VEC2 *p)
 	dest->y = p->y / length;
 
 	return (dest);
+}
+
+VEC2 *
+vec2_projection(VEC2 *p_onto_q, const VEC2 *p, const VEC2 *q)
+{
+	VEC2 temp;
+	scalar p_dot_q, q_len_squared;
+
+	p_dot_q = vec2_dot(p, q);
+	q_len_squared = vec2_sqlength(q);
+	vec2_scale(&temp, p_dot_q / q_len_squared, q);
+	*p_onto_q = temp;
+
+	return (p_onto_q);
 }
 
 VEC2 *
@@ -99,6 +125,18 @@ vec3_cross(VEC3 *dest, const VEC3 *p, const VEC3 *q)
 }
 
 scalar
+vec3_distance(const VEC3 *p, const VEC3 *q)
+{
+	VEC3 displacement;
+	scalar magnitude_of_displacement;
+
+	vec3_sub(&displacement, p, q);
+	magnitude_of_displacement = vec3_length(&displacement);
+
+	return (magnitude_of_displacement);
+}
+
+scalar
 vec3_dot(const VEC3 *p, const VEC3 *q)
 {
 	scalar dot_product;
@@ -134,6 +172,20 @@ vec3_normalize(VEC3 *dest, const VEC3 *p)
 	dest->z = p->z / length;
 
 	return (dest);
+}
+
+VEC3 *
+vec3_projection(VEC3 *p_onto_q, const VEC3 *p, const VEC3 *q)
+{
+	VEC3 temp;
+	scalar p_dot_q, q_len_squared;
+
+	p_dot_q = vec3_dot(p, q);
+	q_len_squared = vec3_sqlength(q);
+	vec3_scale(&temp, p_dot_q / q_len_squared, q);
+	*p_onto_q = temp;
+
+	return (p_onto_q);
 }
 
 VEC3 *
@@ -178,6 +230,18 @@ vec4_add(VEC4 *dest, const VEC4 *p, const VEC4 *q)
 }
 
 scalar
+vec4_distance(const VEC4 *p, const VEC4 *q)
+{
+	VEC4 displacement;
+	scalar magnitude_of_displacement;
+
+	vec4_sub(&displacement, p, q);
+	magnitude_of_displacement = vec4_length(&displacement);
+
+	return (magnitude_of_displacement);
+}
+
+scalar
 vec4_dot(const VEC4 *p, const VEC4 *q)
 {
 	scalar dot_product;
@@ -218,6 +282,20 @@ vec4_normalize(VEC4 *dest, const VEC4 *p)
 }
 
 VEC4 *
+vec4_projection(VEC4 *p_onto_q, const VEC4 *p, const VEC4 *q)
+{
+	VEC4 temp;
+	scalar p_dot_q, q_len_squared;
+
+	p_dot_q = vec4_dot(p, q);
+	q_len_squared = vec4_sqlength(q);
+	vec4_scale(&temp, p_dot_q / q_len_squared, q);
+	*p_onto_q = temp;
+
+	return (p_onto_q);
+}
+
+VEC4 *
 vec4_scale(VEC4 *dest, scalar scale, const VEC4 *p)
 {
 	dest->x = scale * p->x;
@@ -238,7 +316,7 @@ vec4_sqlength(const VEC4 *p)
 	    (p->z * p->z) +
 	    (p->w * p->w));
 
-	return (squared_length);
+  	return (squared_length);
 }
 
 VEC4 *

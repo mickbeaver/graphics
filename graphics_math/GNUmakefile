@@ -1,6 +1,6 @@
 CC = gcc
 CPPFLAGS = -I./include -I/usr/local/include
-CFLAGS = -std=c99 -pedantic -Wall -Wextra -g -O0
+CFLAGS = -std=c11 -pedantic -Wall -Wextra -g -O0
 LDFLAGS = -lm
 
 SRC_DIR = src
@@ -14,6 +14,9 @@ TEST_OUTPUT_DIR = $(OUTPUT_DIR)/tests
 TEST_OUTPUT_DIR_MARKER = $(TEST_OUTPUT_DIR)/.f
 TEST_PROGRAMS = $(addprefix $(TEST_OUTPUT_DIR)/,check_vector)
 TEST_OBJS = $(addsuffix .o,$(TEST_PROGRAMS))
+ifeq ($(CC),clang)
+TEST_CFLAGS = -Wno-gnu-zero-variadic-macro-arguments
+endif
 TEST_LDFLAGS = -L/usr/local/lib -lcheck
 
 .PHONY: all clean print test
@@ -34,7 +37,7 @@ $(TEST_OUTPUT_DIR)/check_vector: $(TEST_OUTPUT_DIR)/check_vector.o $(OBJS) $(TES
 	$(LINK.c) -o $@ $(OBJS) $< $(TEST_LDFLAGS)
 
 $(TEST_OUTPUT_DIR)/%.o: $(TEST_SRC_DIR)/%.c $(TEST_OUTPUT_DIR_MARKER)
-	$(COMPILE.c) $< -o $@
+	$(COMPILE.c) $(TEST_CFLAGS) $< -o $@
 
 $(TEST_OUTPUT_DIR_MARKER): $(OUTPUT_DIR_MARKER)
 	mkdir -p $(dir $@)
