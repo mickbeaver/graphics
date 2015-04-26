@@ -65,6 +65,15 @@ vec2_sqlength(const VEC2 *p)
 	return (squared_length);
 }
 
+VEC2 *
+vec2_sub(VEC2 *dest, const VEC2 *p, const VEC2 *q)
+{
+	dest->x = p->x - q->x;
+	dest->y = p->y - q->y;
+
+	return (dest);
+}
+
 VEC3 *
 vec3_add(VEC3 *dest, const VEC3 *p, const VEC3 *q)
 {
@@ -147,6 +156,16 @@ vec3_sqlength(const VEC3 *p)
 	return (squared_length);
 }
 
+VEC3 *
+vec3_sub(VEC3 *dest, const VEC3 *p, const VEC3 *q)
+{
+	dest->x = p->x - q->x;
+	dest->y = p->y - q->y;
+	dest->z = p->z - q->z;
+
+	return (dest);
+}
+
 VEC4 *
 vec4_add(VEC4 *dest, const VEC4 *p, const VEC4 *q)
 {
@@ -220,5 +239,16 @@ vec4_sqlength(const VEC4 *p)
 	    (p->w * p->w));
 
 	return (squared_length);
+}
+
+VEC4 *
+vec4_sub(VEC4 *dest, const VEC4 *p, const VEC4 *q)
+{
+	dest->x = p->x - q->x;
+	dest->y = p->y - q->y;
+	dest->z = p->z - q->z;
+	dest->w = p->w - q->w;
+
+	return (dest);
 }
 

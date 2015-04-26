@@ -44,6 +44,19 @@ START_TEST(test_vec2_add_01)
 }
 END_TEST
 
+START_TEST(test_vec2_dot_01)
+{
+	VEC2 p, q;
+	scalar dot_product;
+
+	p = (VEC2){.x=2.0f, .y=1.25f};
+	q = (VEC2){.x=1.0f, .y=-3.0f};
+	dot_product = vec2_dot(&p, &q);
+
+	ASSERT_FLOAT_EQ(dot_product, -1.75f);
+}
+END_TEST
+
 START_TEST(test_vec2_length_01)
 {
 	VEC2 p;
@@ -89,6 +102,60 @@ START_TEST(test_vec2_scale_01)
 
 	ASSERT_FLOAT_EQ(p.x, 12.0f); 
 	ASSERT_FLOAT_EQ(p.y, -21.0f); 
+}
+END_TEST
+
+START_TEST(test_vec2_sub_01)
+{
+	VEC2 p, q, dest;
+
+	p = (VEC2){.x=3.0f, .y=10.0f};
+	q = (VEC2){.x=8.0f, .y=-7.0f};
+	vec2_sub(&dest, &p, &q);
+
+	ASSERT_FLOAT_EQ(dest.x, -5.0f); 
+	ASSERT_FLOAT_EQ(dest.y, 17.0f); 
+}
+END_TEST
+
+START_TEST(test_vec2_sub_02)
+{
+	VEC2 p, q, dest;
+
+	p = (VEC2){.x=4.0f, .y=5.0f};
+	q = (VEC2){.x=-4.0f, .y=-5.0f};
+	vec2_sub(&dest, &p, &q);
+
+	ASSERT_FLOAT_EQ(dest.x, 8.0f); 
+	ASSERT_FLOAT_EQ(dest.y, 10.0f); 
+}
+END_TEST
+
+START_TEST(test_vec3_add_01)
+{
+	VEC3 p, q, dest;
+
+	p = (VEC3){.x=7.0f, .y=-2.0f, .z=-3.0f};
+	q = (VEC3){.x=6.0f, .y=6.0f, .z=-4.0f};
+	vec3_add(&dest, &p, &q);
+
+	ASSERT_FLOAT_EQ(dest.x, 13.0f);
+	ASSERT_FLOAT_EQ(dest.y, 4.0f);
+	ASSERT_FLOAT_EQ(dest.z, -7.0f);
+}
+END_TEST
+
+START_TEST(test_vec3_add_02)
+{
+	VEC3 p, q, dest;
+
+	p = (VEC3){.x=2.0f, .y=9.0f, .z=-1.0f};
+	q = (VEC3){.x=-2.0f, .y=-9.0f, .z=1.0f};
+	vec3_add(&dest, &p, &q);
+
+	ASSERT_FLOAT_EQ(dest.x, 0.0f);
+	ASSERT_FLOAT_EQ(dest.y, 0.0f);
+	ASSERT_FLOAT_EQ(dest.z, 0.0f);
 }
 END_TEST
 
@@ -184,6 +251,61 @@ START_TEST(test_vec3_scale_01)
 }
 END_TEST
 
+START_TEST(test_vec4_add_01)
+{
+	VEC4 p, q, dest;
+
+	p = (VEC4){.x=7.0f, .y=-2.0f, .z=-3.0f, .w=-8.2f};
+	q = (VEC4){.x=6.0f, .y=6.0f, .z=-4.0f, .w=-7.11f};
+	vec4_add(&dest, &p, &q);
+
+	ASSERT_FLOAT_EQ(dest.x, 13.0f);
+	ASSERT_FLOAT_EQ(dest.y, 4.0f);
+	ASSERT_FLOAT_EQ(dest.z, -7.0f);
+	ASSERT_FLOAT_EQ(dest.w, -15.309999f);
+}
+END_TEST
+
+START_TEST(test_vec4_add_02)
+{
+	VEC4 p, q, dest;
+
+	p = (VEC4){.x=2.0f, .y=9.0f, .z=-1.0f, .w=-2.5f};
+	q = (VEC4){.x=-2.0f, .y=-9.0f, .z=1.0f, .w=23.0f};
+	vec4_add(&dest, &p, &q);
+
+	ASSERT_FLOAT_EQ(dest.x, 0.0f);
+	ASSERT_FLOAT_EQ(dest.y, 0.0f);
+	ASSERT_FLOAT_EQ(dest.z, 0.0f);
+	ASSERT_FLOAT_EQ(dest.w, 20.5f);
+}
+END_TEST
+
+START_TEST(test_vec4_dot_product_01)
+{
+	VEC4 p, q;
+	scalar result;
+	
+	p = (VEC4){.x=2.0f, .y=2.0f, .z=1.0f, .w=3.5f};
+	q = (VEC4){.x=1.0f, .y=-2.0f, .z=0.0f, .w=12.0f};
+	result = vec4_dot(&p, &q);
+
+	ASSERT_FLOAT_EQ(result, 40.0f);
+}
+END_TEST
+
+START_TEST(test_vec4_length_01)
+{
+	VEC4 p;
+	scalar length;
+
+	p = (VEC4){.x=8.0f, .y=-3.0f, .z=0.5f, .w=2.5f};
+	length = vec4_length(&p);
+
+	ASSERT_FLOAT_APPROX_EQ(length, 8.91627725f, TEST_FLOAT_EPSILON); 
+}
+END_TEST
+
 START_TEST(test_vec4_normalize_01)
 {
 	VEC4 p;
@@ -233,6 +355,10 @@ main(int argc, char *argv[])
 	tcase_add_test(test_case, test_vec2_add_01);
 	suite_add_tcase(suite, test_case);
 
+	test_case = tcase_create("vec2 dot product");
+	tcase_add_test(test_case, test_vec2_dot_01);
+	suite_add_tcase(suite, test_case);
+
 	test_case = tcase_create("vec2 length");
 	tcase_add_test(test_case, test_vec2_length_01);
 	suite_add_tcase(suite, test_case);
@@ -246,6 +372,16 @@ main(int argc, char *argv[])
 	tcase_add_test(test_case, test_vec2_scale_01);
 	suite_add_tcase(suite, test_case);
 	
+	test_case = tcase_create("vec3 subtraction");
+	tcase_add_test(test_case, test_vec2_sub_01);
+	tcase_add_test(test_case, test_vec2_sub_02);
+	suite_add_tcase(suite, test_case);
+
+	test_case = tcase_create("vec3 addition");
+	tcase_add_test(test_case, test_vec3_add_01);
+	tcase_add_test(test_case, test_vec3_add_02);
+	suite_add_tcase(suite, test_case);
+
 	test_case = tcase_create("vec3 cross product");
 	tcase_add_test(test_case, test_vec3_cross_product_01);
 	tcase_add_test(test_case, test_vec3_cross_product_02);
@@ -266,6 +402,19 @@ main(int argc, char *argv[])
 
 	test_case = tcase_create("vec3 scale");
 	tcase_add_test(test_case, test_vec3_scale_01);
+	suite_add_tcase(suite, test_case);
+	
+	test_case = tcase_create("vec4 addition");
+	tcase_add_test(test_case, test_vec4_add_01);
+	tcase_add_test(test_case, test_vec4_add_02);
+	suite_add_tcase(suite, test_case);
+
+	test_case = tcase_create("vec4 dot product");
+	tcase_add_test(test_case, test_vec4_dot_product_01);
+	suite_add_tcase(suite, test_case);
+
+	test_case = tcase_create("vec4 length");
+	tcase_add_test(test_case, test_vec4_length_01);
 	suite_add_tcase(suite, test_case);
 	
 	test_case = tcase_create("vec4 scale");
