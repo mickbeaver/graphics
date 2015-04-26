@@ -78,17 +78,13 @@ vec3_add(VEC3 *dest, const VEC3 *p, const VEC3 *q)
 VEC3 *
 vec3_cross(VEC3 *dest, const VEC3 *p, const VEC3 *q)
 {
-	scalar result_x;
-	scalar result_y;
-	scalar result_z;
+	VEC3 temp;
 
-	result_x = (p->y * q->z) - (p->z * q->y);
-	result_y = (p->z * q->x) - (p->x * q->z);
-	result_z = (p->x * q->y) - (p->y * q->x);
+	temp.x = (p->y * q->z) - (p->z * q->y);
+	temp.y = (p->z * q->x) - (p->x * q->z);
+	temp.z = (p->x * q->y) - (p->y * q->x);
 
-	dest->x = result_x;
-	dest->y = result_y;
-	dest->z = result_z;
+	*dest = temp;
 
 	return (dest);
 }
