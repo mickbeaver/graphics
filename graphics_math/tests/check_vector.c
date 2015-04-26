@@ -18,6 +18,19 @@
 	    float1, float2);                                 \
 } while (0)
 
+START_TEST(test_vector_sizes)
+{
+	/**
+	 * Double-check that there are no issues with padding or
+	 * packing that would interfere with using the vector
+	 * structs directly, as opposed to arrays of floats.
+	 */
+	ck_assert_int_eq(sizeof(VEC2), sizeof(scalar) * 2);
+	ck_assert_int_eq(sizeof(VEC3), sizeof(scalar) * 3);
+	ck_assert_int_eq(sizeof(VEC4), sizeof(scalar) * 4);
+}
+END_TEST
+
 START_TEST(test_vec2_add_01)
 {
 	VEC2 p, q, dest;
@@ -211,6 +224,10 @@ main(int argc, char *argv[])
 	(void) argv;
 
 	suite = suite_create("vector");
+
+	test_case = tcase_create("vector sizes");
+	tcase_add_test(test_case, test_vector_sizes);
+	suite_add_tcase(suite, test_case);
 
 	test_case = tcase_create("vec2 addition");
 	tcase_add_test(test_case, test_vec2_add_01);
