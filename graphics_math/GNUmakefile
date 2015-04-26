@@ -1,5 +1,5 @@
 CC = gcc
-CPPFLAGS = -I./include
+CPPFLAGS = -I./include -I/usr/local/include
 CFLAGS = -std=c99 -pedantic -Wall -Wextra -g -O0
 LDFLAGS = -lm
 
@@ -14,7 +14,7 @@ TEST_OUTPUT_DIR = $(OUTPUT_DIR)/tests
 TEST_OUTPUT_DIR_MARKER = $(TEST_OUTPUT_DIR)/.f
 TEST_PROGRAMS = $(addprefix $(TEST_OUTPUT_DIR)/,check_vector)
 TEST_OBJS = $(addsuffix .o,$(TEST_PROGRAMS))
-TEST_LDFLAGS = -lcheck
+TEST_LDFLAGS = -L/usr/local/lib -lcheck
 
 .PHONY: all clean print test
 
