@@ -17,7 +17,7 @@ TEST_OBJS = $(addsuffix .o,$(TEST_PROGRAMS))
 ifeq ($(CC),clang)
 TEST_CFLAGS = -Wno-gnu-zero-variadic-macro-arguments
 endif
-TEST_LDFLAGS = -L/usr/local/lib -lcheck
+TEST_LDFLAGS = -L/usr/local/lib -lcheck -lpthread -lrt
 
 .PHONY: all clean print test
 
