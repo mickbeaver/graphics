@@ -22,9 +22,21 @@ typedef struct mat4 {
 } MAT4;
 
 MAT2	*mat2_add(MAT2 *dest, const MAT2 *a, const MAT2 *b);
-MAT2	*mat2_multiply(MAT2 *dest, const MAT2 *a, const MAT2 *b);
-MAT2	*mat2_transpose(MAT2 *dest, const MAT2 *a);
 scalar	 mat2_determinant(const MAT2 *a);
 MAT2	*mat2_inverse(MAT2 *dest, const MAT2 *a);
+MAT2	*mat2_multiply(MAT2 *dest, const MAT2 *a, const MAT2 *b);
+MAT2	*mat2_transpose(MAT2 *dest, const MAT2 *a);
+
+MAT3	*mat3_add(MAT3 *dest, const MAT3 *a, const MAT3 *b);
+scalar	 mat3_determinant(const MAT3 *a);
+MAT3	*mat3_inverse(MAT3 *dest, const MAT3 *a);
+MAT3	*mat3_multiply(MAT3 *dest, const MAT3 *a, const MAT3 *b);
+MAT3	*mat3_transpose(MAT3 *dest, const MAT3 *a);
+
+MAT4	*mat4_add(MAT4 *dest, const MAT4 *a, const MAT4 *b);
+scalar	 mat4_determinant(const MAT4 *a);
+MAT4	*mat4_inverse(MAT4 *dest, const MAT4 *a);
+MAT4	*mat4_multiply(MAT4 *dest, const MAT4 *a, const MAT4 *b);
+MAT4	*mat4_transpose(MAT4 *dest, const MAT4 *a);
 
 #endif /* GRAPHICS_MATH_MATRIX_H */
