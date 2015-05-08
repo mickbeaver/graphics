@@ -4,7 +4,7 @@ CFLAGS = -std=c11 -pedantic -Wall -Wextra -g -O0
 LDFLAGS = -lm
 
 SRC_DIR = src
-SRCS = $(addprefix $(SRC_DIR)/,vector.c)
+SRCS = $(addprefix $(SRC_DIR)/,vector.c matrix.c)
 OUTPUT_DIR = build_output
 OUTPUT_DIR_MARKER = $(OUTPUT_DIR)/.f
 OBJS = $(subst $(SRC_DIR)/,$(OUTPUT_DIR)/,$(patsubst %.c,%.o,$(SRCS)))
@@ -12,7 +12,7 @@ OBJS = $(subst $(SRC_DIR)/,$(OUTPUT_DIR)/,$(patsubst %.c,%.o,$(SRCS)))
 TEST_SRC_DIR = tests
 TEST_OUTPUT_DIR = $(OUTPUT_DIR)/tests
 TEST_OUTPUT_DIR_MARKER = $(TEST_OUTPUT_DIR)/.f
-TEST_PROGRAMS = $(addprefix $(TEST_OUTPUT_DIR)/,check_vector)
+TEST_PROGRAMS = $(addprefix $(TEST_OUTPUT_DIR)/,check_vector check_matrix)
 TEST_OBJS = $(addsuffix .o,$(TEST_PROGRAMS))
 ifeq ($(CC),clang)
 TEST_CFLAGS = -Wno-gnu-zero-variadic-macro-arguments
@@ -32,8 +32,12 @@ $(OUTPUT_DIR_MARKER):
 
 test: $(OBJS) $(TEST_PROGRAMS)
 	$(TEST_OUTPUT_DIR)/check_vector
+	$(TEST_OUTPUT_DIR)/check_matrix
 
 $(TEST_OUTPUT_DIR)/check_vector: $(TEST_OUTPUT_DIR)/check_vector.o $(OBJS) $(TEST_OUTPUT_DIR_MARKER)
+	$(LINK.c) -o $@ $(OBJS) $< $(TEST_LDFLAGS)
+
+$(TEST_OUTPUT_DIR)/check_matrix: $(TEST_OUTPUT_DIR)/check_matrix.o $(OBJS) $(TEST_OUTPUT_DIR_MARKER)
 	$(LINK.c) -o $@ $(OBJS) $< $(TEST_LDFLAGS)
 
 $(TEST_OUTPUT_DIR)/%.o: $(TEST_SRC_DIR)/%.c $(TEST_OUTPUT_DIR_MARKER)

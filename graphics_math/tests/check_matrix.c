@@ -25,7 +25,9 @@ START_TEST(test_matrix_sizes)
 	 * packing that would interfere with using the vector
 	 * structs directly, as opposed to arrays of floats.
 	 */
-	ck_assert_int_eq(sizeof(MAT2), sizeof(scalar) * 4);
+	ck_assert_int_eq(sizeof(MAT2), sizeof(scalar) * 2 * 2);
+	ck_assert_int_eq(sizeof(MAT3), sizeof(scalar) * 3 * 3);
+	ck_assert_int_eq(sizeof(MAT4), sizeof(scalar) * 4 * 4);
 }
 END_TEST
 
@@ -41,6 +43,34 @@ START_TEST(test_mat2_multiply_01)
 	ASSERT_FLOAT_EQ(dest.m21, -15.0f);
 	ASSERT_FLOAT_EQ(dest.m12, 19.0f/3.0f);
 	ASSERT_FLOAT_EQ(dest.m22, 35.0f);
+}
+END_TEST
+
+START_TEST(test_mat2_inverse_01)
+{
+	MAT2 a, inverse;
+
+	a = (MAT2){.m11=4.0f, .m21=3.0f, .m12=3.0f, .m22=2.0f};
+	mat2_inverse(&inverse, &a);
+
+	ASSERT_FLOAT_EQ(inverse.m11, -2.0f);
+	ASSERT_FLOAT_EQ(inverse.m21, 3.0f);
+	ASSERT_FLOAT_EQ(inverse.m12, 3.0f);
+	ASSERT_FLOAT_EQ(inverse.m22, -4.0f);
+}
+END_TEST
+
+START_TEST(test_mat2_inverse_02)
+{
+	MAT2 a, inverse;
+
+	a = (MAT2){.m11=1.0f, .m21=3.0f, .m12=2.0f, .m22=4.0f};
+	mat2_inverse(&inverse, &a);
+
+	ASSERT_FLOAT_EQ(inverse.m11, -2.0f);
+	ASSERT_FLOAT_EQ(inverse.m21, 1.5f);
+	ASSERT_FLOAT_EQ(inverse.m12, 1.0f);
+	ASSERT_FLOAT_EQ(inverse.m22, -0.5f);
 }
 END_TEST
 
@@ -63,6 +93,11 @@ main(int argc, char *argv[])
 
 	test_case = tcase_create("mat2 multiply");
 	tcase_add_test(test_case, test_mat2_multiply_01);
+	suite_add_tcase(suite, test_case);
+
+	test_case = tcase_create("mat2 inverse");
+	tcase_add_test(test_case, test_mat2_inverse_01);
+	tcase_add_test(test_case, test_mat2_inverse_02);
 	suite_add_tcase(suite, test_case);
 
 	suite_runner = srunner_create(suite);

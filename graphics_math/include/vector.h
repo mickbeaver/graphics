@@ -1,7 +1,7 @@
 #ifndef GRAPHICS_MATH_VECTOR_H
 #define GRAPHICS_MATH_VECTOR_H
 
-typedef float scalar;
+#include "scalar.h"
 
 typedef struct vec2 {
 	scalar x;
