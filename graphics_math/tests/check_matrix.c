@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <check.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,6 +26,10 @@ START_TEST(test_matrix_sizes)
 	 * packing that would interfere with using the vector
 	 * structs directly, as opposed to arrays of floats.
 	 */
+	static_assert(sizeof(MAT2) == sizeof(scalar) * 2 * 2, "MAT2 cannot be used as an array of scalars");
+	static_assert(sizeof(MAT3) == sizeof(scalar) * 3 * 3, "MAT3 cannot be used as an array of scalars");
+	static_assert(sizeof(MAT4) == sizeof(scalar) * 4 * 4, "MAT4 cannot be used as an array of scalars");
+
 	ck_assert_int_eq(sizeof(MAT2), sizeof(scalar) * 2 * 2);
 	ck_assert_int_eq(sizeof(MAT3), sizeof(scalar) * 3 * 3);
 	ck_assert_int_eq(sizeof(MAT4), sizeof(scalar) * 4 * 4);

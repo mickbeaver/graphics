@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <check.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,6 +26,10 @@ START_TEST(test_vector_sizes)
 	 * packing that would interfere with using the vector
 	 * structs directly, as opposed to arrays of floats.
 	 */
+	static_assert(sizeof(VEC2) == sizeof(scalar) * 2, "VEC2 cannot be used as an array of scalars");
+	static_assert(sizeof(VEC3) == sizeof(scalar) * 3, "VEC3 cannot be used as an array of scalars");
+	static_assert(sizeof(VEC4) == sizeof(scalar) * 4, "VEC4 cannot be used as an array of scalars");
+
 	ck_assert_int_eq(sizeof(VEC2), sizeof(scalar) * 2);
 	ck_assert_int_eq(sizeof(VEC3), sizeof(scalar) * 3);
 	ck_assert_int_eq(sizeof(VEC4), sizeof(scalar) * 4);

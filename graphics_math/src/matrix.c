@@ -1,5 +1,7 @@
 #include <assert.h>
+#include <tgmath.h>
 #include "matrix.h"
+#include "vector.h"
 
 MAT2 *
 mat2_add(MAT2 *dest, const MAT2 *a, const MAT2 *b)
@@ -54,6 +56,17 @@ mat2_multiply(MAT2 *dest, const MAT2 *a, const MAT2 *b)
 }
 
 MAT2 *
+mat2_scalar_multiply(MAT2 *dest, const MAT2 *a, scalar x)
+{
+	dest->m11 = a->m11 * x;
+	dest->m21 = a->m21 * x;
+	dest->m12 = a->m12 * x;
+	dest->m22 = a->m22 * x;
+
+	return (dest);
+}
+
+MAT2 *
 mat2_transpose(MAT2 *dest, const MAT2 *a)
 {
 	MAT2 result;
@@ -103,6 +116,22 @@ mat3_multiply(MAT3 *dest, const MAT3 *a, const MAT3 *b)
 }
 
 MAT3 *
+mat3_scalar_multiply(MAT3 *dest, const MAT3 *a, scalar x)
+{
+	dest->m11 = a->m11 * x;
+	dest->m21 = a->m21 * x;
+	dest->m31 = a->m31 * x;
+	dest->m12 = a->m12 * x;
+	dest->m22 = a->m22 * x;
+	dest->m32 = a->m32 * x;
+	dest->m13 = a->m13 * x;
+	dest->m23 = a->m23 * x;
+	dest->m33 = a->m33 * x;
+
+	return (dest);
+}
+
+MAT3 *
 mat3_transpose(MAT3 *dest, const MAT3 *a)
 {
 	MAT3 result;
@@ -141,20 +170,25 @@ mat3_determinant(const MAT3 *a)
 MAT3 *
 mat3_inverse(MAT3 *dest, const MAT3 *a)
 {
-	MAT3 inverse;
+	MAT3 adjoint;
+	MAT3 cofactors;
 	scalar determinant;
 
 	determinant = mat3_determinant(a);
-	inverse.m11 = +((a->m22 * a->m33) - (a->m32 * a->m23)) / determinant;
-	inverse.m12 = -((a->m12 * a->m33) - (a->m32 * a->m13)) / determinant;
-	inverse.m13 = +((a->m12 * a->m23) - (a->m22 * a->m13)) / determinant;
-	inverse.m21 = -((a->m21 * a->m33) - (a->m31 * a->m23)) / determinant;
-	inverse.m22 = +((a->m11 * a->m33) - (a->m31 * a->m13)) / determinant;
-	inverse.m23 = -((a->m11 * a->m23) - (a->m21 * a->m13)) / determinant;
-	inverse.m31 = +((a->m21 * a->m32) - (a->m31 * a->m22)) / determinant;
-	inverse.m32 = -((a->m11 * a->m32) - (a->m31 * a->m12)) / determinant;
-	inverse.m33 = +((a->m11 * a->m22) - (a->m21 * a->m12)) / determinant;
-	*dest = inverse;
+	assert(determinant != 0.0f);
+
+	cofactors.m11 = +((a->m22 * a->m33) - (a->m32 * a->m23));
+	cofactors.m12 = -((a->m21 * a->m33) - (a->m31 * a->m23));
+	cofactors.m13 = +((a->m21 * a->m32) - (a->m31 * a->m22));
+	cofactors.m21 = -((a->m12 * a->m33) - (a->m32 * a->m13));
+	cofactors.m22 = +((a->m11 * a->m33) - (a->m31 * a->m13));
+	cofactors.m23 = -((a->m11 * a->m32) - (a->m31 * a->m12));
+	cofactors.m31 = +((a->m12 * a->m23) - (a->m22 * a->m13));
+	cofactors.m32 = -((a->m11 * a->m23) - (a->m21 * a->m13));
+	cofactors.m33 = +((a->m11 * a->m22) - (a->m21 * a->m12));
+
+	mat3_transpose(&adjoint, &cofactors);
+	mat3_scalar_multiply(dest, dest, 1.0f / determinant);
 
 	return (dest);
 }
@@ -204,6 +238,29 @@ mat4_multiply(MAT4 *dest, const MAT4 *a, const MAT4 *b)
 	result.m34 = (a->m31 * b->m14) + (a->m32 * b->m24) + (a->m33 * b->m34) + (a->m34 * b->m44);
 	result.m44 = (a->m41 * b->m14) + (a->m42 * b->m24) + (a->m43 * b->m34) + (a->m44 * b->m44);
 	*dest = result;
+
+	return (dest);
+}
+
+MAT4 *
+mat4_scalar_multiply(MAT4 *dest, const MAT4 *a, scalar x)
+{
+	dest->m11 = a->m11 * x;
+	dest->m21 = a->m21 * x;
+	dest->m31 = a->m31 * x;
+	dest->m41 = a->m41 * x;
+	dest->m12 = a->m12 * x;
+	dest->m22 = a->m22 * x;
+	dest->m32 = a->m32 * x;
+	dest->m42 = a->m42 * x;
+	dest->m13 = a->m13 * x;
+	dest->m23 = a->m23 * x;
+	dest->m33 = a->m33 * x;
+	dest->m43 = a->m43 * x;
+	dest->m14 = a->m14 * x;
+	dest->m24 = a->m24 * x;
+	dest->m34 = a->m34 * x;
+	dest->m44 = a->m44 * x;
 
 	return (dest);
 }
@@ -276,8 +333,6 @@ mat4_determinant(const MAT4 *a)
 MAT4 *
 mat4_inverse(MAT4 *dest, const MAT4 *a)
 {
-	MAT4 adjoint;
-	MAT4 inverse;
 	scalar determinant;
 
 	// TODO: This is not finished
@@ -285,7 +340,7 @@ mat4_inverse(MAT4 *dest, const MAT4 *a)
 
 	determinant = mat4_determinant(a);
 	assert(determinant != 0);
-	*dest = inverse;
+	//*dest = inverse;
 
 	return (dest);
 }
@@ -300,7 +355,7 @@ mat4_look_at(MAT4 *dest, const VEC3 *eye, const VEC3 *center, const VEC3 *up)
 
 	vec3_sub(&forward_component, center, eye);
 	vec3_normalize(&forward_component, &forward_component);
-	vec3_normalize(&up_normalized, &up);
+	vec3_normalize(&up_normalized, up);
 	vec3_cross(&right_component, &forward_component, &up_normalized);
 	vec3_normalize(&right_component, &right_component);
 	vec3_cross(&up_component, &right_component, &forward_component);
@@ -325,8 +380,8 @@ mat4_look_at(MAT4 *dest, const VEC3 *eye, const VEC3 *center, const VEC3 *up)
 	dest->m23 = up_component.z;
 	dest->m33 = -forward_component.z;
 	dest->m43 = 0.0f;
-	dest->m14 = -vec3_dot(&right_component, &eye);
-	dest->m14 = -vec3_dot(&up_component, &eye);
+	dest->m14 = -vec3_dot(&right_component, eye);
+	dest->m14 = -vec3_dot(&up_component, eye);
 	dest->m14 = -vec3_dot(&forward_component, &eye);
 	dest->m14 = 1.0f;
 
