@@ -29,7 +29,7 @@ add_subdirectory(shaders)
 include_directories(../math/include)
 
 add_executable(sdl_gl_info sdl_gl_info.c ${PLATFORM_SRCS})
-target_link_libraries(sdl_gl_info math ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES})
+target_link_libraries(sdl_gl_info 3dmath ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES})
 
 add_executable(sdl_gl_test sdl_gl_test.c ${PLATFORM_SRCS})
 target_link_libraries(sdl_gl_test ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES})

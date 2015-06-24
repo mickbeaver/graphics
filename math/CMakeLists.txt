@@ -6,5 +6,5 @@ set(math_srcs
     src/vector.c
     src/matrix.c)
 
-add_library(math ${math_srcs})
+add_library(3dmath ${math_srcs})
 
