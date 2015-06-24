@@ -21,10 +21,14 @@ PFNGLSHADERSOURCEPROC			glShaderSource;
 PFNGLUSEPROGRAMPROC			glUseProgram;
 PFNGLVERTEXATTRIBPOINTERPROC		glVertexAttribPointer;
 
+#if defined(__GNUC__) && !defined(__clang__) // GCC only
 #if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
 #pragma GCC diagnostic push
-#endif
+#pragma GCC diagnostic ignored "-Wpedantic"
+#else
 #pragma GCC diagnostic ignored "-pedantic"
+#endif
+#endif // GCC only
 void
 glsys_load_extensions(void)
 {
@@ -48,6 +52,8 @@ glsys_load_extensions(void)
         glUseProgram = (PFNGLUSEPROGRAMPROC)SDL_GL_GetProcAddress("glUseProgram");
 	glVertexAttribPointer = (PFNGLVERTEXATTRIBPOINTERPROC)SDL_GL_GetProcAddress("glVertexAttribPointer");
 }
+#if defined(__GNUC__) && !defined(__clang__) // GCC only
 #if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
 #pragma GCC diagnostic pop
 #endif
+#endif // GCC only

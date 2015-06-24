@@ -5,9 +5,9 @@ project(graphics C)
 enable_testing()
 
 if(UNIX)
-
 	include_directories(/usr/local/include)
 	link_directories(/usr/local/lib)
+
 	if(Clang STREQUAL ${CMAKE_C_COMPILER_ID})
 		add_definitions(
 			-D_POSIX_C_SOURCE=200809L
@@ -15,6 +15,7 @@ if(UNIX)
 			-Werror
 			-Weverything
 			-Wno-documentation
+			-Wno-missing-noreturn
 			-Wno-padded
 			-pedantic-errors
 			-std=c99
