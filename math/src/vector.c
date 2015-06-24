@@ -1,5 +1,5 @@
 #include <assert.h>
-#include <tgmath.h>
+#include <math.h>
 #include "vector.h"
 
 VEC2 *
@@ -40,7 +40,7 @@ vec2_length(const VEC2 *p)
 	scalar length;
 
 	squared_length = vec2_sqlength(p);
-	length = sqrt(squared_length);
+	length = scalar_sqrt(squared_length);
 
 	return (length);
 }
@@ -155,7 +155,7 @@ vec3_length(const VEC3 *p)
 	scalar length;
 
 	squared_length = vec3_sqlength(p);
-	length = sqrt(squared_length);
+	length = scalar_sqrt(squared_length);
 
 	return (length);
 }
@@ -261,7 +261,7 @@ vec4_length(const VEC4 *p)
 	scalar length;
 
 	squared_length = vec4_sqlength(p);
-	length = sqrt(squared_length);
+	length = scalar_sqrt(squared_length);
 
 	return (length);
 }

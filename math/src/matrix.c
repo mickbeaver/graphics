@@ -1,5 +1,5 @@
 #include <assert.h>
-#include <tgmath.h>
+#include <math.h>
 #include "matrix.h"
 #include "vector.h"
 
@@ -31,7 +31,7 @@ mat2_inverse(MAT2 *dest, const MAT2 *a)
 	scalar determinant;
 
 	determinant = mat2_determinant(a);
-	assert(determinant != 0);
+	assert(determinant != 0.0f);
 	inverse.m11 = a->m22 / determinant;
 	inverse.m21 = -(a->m21) / determinant;
 	inverse.m12 = -(a->m12) / determinant;
@@ -339,7 +339,7 @@ mat4_inverse(MAT4 *dest, const MAT4 *a)
 	assert(0);
 
 	determinant = mat4_determinant(a);
-	assert(determinant != 0);
+	assert(determinant != 0.0f);
 	//*dest = inverse;
 
 	return (dest);
@@ -382,7 +382,7 @@ mat4_look_at(MAT4 *dest, const VEC3 *eye, const VEC3 *center, const VEC3 *up)
 	dest->m43 = 0.0f;
 	dest->m14 = -vec3_dot(&right_component, eye);
 	dest->m14 = -vec3_dot(&up_component, eye);
-	dest->m14 = -vec3_dot(&forward_component, &eye);
+	dest->m14 = -vec3_dot(&forward_component, eye);
 	dest->m14 = 1.0f;
 
 	return (dest);
@@ -394,8 +394,8 @@ mat4_perspective(MAT4 *dest, scalar fov_y, scalar aspect_ratio, scalar z_near, s
 	scalar fov_y_radians;
 	scalar cot_of_half_fov_y;
 
-	fov_y_radians = (180.0f * fov_y) / GM_PI;
-	cot_of_half_fov_y = 1.0f / tan(fov_y_radians / 2.0f);
+	fov_y_radians = (180.0f * fov_y) / SCALAR_PI;
+	cot_of_half_fov_y = 1.0f / scalar_tan(fov_y_radians / 2.0f);
 
 	assert(aspect_ratio >= 0.0f);
 	assert(z_near - z_far != 0.0f);
