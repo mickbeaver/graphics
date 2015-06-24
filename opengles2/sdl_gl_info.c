@@ -1,7 +1,6 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdnoreturn.h>
 #include <string.h>
 
 #include "SDL.h"
@@ -23,7 +22,7 @@ static int	strings_qsort_cmp_func(void const *, void const *);
 static void	print_gl_info(void);
 static void	print_sorted_gl_exts(const GLubyte *);
 
-static noreturn void
+static void
 sdl_print_error_and_exit_func(const char *function_name, int line, const char *user_message)
 {
 	printf("%s()[%d]: SDL Error: %s\n", function_name, line, SDL_GetError());

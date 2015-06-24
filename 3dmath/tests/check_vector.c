@@ -1,11 +1,9 @@
 #include <assert.h>
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
-#include <check.h>
-#pragma clang diagnostic pop
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "libcheck_wrapper.h"
 #include "vector.h"
 
 #define TEST_FLOAT_EPSILON (0.000001f)

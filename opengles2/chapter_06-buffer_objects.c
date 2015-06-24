@@ -2,7 +2,6 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdnoreturn.h>
 
 #include "SDL.h"
 #include "glsys.h"
@@ -52,7 +51,7 @@ static GLchar	*load_text_file_into_string(const char *filename);
 static GLuint	 load_shader(const GLenum shader_type, const char *filename);
 static GLuint	 load_program(const char *vertex_shader_filename, const char *fragment_shader_filename);
 
-static noreturn void
+static void
 sdl_print_error_and_exit_func(const char *function_name, int line, const char *user_message)
 {
 	printf("%s()[%d]: SDL Error: %s\n", function_name, line, SDL_GetError());

@@ -1,5 +1,4 @@
-include_directories(include /usr/local/include)
-link_directories(/usr/local/lib)
+include_directories(include)
 
 set(math_srcs
     include/vector.h

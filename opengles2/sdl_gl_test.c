@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdnoreturn.h>
 
 #include "SDL.h"
 #include "SDL_assert.h"
@@ -14,7 +13,7 @@
 #endif
 
 
-static noreturn void
+static void
 sdl_print_error_and_exit_func(const char *function_name, int line, const char *user_message)
 {
 	printf("%s()[%d]: SDL Error: %s\n", function_name, line, SDL_GetError());
