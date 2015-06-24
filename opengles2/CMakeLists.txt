@@ -26,7 +26,7 @@ else()
 endif()
 
 add_subdirectory(shaders)
-include_directories(../math/include)
+include_directories(../3dmath/include)
 
 add_executable(sdl_gl_info sdl_gl_info.c ${PLATFORM_SRCS})
 target_link_libraries(sdl_gl_info 3dmath ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES})

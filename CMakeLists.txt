@@ -14,6 +14,6 @@ else()
   message(FATAL_ERROR "Only Unix systems are supported.")
 endif()
 
-add_subdirectory(math)
+add_subdirectory(3dmath)
 add_subdirectory(opengles2)
 
