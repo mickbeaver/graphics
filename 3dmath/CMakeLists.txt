@@ -1,4 +1,5 @@
-include_directories(include)
+include_directories(include /usr/local/include)
+link_directories(/usr/local/lib)
 
 set(math_srcs
     include/vector.h
@@ -8,3 +9,10 @@ set(math_srcs
 
 add_library(3dmath ${math_srcs})
 
+add_executable(check_vector tests/check_vector.c)
+target_link_libraries(check_vector 3dmath check)
+add_test(check_vector check_vector)
+
+add_executable(check_matrix tests/check_matrix.c)
+target_link_libraries(check_matrix 3dmath check m)
+add_test(check_matrix check_matrix)

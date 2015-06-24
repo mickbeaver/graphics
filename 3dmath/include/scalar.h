@@ -15,6 +15,7 @@ typedef float scalar;
 // <tgmath.h> should do the right thing, but does not work correctly on
 // FreeBSD's headers. These defines should be updated if the scalar
 // typedef changes.
+#define scalar_fabs fabsf
 #define scalar_sqrt sqrtf
 #define scalar_tan tanf
 

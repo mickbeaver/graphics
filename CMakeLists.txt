@@ -2,7 +2,11 @@ cmake_minimum_required(VERSION 2.8.12)
 
 project(graphics C)
 
+enable_testing()
+
 if(UNIX)
+  include_directories(/usr/local/include)
+  link_directories(/usr/local/lib)
   if(Clang STREQUAL ${CMAKE_C_COMPILER_ID})
     add_definitions(-Werror -Weverything -Wno-padded -Wno-documentation -std=c99 -pedantic-errors)
   elseif(GNU STREQUAL ${CMAKE_C_COMPILER_ID})

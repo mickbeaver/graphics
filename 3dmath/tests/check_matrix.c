@@ -1,22 +1,19 @@
 #include <assert.h>
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
 #include <check.h>
+#pragma clang diagnostic pop
 #include <stdio.h>
 #include <stdlib.h>
-#include <tgmath.h>
+#include <math.h>
 #include "matrix.h"
 
-#define TEST_FLOAT_EPSILON (0.0000001f)
+#define TEST_FLOAT_EPSILON (0.000001f)
 
-#define ASSERT_FLOAT_EQ(float1, float2) do {        \
-	ck_assert_msg(float1 == float2,             \
-	    "(" #float1 "=%f) != (" #float2 "=%f)", \
-	    float1, float2);                        \
-} while (0)
-
-#define ASSERT_FLOAT_APPROX_EQ(float1, float2, epsilon) do { \
-	ck_assert_msg(abs(float1 - float2) < epsilon,        \
-	    "(" #float1 "=%f) !~= (" #float2 "=%f)",         \
-	    float1, float2);                                 \
+#define ASSERT_FLOAT_APPROX_EQ(float1, float2) do {                      \
+	ck_assert_msg(scalar_fabs(float1 - float2) < TEST_FLOAT_EPSILON, \
+	    "(" #float1 "=%f) !~= (" #float2 "=%f)",                     \
+	    float1, float2);                                             \
 } while (0)
 
 START_TEST(test_matrix_sizes)
@@ -26,10 +23,6 @@ START_TEST(test_matrix_sizes)
 	 * packing that would interfere with using the vector
 	 * structs directly, as opposed to arrays of floats.
 	 */
-	static_assert(sizeof(MAT2) == sizeof(scalar) * 2 * 2, "MAT2 cannot be used as an array of scalars");
-	static_assert(sizeof(MAT3) == sizeof(scalar) * 3 * 3, "MAT3 cannot be used as an array of scalars");
-	static_assert(sizeof(MAT4) == sizeof(scalar) * 4 * 4, "MAT4 cannot be used as an array of scalars");
-
 	ck_assert_int_eq(sizeof(MAT2), sizeof(scalar) * 2 * 2);
 	ck_assert_int_eq(sizeof(MAT3), sizeof(scalar) * 3 * 3);
 	ck_assert_int_eq(sizeof(MAT4), sizeof(scalar) * 4 * 4);
@@ -44,10 +37,10 @@ START_TEST(test_mat2_multiply_01)
 	b = (MAT2){.m11=-3.0f, .m21=4.0f, .m12=7.0f, .m22=1.0f/3.0f};
 	mat2_multiply(&dest, &a, &b);
 
-	ASSERT_FLOAT_EQ(dest.m11, -11.0f);
-	ASSERT_FLOAT_EQ(dest.m21, -15.0f);
-	ASSERT_FLOAT_EQ(dest.m12, 19.0f/3.0f);
-	ASSERT_FLOAT_EQ(dest.m22, 35.0f);
+	ASSERT_FLOAT_APPROX_EQ(dest.m11, -11.0f);
+	ASSERT_FLOAT_APPROX_EQ(dest.m21, -15.0f);
+	ASSERT_FLOAT_APPROX_EQ(dest.m12, 19.0f/3.0f);
+	ASSERT_FLOAT_APPROX_EQ(dest.m22, 35.0f);
 }
 END_TEST
 
@@ -58,10 +51,10 @@ START_TEST(test_mat2_inverse_01)
 	a = (MAT2){.m11=4.0f, .m21=3.0f, .m12=3.0f, .m22=2.0f};
 	mat2_inverse(&inverse, &a);
 
-	ASSERT_FLOAT_EQ(inverse.m11, -2.0f);
-	ASSERT_FLOAT_EQ(inverse.m21, 3.0f);
-	ASSERT_FLOAT_EQ(inverse.m12, 3.0f);
-	ASSERT_FLOAT_EQ(inverse.m22, -4.0f);
+	ASSERT_FLOAT_APPROX_EQ(inverse.m11, -2.0f);
+	ASSERT_FLOAT_APPROX_EQ(inverse.m21, 3.0f);
+	ASSERT_FLOAT_APPROX_EQ(inverse.m12, 3.0f);
+	ASSERT_FLOAT_APPROX_EQ(inverse.m22, -4.0f);
 }
 END_TEST
 
@@ -72,10 +65,10 @@ START_TEST(test_mat2_inverse_02)
 	a = (MAT2){.m11=1.0f, .m21=3.0f, .m12=2.0f, .m22=4.0f};
 	mat2_inverse(&inverse, &a);
 
-	ASSERT_FLOAT_EQ(inverse.m11, -2.0f);
-	ASSERT_FLOAT_EQ(inverse.m21, 1.5f);
-	ASSERT_FLOAT_EQ(inverse.m12, 1.0f);
-	ASSERT_FLOAT_EQ(inverse.m22, -0.5f);
+	ASSERT_FLOAT_APPROX_EQ(inverse.m11, -2.0f);
+	ASSERT_FLOAT_APPROX_EQ(inverse.m21, 1.5f);
+	ASSERT_FLOAT_APPROX_EQ(inverse.m12, 1.0f);
+	ASSERT_FLOAT_APPROX_EQ(inverse.m22, -0.5f);
 }
 END_TEST
 
