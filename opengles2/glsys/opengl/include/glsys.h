@@ -1,6 +1,8 @@
 #ifndef _GLSYS_H_INCLUDED_
 #define _GLSYS_H_INCLUDED_
-
+#ifdef _MSC_VER
+#include <windows.h>
+#endif
 #include <GL/gl.h>
 #include "glext.h"
 

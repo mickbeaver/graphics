@@ -29,10 +29,10 @@ END_TEST
 
 START_TEST(test_mat2_multiply_01)
 {
-	MAT2 a, b, dest;
+	MAT2 a = {1.0f, 5.0f, -2.0f, 0.0f};
+	MAT2 b = {-3.0f, 4.0f, 7.0f, 1.0f/3.0f};
+	MAT2 dest;
 
-	a = (MAT2){.m11=1.0f, .m21=5.0f, .m12=-2.0f, .m22=0.0f};
-	b = (MAT2){.m11=-3.0f, .m21=4.0f, .m12=7.0f, .m22=1.0f/3.0f};
 	mat2_multiply(&dest, &a, &b);
 
 	ASSERT_FLOAT_APPROX_EQ(dest.m11, -11.0f);
@@ -44,9 +44,9 @@ END_TEST
 
 START_TEST(test_mat2_inverse_01)
 {
-	MAT2 a, inverse;
+	MAT2 a = {4.0f, 3.0f, 3.0f, 2.0f};
+	MAT2 inverse;
 
-	a = (MAT2){.m11=4.0f, .m21=3.0f, .m12=3.0f, .m22=2.0f};
 	mat2_inverse(&inverse, &a);
 
 	ASSERT_FLOAT_APPROX_EQ(inverse.m11, -2.0f);
@@ -58,9 +58,9 @@ END_TEST
 
 START_TEST(test_mat2_inverse_02)
 {
-	MAT2 a, inverse;
+	MAT2 a = {1.0f, 3.0f, 2.0f, 4.0f};
+	MAT2 inverse;
 
-	a = (MAT2){.m11=1.0f, .m21=3.0f, .m12=2.0f, .m22=4.0f};
 	mat2_inverse(&inverse, &a);
 
 	ASSERT_FLOAT_APPROX_EQ(inverse.m11, -2.0f);

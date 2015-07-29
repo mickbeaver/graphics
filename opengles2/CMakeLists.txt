@@ -1,7 +1,3 @@
-cmake_minimum_required(VERSION 2.8.12)
-
-project(opengles2 C)
-
 if(UNIX)
   if (armv6l STREQUAL ${CMAKE_HOST_SYSTEM_PROCESSOR})
     message(STATUS "CPU is armv6l. Assuming Raspberry Pi and OpenGL ES 2.")
@@ -21,8 +17,11 @@ if(UNIX)
   pkg_check_modules(SDL2_PC REQUIRED sdl2)
   add_compile_options(${SDL2_PC_CFLAGS})
   set(SDL2_LIBRARIES ${SDL2_PC_LDFLAGS})
-else()
-  message(FATAL_ERROR "Only Unix systems are supported.")
+elseif(MSVC11)
+  include_directories(glsys/opengl/include)
+  set(PLATFORM_SRCS glsys/opengl/src/glsys.c)
+  find_package(OpenGL REQUIRED)
+  set(SDL2_LIBRARIES SDL2 SDL2main)
 endif()
 
 add_subdirectory(shaders)
@@ -46,3 +45,17 @@ add_executable(chapter_06-buffer_objects chapter_06-buffer_objects.c ${PLATFORM_
 add_dependencies(chapter_06-buffer_objects shaders)
 target_link_libraries(chapter_06-buffer_objects ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES})
 
+if(MSVC11)
+  set(SDL2_DLL_SRC ${PROJECT_SOURCE_DIR}/external/MSVC11/lib/win64/$<CONFIGURATION>/SDL2.dll)
+  set(SDL2_DLL_DEST ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/SDL2.dll)
+  add_custom_command(OUTPUT ${SDL2_DLL_DEST}
+    COMMAND ${CMAKE_COMMAND} -E copy ${SDL2_DLL_SRC} ${SDL2_DLL_DEST}
+    DEPENDS ${SDL2_DLL_SRC})
+  add_custom_target(copy_sdl2_dlls ALL
+    DEPENDS ${SDL2_DLL_DEST})
+  add_dependencies(sdl_gl_info copy_sdl2_dlls)
+  add_dependencies(sdl_gl_test copy_sdl2_dlls)
+  add_dependencies(chapter_04 copy_sdl2_dlls)
+  add_dependencies(chapter_06 copy_sdl2_dlls)
+  add_dependencies(chapter_06-buffer_objects copy_sdl2_dlls)
+endif()

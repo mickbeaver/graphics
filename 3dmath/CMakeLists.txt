@@ -1,5 +1,12 @@
 include_directories(include)
 
+if(UNIX)
+  set(math_libs m)
+  set(check_libs check)
+elseif(MSVC11)
+  set(check_libs check compat)
+endif()
+
 set(math_srcs
     include/vector.h
     include/matrix.h
@@ -9,9 +16,9 @@ set(math_srcs
 add_library(3dmath ${math_srcs})
 
 add_executable(check_vector tests/check_vector.c)
-target_link_libraries(check_vector 3dmath check)
+target_link_libraries(check_vector 3dmath ${check_libs})
 add_test(check_vector check_vector)
 
 add_executable(check_matrix tests/check_matrix.c)
-target_link_libraries(check_matrix 3dmath check m)
+target_link_libraries(check_matrix 3dmath ${check_libs} ${math_library})
 add_test(check_matrix check_matrix)

@@ -6,11 +6,11 @@
 #include "SDL.h"
 #include "glsys.h"
 
-#define sdl_print_error_and_exit(user_message) sdl_print_error_and_exit_func(__func__, __LINE__, user_message)
+#define sdl_print_error_and_exit(user_message) sdl_print_error_and_exit_func(__FILE__, __LINE__, user_message)
 #ifdef NDEBUG
 #define sdl_check_error() (void) 0
 #else
-#define sdl_check_error() sdl_check_and_clear_error_func(__func__, __LINE__)
+#define sdl_check_error() sdl_check_and_clear_error_func(__FILE__, __LINE__)
 #endif
 
 #define VERTEX_POS_INDEX 0

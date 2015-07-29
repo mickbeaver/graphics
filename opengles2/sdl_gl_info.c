@@ -8,19 +8,33 @@
 #include "glsys.h"
 #include "vector.h"
 
-#define sdl_print_error_and_exit(user_message) sdl_print_error_and_exit_func(__func__, __LINE__, user_message)
+#define sdl_print_error_and_exit(user_message) sdl_print_error_and_exit_func(__FILE__, __LINE__, user_message)
 #ifdef NDEBUG
 #define sdl_check_error() (void) 0
 #else
 #define sdl_check_error() sdl_check_and_clear_error_func(SDL_FUNCTION, __LINE__)
 #endif
 
-static void	sdl_print_error_and_exit_func(const char *_function_name, int _line, const char *_user_message);
-static void	sdl_print_error_and_exit_func(const char *_function_name, int _line, const char *_user_mesage);
-static void	print_sdl_info(void);
-static int	strings_qsort_cmp_func(void const *, void const *);
-static void	print_gl_info(void);
-static void	print_sorted_gl_exts(const GLubyte *);
+static void		 sdl_print_error_and_exit_func(const char *_function_name, int _line, const char *_user_message);
+static void		 sdl_print_error_and_exit_func(const char *_function_name, int _line, const char *_user_mesage);
+static void		 print_sdl_info(void);
+static int		 strings_qsort_cmp_func(void const *, void const *);
+static void		 print_gl_info(void);
+static void		 print_sorted_gl_exts(const GLubyte *);
+static char		*local_strdup(const char *_original);
+
+static char *
+local_strdup(const char *original)
+{
+	size_t	 length;
+	char	*copy_to_return;
+
+	length = strlen(original);
+	copy_to_return = (char *)malloc(length + 1);
+	strcpy(copy_to_return, original);
+
+	return copy_to_return;
+}
 
 static void
 sdl_print_error_and_exit_func(const char *function_name, int line, const char *user_message)
@@ -69,7 +83,7 @@ print_sorted_gl_exts(const GLubyte *gl_exts)
 	char	*extensions_dup;
 	char	*current_char;
         
-	extensions_dup = strdup((char const *)gl_exts);
+	extensions_dup = local_strdup((char const *)gl_exts);
 	len_of_extensions_dup = strlen(extensions_dup);
 	current_char = extensions_dup;
 
@@ -88,17 +102,16 @@ print_sorted_gl_exts(const GLubyte *gl_exts)
 		size_t	current_extension_index;
 		char	*current_extension, **extensions;
 		const char *extension_printf_padding;
-		char	*strtok_context;
 
 		extensions = (char **)malloc(sizeof(char *) * num_extensions);
 		printf("There are %zu extensions\n", num_extensions);
-		current_extension = strtok_r(extensions_dup, " ", &strtok_context);
+		current_extension = strtok(extensions_dup, " ");
 
 		current_extension_index = 0;
 		while (current_extension != NULL) {
 			extensions[current_extension_index] = current_extension;
 			++current_extension_index;
-			current_extension = strtok_r(NULL, " ", &strtok_context);
+			current_extension = strtok(NULL, " ");
 		}
 		qsort(extensions, num_extensions, sizeof(char *), strings_qsort_cmp_func);
 

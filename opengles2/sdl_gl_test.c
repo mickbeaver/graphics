@@ -22,7 +22,19 @@ sdl_print_error_and_exit_func(const char *function_name, int line, const char *u
 	SDL_Quit();
 	exit(EXIT_FAILURE);
 }
- 
+
+static void
+sdl_check_and_clear_error_func(const char *function_name, int line)
+{
+	const char	*error;
+
+	error = SDL_GetError();
+	if (*error != '\0') {
+		printf("%s()[%d]: SDL Error: %s\n", function_name, line, error);
+		SDL_ClearError();
+	}
+}
+
 int
 main(int argc, char *argv[])
 {
