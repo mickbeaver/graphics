@@ -7,6 +7,7 @@ set(math_srcs
     src/matrix.c)
 
 add_library(3dmath ${math_srcs})
+target_link_libraries(3dmath m)
 
 add_executable(check_vector tests/check_vector.c)
 target_link_libraries(check_vector 3dmath check)

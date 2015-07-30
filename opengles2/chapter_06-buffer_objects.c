@@ -171,6 +171,7 @@ load_program(const char *vertex_shader_filename, const char *fragment_shader_fil
 static void
 draw(void)
 {
+	glClear(GL_COLOR_BUFFER_BIT);
 	glDrawElements(GL_TRIANGLES, sizeof(triangle_indices) / sizeof(triangle_indices[0]), GL_UNSIGNED_SHORT, (const void *)0);
 }
 
@@ -183,6 +184,8 @@ simulation_loop(SDL_Window *window)
 	while (!is_done) {
 		while(SDL_PollEvent(&event) == 1) {
 			if (event.type == SDL_QUIT)
+				is_done = GL_TRUE;
+			else if (event.type == SDL_KEYDOWN)
 				is_done = GL_TRUE;
 		}
 		draw();
