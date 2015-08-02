@@ -23,6 +23,7 @@ sdl_print_error_and_exit_func(const char *function_name, int line, const char *u
 	exit(EXIT_FAILURE);
 }
 
+#ifdef NDEBUG
 static void
 sdl_check_and_clear_error_func(const char *function_name, int line)
 {
@@ -34,6 +35,7 @@ sdl_check_and_clear_error_func(const char *function_name, int line)
 		SDL_ClearError();
 	}
 }
+#endif
 
 int
 main(int argc, char *argv[])
