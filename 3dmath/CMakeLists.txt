@@ -3,7 +3,7 @@ include_directories(include)
 if(UNIX)
   set(math_library m)
   set(check_libs check)
-elseif(MSVC11)
+elseif(MSVC)
   set(check_libs check compat)
 endif()
 
