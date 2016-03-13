@@ -1,9 +1,9 @@
 #include <assert.h>
+#include <check.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "libcheck_wrapper.h"
 #include "vector.h"
 
 #define TEST_FLOAT_EPSILON (0.000001f)
@@ -95,7 +95,7 @@ START_TEST(test_vec2_normalize_01)
 
 	ASSERT_FLOAT_APPROX_EQ(p.x, 0.923077f);
 	ASSERT_FLOAT_APPROX_EQ(p.y, 0.384615f);
-	ASSERT_FLOAT_APPROX_EQ(vec2_length(p), 1.0f);
+	ASSERT_FLOAT_APPROX_EQ(vec2_length(&p), 1.0f);
 }
 END_TEST
 
@@ -107,7 +107,7 @@ START_TEST(test_vec2_normalize_02)
 
 	ASSERT_FLOAT_APPROX_EQ(p.x, 0.0f);
 	ASSERT_FLOAT_APPROX_EQ(p.y, 1.0f);
-	ASSERT_FLOAT_APPROX_EQ(vec2_length(p), 1.0f);
+	ASSERT_FLOAT_APPROX_EQ(vec2_length(&p), 1.0f);
 }
 END_TEST
 
@@ -275,7 +275,7 @@ START_TEST(test_vec3_normalize_01)
 	ASSERT_FLOAT_APPROX_EQ(p.x, 0.934730f);
 	ASSERT_FLOAT_APPROX_EQ(p.y, -0.350524f);
 	ASSERT_FLOAT_APPROX_EQ(p.z, 0.058421f);
-	ASSERT_FLOAT_APPROX_EQ(vec3_length(p), 1.0f);
+	ASSERT_FLOAT_APPROX_EQ(vec3_length(&p), 1.0f);
 }
 END_TEST
 
@@ -288,7 +288,7 @@ START_TEST(test_vec3_normalize_02)
 	ASSERT_FLOAT_APPROX_EQ(p.x, -0.923077f);
 	ASSERT_FLOAT_APPROX_EQ(p.y, 0.23077f);
 	ASSERT_FLOAT_APPROX_EQ(p.z, -0.307692f);
-	ASSERT_FLOAT_APPROX_EQ(vec3_length(p), 1.0f);
+	ASSERT_FLOAT_APPROX_EQ(vec3_length(&p), 1.0f);
 }
 END_TEST
 
@@ -424,7 +424,7 @@ START_TEST(test_vec4_normalize_01)
 	ASSERT_FLOAT_APPROX_EQ(p.y, 0.5f);
 	ASSERT_FLOAT_APPROX_EQ(p.z, 0.5f);
 	ASSERT_FLOAT_APPROX_EQ(p.w, 0.5f);
-	ASSERT_FLOAT_APPROX_EQ(vec4_length(p), 1.0f);
+	ASSERT_FLOAT_APPROX_EQ(vec4_length(&p), 1.0f);
 }
 END_TEST
 
