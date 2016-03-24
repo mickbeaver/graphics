@@ -113,13 +113,9 @@ vec3_add(VEC3 *dest, const VEC3 *p, const VEC3 *q)
 VEC3 *
 vec3_cross(VEC3 *dest, const VEC3 *p, const VEC3 *q)
 {
-	VEC3 temp;
-
-	temp.x = (p->y * q->z) - (p->z * q->y);
-	temp.y = (p->z * q->x) - (p->x * q->z);
-	temp.z = (p->x * q->y) - (p->y * q->x);
-
-	*dest = temp;
+	dest->x = (p->y * q->z) - (p->z * q->y);
+	dest->y = (p->z * q->x) - (p->x * q->z);
+	dest->z = (p->x * q->y) - (p->y * q->x);
 
 	return (dest);
 }

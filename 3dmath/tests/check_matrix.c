@@ -1,9 +1,9 @@
 #include <assert.h>
+#include <check.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 
-#include "libcheck_wrapper.h"
 #include "matrix.h"
 
 #define TEST_FLOAT_EPSILON (0.000001f)
@@ -70,6 +70,38 @@ START_TEST(test_mat2_inverse_02)
 }
 END_TEST
 
+START_TEST(test_mat4_rotation_01)
+{
+	MAT4 dest;
+	VEC3 normal = {1.0f, 0.0f, 0.0f};
+	scalar angle;
+
+	angle = (20.0f * SCALAR_PI) / 180.0f;
+	mat4_rotation(&dest, &normal, angle);
+
+	ASSERT_FLOAT_APPROX_EQ(dest.m11, 1.0f);
+	ASSERT_FLOAT_APPROX_EQ(dest.m21, 0.0f);
+	ASSERT_FLOAT_APPROX_EQ(dest.m31, 0.0f);
+	ASSERT_FLOAT_APPROX_EQ(dest.m41, 0.0f);
+
+	ASSERT_FLOAT_APPROX_EQ(dest.m12, 0.0f);
+	ASSERT_FLOAT_APPROX_EQ(dest.m22, 0.939693f);
+	ASSERT_FLOAT_APPROX_EQ(dest.m32, 0.342020f);
+	ASSERT_FLOAT_APPROX_EQ(dest.m42, 0.0f);
+
+	ASSERT_FLOAT_APPROX_EQ(dest.m13, 0.0f);
+	ASSERT_FLOAT_APPROX_EQ(dest.m23, -0.342020f);
+	ASSERT_FLOAT_APPROX_EQ(dest.m33, 0.939693f);
+	ASSERT_FLOAT_APPROX_EQ(dest.m43, 0.0f);
+
+	ASSERT_FLOAT_APPROX_EQ(dest.m14, 0.0f);
+	ASSERT_FLOAT_APPROX_EQ(dest.m24, 0.0f);
+	ASSERT_FLOAT_APPROX_EQ(dest.m34, 0.0f);
+	ASSERT_FLOAT_APPROX_EQ(dest.m44, 1.0f);
+}
+
+END_TEST
+
 int
 main(int argc, char *argv[])
 {
@@ -94,6 +126,10 @@ main(int argc, char *argv[])
 	test_case = tcase_create("mat2 inverse");
 	tcase_add_test(test_case, test_mat2_inverse_01);
 	tcase_add_test(test_case, test_mat2_inverse_02);
+	suite_add_tcase(suite, test_case);
+
+	test_case = tcase_create("mat4 rotation");
+	tcase_add_test(test_case, test_mat4_rotation_01);
 	suite_add_tcase(suite, test_case);
 
 	suite_runner = srunner_create(suite);

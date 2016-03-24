@@ -44,13 +44,10 @@ mat2_inverse(MAT2 *dest, const MAT2 *a)
 MAT2 *
 mat2_multiply(MAT2 *dest, const MAT2 *a, const MAT2 *b)
 {
-	MAT2 result;
-
-	result.m11 = (a->m11 * b->m11) + (a->m12 * b->m21);
-	result.m21 = (a->m21 * b->m11) + (a->m22 * b->m21);
-	result.m12 = (a->m11 * b->m12) + (a->m12 * b->m22);
-	result.m22 = (a->m21 * b->m12) + (a->m22 * b->m22);
-	*dest = result;
+	dest->m11 = (a->m11 * b->m11) + (a->m12 * b->m21);
+	dest->m21 = (a->m21 * b->m11) + (a->m22 * b->m21);
+	dest->m12 = (a->m11 * b->m12) + (a->m12 * b->m22);
+	dest->m22 = (a->m21 * b->m12) + (a->m22 * b->m22);
 
 	return (dest);
 }
@@ -69,13 +66,10 @@ mat2_scalar_multiply(MAT2 *dest, const MAT2 *a, scalar x)
 MAT2 *
 mat2_transpose(MAT2 *dest, const MAT2 *a)
 {
-	MAT2 result;
-
-	result.m11 = a->m11;
-	result.m21 = a->m12;
-	result.m12 = a->m21;
-	result.m22 = a->m22;
-	*dest = result;
+	dest->m11 = a->m11;
+	dest->m21 = a->m12;
+	dest->m12 = a->m21;
+	dest->m22 = a->m22;
 
 	return (dest);
 }
@@ -99,18 +93,15 @@ mat3_add(MAT3 *dest, const MAT3 *a, const MAT3 *b)
 MAT3 *
 mat3_multiply(MAT3 *dest, const MAT3 *a, const MAT3 *b)
 {
-	MAT3 result;
-
-	result.m11 = (a->m11 * b->m11) + (a->m12 * b->m21) + (a->m13 * b->m31);
-	result.m21 = (a->m21 * b->m11) + (a->m22 * b->m21) + (a->m23 * b->m31);
-	result.m31 = (a->m31 * b->m11) + (a->m32 * b->m21) + (a->m33 * b->m31);
-	result.m12 = (a->m11 * b->m12) + (a->m12 * b->m22) + (a->m13 * b->m32);
-	result.m22 = (a->m21 * b->m12) + (a->m22 * b->m22) + (a->m23 * b->m32);
-	result.m32 = (a->m31 * b->m12) + (a->m32 * b->m22) + (a->m33 * b->m32);
-	result.m13 = (a->m11 * b->m13) + (a->m12 * b->m23) + (a->m13 * b->m33);
-	result.m23 = (a->m21 * b->m13) + (a->m22 * b->m23) + (a->m23 * b->m33);
-	result.m33 = (a->m31 * b->m13) + (a->m32 * b->m23) + (a->m33 * b->m33);
-	*dest = result;
+	dest->m11 = (a->m11 * b->m11) + (a->m12 * b->m21) + (a->m13 * b->m31);
+	dest->m21 = (a->m21 * b->m11) + (a->m22 * b->m21) + (a->m23 * b->m31);
+	dest->m31 = (a->m31 * b->m11) + (a->m32 * b->m21) + (a->m33 * b->m31);
+	dest->m12 = (a->m11 * b->m12) + (a->m12 * b->m22) + (a->m13 * b->m32);
+	dest->m22 = (a->m21 * b->m12) + (a->m22 * b->m22) + (a->m23 * b->m32);
+	dest->m32 = (a->m31 * b->m12) + (a->m32 * b->m22) + (a->m33 * b->m32);
+	dest->m13 = (a->m11 * b->m13) + (a->m12 * b->m23) + (a->m13 * b->m33);
+	dest->m23 = (a->m21 * b->m13) + (a->m22 * b->m23) + (a->m23 * b->m33);
+	dest->m33 = (a->m31 * b->m13) + (a->m32 * b->m23) + (a->m33 * b->m33);
 
 	return (dest);
 }
@@ -134,18 +125,15 @@ mat3_scalar_multiply(MAT3 *dest, const MAT3 *a, scalar x)
 MAT3 *
 mat3_transpose(MAT3 *dest, const MAT3 *a)
 {
-	MAT3 result;
-
-	result.m11 = a->m11;
-	result.m21 = a->m12;
-	result.m31 = a->m13;
-	result.m12 = a->m21;
-	result.m22 = a->m22;
-	result.m32 = a->m23;
-	result.m13 = a->m31;
-	result.m23 = a->m32;
-	result.m33 = a->m33;
-	*dest = result;
+	dest->m11 = a->m11;
+	dest->m21 = a->m12;
+	dest->m31 = a->m13;
+	dest->m12 = a->m21;
+	dest->m22 = a->m22;
+	dest->m32 = a->m23;
+	dest->m13 = a->m31;
+	dest->m23 = a->m32;
+	dest->m33 = a->m33;
 
 	return (dest);
 }
@@ -219,25 +207,62 @@ mat4_add(MAT4 *dest, const MAT4 *a, const MAT4 *b)
 MAT4 *
 mat4_multiply(MAT4 *dest, const MAT4 *a, const MAT4 *b)
 {
-	MAT4 result;
+	dest->m11 = (a->m11 * b->m11) + (a->m12 * b->m21) + (a->m13 * b->m31) + (a->m14 * b->m41);
+	dest->m21 = (a->m21 * b->m11) + (a->m22 * b->m21) + (a->m23 * b->m31) + (a->m24 * b->m41);
+	dest->m31 = (a->m31 * b->m11) + (a->m32 * b->m21) + (a->m33 * b->m31) + (a->m34 * b->m41);
+	dest->m41 = (a->m41 * b->m11) + (a->m42 * b->m21) + (a->m43 * b->m31) + (a->m44 * b->m41);
+	dest->m12 = (a->m11 * b->m12) + (a->m12 * b->m22) + (a->m13 * b->m32) + (a->m14 * b->m42);
+	dest->m22 = (a->m21 * b->m12) + (a->m22 * b->m22) + (a->m23 * b->m32) + (a->m24 * b->m42);
+	dest->m32 = (a->m31 * b->m12) + (a->m32 * b->m22) + (a->m33 * b->m32) + (a->m34 * b->m42);
+	dest->m42 = (a->m41 * b->m12) + (a->m42 * b->m22) + (a->m43 * b->m32) + (a->m44 * b->m42);
+	dest->m13 = (a->m11 * b->m13) + (a->m12 * b->m23) + (a->m13 * b->m33) + (a->m14 * b->m43);
+	dest->m23 = (a->m21 * b->m13) + (a->m22 * b->m23) + (a->m23 * b->m33) + (a->m24 * b->m43);
+	dest->m33 = (a->m31 * b->m13) + (a->m32 * b->m23) + (a->m33 * b->m33) + (a->m34 * b->m43);
+	dest->m43 = (a->m41 * b->m13) + (a->m42 * b->m23) + (a->m43 * b->m33) + (a->m44 * b->m43);
+	dest->m14 = (a->m11 * b->m14) + (a->m12 * b->m24) + (a->m13 * b->m34) + (a->m14 * b->m44);
+	dest->m24 = (a->m21 * b->m14) + (a->m22 * b->m24) + (a->m23 * b->m34) + (a->m24 * b->m44);
+	dest->m34 = (a->m31 * b->m14) + (a->m32 * b->m24) + (a->m33 * b->m34) + (a->m34 * b->m44);
+	dest->m44 = (a->m41 * b->m14) + (a->m42 * b->m24) + (a->m43 * b->m34) + (a->m44 * b->m44);
 
-	result.m11 = (a->m11 * b->m11) + (a->m12 * b->m21) + (a->m13 * b->m31) + (a->m14 * b->m41);
-	result.m21 = (a->m21 * b->m11) + (a->m22 * b->m21) + (a->m23 * b->m31) + (a->m24 * b->m41);
-	result.m31 = (a->m31 * b->m11) + (a->m32 * b->m21) + (a->m33 * b->m31) + (a->m34 * b->m41);
-	result.m41 = (a->m41 * b->m11) + (a->m42 * b->m21) + (a->m43 * b->m31) + (a->m44 * b->m41);
-	result.m12 = (a->m11 * b->m12) + (a->m12 * b->m22) + (a->m13 * b->m32) + (a->m14 * b->m42);
-	result.m22 = (a->m21 * b->m12) + (a->m22 * b->m22) + (a->m23 * b->m32) + (a->m24 * b->m42);
-	result.m32 = (a->m31 * b->m12) + (a->m32 * b->m22) + (a->m33 * b->m32) + (a->m34 * b->m42);
-	result.m42 = (a->m41 * b->m12) + (a->m42 * b->m22) + (a->m43 * b->m32) + (a->m44 * b->m42);
-	result.m13 = (a->m11 * b->m13) + (a->m12 * b->m23) + (a->m13 * b->m33) + (a->m14 * b->m43);
-	result.m23 = (a->m21 * b->m13) + (a->m22 * b->m23) + (a->m23 * b->m33) + (a->m24 * b->m43);
-	result.m33 = (a->m31 * b->m13) + (a->m32 * b->m23) + (a->m33 * b->m33) + (a->m34 * b->m43);
-	result.m43 = (a->m41 * b->m13) + (a->m42 * b->m23) + (a->m43 * b->m33) + (a->m44 * b->m43);
-	result.m14 = (a->m11 * b->m14) + (a->m12 * b->m24) + (a->m13 * b->m34) + (a->m14 * b->m44);
-	result.m24 = (a->m21 * b->m14) + (a->m22 * b->m24) + (a->m23 * b->m34) + (a->m24 * b->m44);
-	result.m34 = (a->m31 * b->m14) + (a->m32 * b->m24) + (a->m33 * b->m34) + (a->m34 * b->m44);
-	result.m44 = (a->m41 * b->m14) + (a->m42 * b->m24) + (a->m43 * b->m34) + (a->m44 * b->m44);
-	*dest = result;
+	return (dest);
+}
+
+MAT4 *
+mat4_rotation(MAT4 *dest, const VEC3 *normal, scalar angle)
+{
+	scalar angle_cos;
+	scalar angle_sin;
+	scalar one_minus_angle_cos;
+	scalar nx_times_ny;
+	scalar nx_times_nz;
+	scalar ny_times_nz;
+
+	angle_cos = scalar_cos(angle);
+	angle_sin = scalar_sin(angle);
+	one_minus_angle_cos = 1.0f - angle_cos;
+	nx_times_ny = normal->x * normal->y;
+	nx_times_nz = normal->x * normal->z;
+	ny_times_nz = normal->y * normal->z;
+	
+	dest->m11 = normal->x * normal->x * one_minus_angle_cos + angle_cos;
+	dest->m21 = nx_times_ny * one_minus_angle_cos + normal->z * angle_sin;
+	dest->m31 = nx_times_nz * one_minus_angle_cos - normal->y * angle_sin;
+	dest->m41 = 0.0f;
+
+	dest->m12 = nx_times_ny * one_minus_angle_cos - normal->z * angle_sin;
+	dest->m22 = normal->y * normal->y * one_minus_angle_cos + angle_cos;
+	dest->m32 = ny_times_nz * one_minus_angle_cos + normal->x * angle_sin;
+	dest->m42 = 0.0f;
+
+	dest->m13 = nx_times_nz * one_minus_angle_cos + normal->y * angle_sin;
+	dest->m23 = ny_times_nz * one_minus_angle_cos - normal->x * angle_sin;
+	dest->m33 = normal->z * normal->z * one_minus_angle_cos + angle_cos;
+	dest->m43 = 0.0f;
+
+	dest->m14 = 0.0f;
+	dest->m24 = 0.0f;
+	dest->m34 = 0.0f;
+	dest->m44 = 1.0f;
 
 	return (dest);
 }
@@ -268,25 +293,22 @@ mat4_scalar_multiply(MAT4 *dest, const MAT4 *a, scalar x)
 MAT4 *
 mat4_transpose(MAT4 *dest, const MAT4 *a)
 {
-	MAT4 result;
-
-	result.m11 = a->m11;
-	result.m21 = a->m12;
-	result.m31 = a->m13;
-	result.m41 = a->m14;
-	result.m12 = a->m21;
-	result.m22 = a->m22;
-	result.m32 = a->m23;
-	result.m42 = a->m24;
-	result.m13 = a->m31;
-	result.m23 = a->m32;
-	result.m33 = a->m33;
-	result.m43 = a->m34;
-	result.m14 = a->m41;
-	result.m24 = a->m42;
-	result.m34 = a->m43;
-	result.m44 = a->m44;
-	*dest = result;
+	dest->m11 = a->m11;
+	dest->m21 = a->m12;
+	dest->m31 = a->m13;
+	dest->m41 = a->m14;
+	dest->m12 = a->m21;
+	dest->m22 = a->m22;
+	dest->m32 = a->m23;
+	dest->m42 = a->m24;
+	dest->m13 = a->m31;
+	dest->m23 = a->m32;
+	dest->m33 = a->m33;
+	dest->m43 = a->m34;
+	dest->m14 = a->m41;
+	dest->m24 = a->m42;
+	dest->m34 = a->m43;
+	dest->m44 = a->m44;
 
 	return (dest);
 }

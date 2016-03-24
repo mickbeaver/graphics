@@ -18,6 +18,9 @@ typedef float scalar;
 #define scalar_fabs fabsf
 #define scalar_sqrt sqrtf
 #define scalar_tan tanf
+#define scalar_tan tanf
+#define scalar_cos cosf
+#define scalar_sin sinf
 
 #else
 #error "SCALAR_TYPE set to an invalid value"
