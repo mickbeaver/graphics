@@ -1,6 +1,6 @@
-#ifdef GL_ES
+#version 100
+
 precision mediump float;
-#endif
 
 void
 main()

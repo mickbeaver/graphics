@@ -1,10 +1,10 @@
+#include <GLES2/gl2.h>
 #include <assert.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "SDL.h"
-#include "glsys.h"
 
 
 #define sdl_print_error_and_exit(user_message) sdl_print_error_and_exit_func(__FILE__, __LINE__, user_message)
@@ -18,29 +18,28 @@
 #define VERTEX_POS_SIZE	 3
 #define VERTEX_COLOR_INDEX 1
 #define VERTEX_COLOR_SIZE  3
-/* static GLfloat triangle_vertex_pos[] = { */
-/* 	0.0f, 0.5f, 0.0f, */
-/* 	-0.5f, -0.5f, 0.0f, */
-/* 	0.5f, -0.5f, 0.0f}; */
-/* static GLfloat triangle_vertex_color[] = { */
-/* 	1.0f, 0.0f, 0.0f, */
-/* 	0.0f, 1.0f, 0.0f, */
-/* 	0.0f, 0.0f, 1.0f}; */
+
+#define USE_INTERLEAVED_MESH
+#ifdef USE_INTERLEAVED_MESH
 static GLfloat triangle_interleaved_mesh[] = {
-	0.0f, 0.5f, 0.0f,
-	1.0f, 0.0f, 0.0f,
-	-0.5f, -0.5f, 0.0f,
-	0.0f, 1.0f, 0.0f,
-	0.5f, -0.5f, 0.0f,
-	0.0f, 0.0f, 1.0f};
+    0.0f, 0.5f, 0.0f,
+    1.0f, 0.0f, 0.0f,
+    -0.5f, -0.5f, 0.0f,
+    0.0f, 1.0f, 0.0f,
+    0.5f, -0.5f, 0.0f,
+    0.0f, 0.0f, 1.0f};
+#else
+static GLfloat triangle_vertex_pos[] = {
+    0.0f, 0.5f, 0.0f,
+    -0.5f, -0.5f, 0.0f,
+    0.5f, -0.5f, 0.0f};
+static GLfloat triangle_vertex_color[] = {
+    1.0f, 0.0f, 0.0f,
+    0.0f, 1.0f, 0.0f,
+    0.0f, 0.0f, 1.0f};
+#endif
+
 static GLushort triangle_indices[] = {0, 1, 2};
-
-enum shader_source_index {
-	SOURCE_INDEX_VERSION,
-	SOURCE_INDEX_SHADER,
-	SOURCE_INDEX_COUNT
-};
-
 
 static void	 draw(void);
 static void	 simulation_loop(SDL_Window *window);
@@ -106,17 +105,13 @@ load_shader(const GLenum shader_type, const char *filename)
 {
 	GLint		 compile_status = 0, info_log_length = 0;
 	GLuint		 shader_handle;
-	GLchar		*file_buffer;
-	const GLchar	*sources[SOURCE_INDEX_COUNT];
+	const GLchar	*file_buffer;
 
 	shader_handle = glCreateShader(shader_type);
 	assert(shader_handle != 0);
 
 	file_buffer = load_text_file_into_string(filename);
-	sources[SOURCE_INDEX_VERSION] = GLSYS_SHADER_VERSION_STRING;
-	sources[SOURCE_INDEX_SHADER] = file_buffer;
-	
-	glShaderSource(shader_handle, SOURCE_INDEX_COUNT, sources, NULL);
+	glShaderSource(shader_handle, 1, &file_buffer, NULL);
 
 	glCompileShader(shader_handle);
 	glGetShaderiv(shader_handle, GL_COMPILE_STATUS, &compile_status);
@@ -248,9 +243,7 @@ main(int argc, char *argv[])
 	main_context = SDL_GL_CreateContext(main_window);
 	sdl_check_error();
 
-	glsys_load_extensions();
-
-	shader_program = load_program("shaders/chapter_06.vert", "shaders/chapter_06.frag");
+	shader_program = load_program("chapter_06.vert", "chapter_06.frag");
 	glUseProgram(shader_program);
 
 	setup_buffers();

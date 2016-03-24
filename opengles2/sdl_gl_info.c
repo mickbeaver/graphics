@@ -1,11 +1,10 @@
+#include <GLES2/gl2.h>
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "SDL.h"
-#include "SDL_assert.h"
-#include "glsys.h"
 #include "vector.h"
 
 #define sdl_print_error_and_exit(user_message) sdl_print_error_and_exit_func(__FILE__, __LINE__, user_message)

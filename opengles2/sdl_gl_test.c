@@ -1,9 +1,8 @@
+#include <GLES2/gl2.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "SDL.h"
-#include "SDL_assert.h"
-#include "glsys.h"
 
 #define sdl_print_error_and_exit(user_message) sdl_print_error_and_exit_func(SDL_FUNCTION, __LINE__, user_message)
 #ifdef NDEBUG

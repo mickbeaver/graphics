@@ -1,10 +1,10 @@
+#include <GLES2/gl2.h>
 #include <assert.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "SDL.h"
-#include "glsys.h"
 
 #define sdl_print_error_and_exit(user_message) sdl_print_error_and_exit_func(__FILE__, __LINE__, user_message)
 #ifdef NDEBUG
@@ -12,13 +12,6 @@
 #else
 #define sdl_check_error() sdl_check_and_clear_error_func(__FILE__, __LINE__)
 #endif
-
-enum shader_source_index {
-	SOURCE_INDEX_VERSION,
-	SOURCE_INDEX_SHADER,
-	SOURCE_INDEX_COUNT
-};
-
 
 static void	 sdl_print_error_and_exit_func(const char *function_name, int line, const char *user_message);
 static void	 sdl_check_and_clear_error_func(const char *function_name, int line);
@@ -35,7 +28,6 @@ sdl_print_error_and_exit_func(const char *function_name, int line, const char *u
 	SDL_Quit();
 	exit(EXIT_FAILURE);
 }
- 
  
 static void
 sdl_check_and_clear_error_func(const char *function_name, int line)
@@ -79,19 +71,15 @@ load_text_file_into_string(const char *filename)
 static GLuint
 load_shader(const GLenum shader_type, const char *filename)
 {
-	GLint	 	compile_status = 0, info_log_length = 0;
+	GLint	 	 compile_status = 0, info_log_length = 0;
 	GLuint	 	 shader_handle;
-	GLchar		*file_buffer;
-	const GLchar	*sources[SOURCE_INDEX_COUNT];
+	const GLchar	*file_buffer;
 
 	shader_handle = glCreateShader(shader_type);
 	assert(shader_handle != 0);
 
 	file_buffer = load_text_file_into_string(filename);
-	sources[SOURCE_INDEX_VERSION] = GLSYS_SHADER_VERSION_STRING;
-	sources[SOURCE_INDEX_SHADER] = file_buffer;
-	
-	glShaderSource(shader_handle, SOURCE_INDEX_COUNT, sources, NULL);
+	glShaderSource(shader_handle, 1, &file_buffer, NULL);
 
 	glCompileShader(shader_handle);
 	glGetShaderiv(shader_handle, GL_COMPILE_STATUS, &compile_status);
@@ -213,9 +201,7 @@ main(int argc, char *argv[])
 	main_context = SDL_GL_CreateContext(main_window);
 	sdl_check_error();
 
-	glsys_load_extensions();
-
-	shader_program = load_program("shaders/hello_triangle.vert", "shaders/hello_triangle.frag");
+	shader_program = load_program("hello_triangle.vert", "hello_triangle.frag");
 	glUseProgram(shader_program);
  
 	SDL_GL_SetSwapInterval(1); /* Sync with the refresh rate */
