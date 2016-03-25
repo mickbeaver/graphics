@@ -46,6 +46,8 @@ sdl_gl_test: sdl_gl_test.o
 	$(LINK.c) -o $@ $^ $(LDFLAGS)
 
 # shaders
+# Get glslangValidator from:
+#   https://github.com/KhronosGroup/glslang.git
 %.vert: opengles2/shaders/%.vert
 	glslangValidator $<
 	cp $< $@

@@ -38,6 +38,7 @@ MAT3	*mat3_transpose(MAT3 *dest, const MAT3 *a);
 
 MAT4	*mat4_add(MAT4 *dest, const MAT4 *a, const MAT4 *b);
 scalar	 mat4_determinant(const MAT4 *a);
+MAT4	*mat4_identity(MAT4 *dest);
 MAT4	*mat4_inverse(MAT4 *dest, const MAT4 *a);
 MAT4	*mat4_multiply(MAT4 *dest, const MAT4 *a, const MAT4 *b);
 MAT4	*mat4_rotation(MAT4 *dest, const VEC3 *normal, scalar angle);

@@ -353,6 +353,32 @@ mat4_determinant(const MAT4 *a)
 }
 
 MAT4 *
+mat4_identity(MAT4 *dest)
+{
+	dest->m11 = 1.0f;
+	dest->m21 = 0.0f;
+	dest->m31 = 0.0f;
+	dest->m41 = 0.0f;
+
+	dest->m12 = 0.0f;
+	dest->m22 = 1.0f;
+	dest->m32 = 0.0f;
+	dest->m42 = 0.0f;
+
+	dest->m13 = 0.0f;
+	dest->m23 = 0.0f;
+	dest->m33 = 1.0f;
+	dest->m43 = 0.0f;
+
+	dest->m14 = 0.0f;
+	dest->m24 = 0.0f;
+	dest->m34 = 0.0f;
+	dest->m44 = 1.0f;
+
+	return (dest);
+}
+
+MAT4 *
 mat4_inverse(MAT4 *dest, const MAT4 *a)
 {
 	scalar determinant;
@@ -374,6 +400,9 @@ mat4_look_at(MAT4 *dest, const VEC3 *eye, const VEC3 *center, const VEC3 *up)
 	VEC3 right_component;
 	VEC3 up_component;
 	VEC3 up_normalized;
+
+	// TODO: This is not finished
+	assert(0);
 
 	vec3_sub(&forward_component, center, eye);
 	vec3_normalize(&forward_component, &forward_component);
@@ -415,6 +444,9 @@ mat4_perspective(MAT4 *dest, scalar fov_y, scalar aspect_ratio, scalar z_near, s
 {
 	scalar fov_y_radians;
 	scalar cot_of_half_fov_y;
+
+	// TODO: this is not finished
+	assert(0);
 
 	fov_y_radians = (180.0f * fov_y) / SCALAR_PI;
 	cot_of_half_fov_y = 1.0f / scalar_tan(fov_y_radians / 2.0f);

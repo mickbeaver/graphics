@@ -99,7 +99,34 @@ START_TEST(test_mat4_rotation_01)
 	ASSERT_FLOAT_APPROX_EQ(dest.m34, 0.0f);
 	ASSERT_FLOAT_APPROX_EQ(dest.m44, 1.0f);
 }
+END_TEST
 
+START_TEST(test_mat4_identity_01)
+{
+	MAT4 dest;
+
+	mat4_identity(&dest);
+
+	ASSERT_FLOAT_APPROX_EQ(dest.m11, 1.0f);
+	ASSERT_FLOAT_APPROX_EQ(dest.m21, 0.0f);
+	ASSERT_FLOAT_APPROX_EQ(dest.m31, 0.0f);
+	ASSERT_FLOAT_APPROX_EQ(dest.m41, 0.0f);
+
+	ASSERT_FLOAT_APPROX_EQ(dest.m12, 0.0f);
+	ASSERT_FLOAT_APPROX_EQ(dest.m22, 1.0f);
+	ASSERT_FLOAT_APPROX_EQ(dest.m32, 0.0f);
+	ASSERT_FLOAT_APPROX_EQ(dest.m42, 0.0f);
+
+	ASSERT_FLOAT_APPROX_EQ(dest.m13, 0.0f);
+	ASSERT_FLOAT_APPROX_EQ(dest.m23, 0.0f);
+	ASSERT_FLOAT_APPROX_EQ(dest.m33, 1.0f);
+	ASSERT_FLOAT_APPROX_EQ(dest.m43, 0.0f);
+
+	ASSERT_FLOAT_APPROX_EQ(dest.m14, 0.0f);
+	ASSERT_FLOAT_APPROX_EQ(dest.m24, 0.0f);
+	ASSERT_FLOAT_APPROX_EQ(dest.m34, 0.0f);
+	ASSERT_FLOAT_APPROX_EQ(dest.m44, 1.0f);
+}
 END_TEST
 
 int
@@ -130,6 +157,10 @@ main(int argc, char *argv[])
 
 	test_case = tcase_create("mat4 rotation");
 	tcase_add_test(test_case, test_mat4_rotation_01);
+	suite_add_tcase(suite, test_case);
+
+	test_case = tcase_create("mat4 identity");
+	tcase_add_test(test_case, test_mat4_identity_01);
 	suite_add_tcase(suite, test_case);
 
 	suite_runner = srunner_create(suite);
