@@ -10,7 +10,7 @@
 
 #define ASSERT_FLOAT_APPROX_EQ(float1, float2) do {                      \
 	ck_assert_msg(scalar_fabs(float1 - float2) < TEST_FLOAT_EPSILON, \
-	    "(" #float1 "=%f) !~= (" #float2 "=%f)",                     \
+	"(" #float1 "=%f) !~= (" #float2 "=%f)",			\
 	    float1, float2);                                             \
 } while (0)
 
@@ -21,17 +21,17 @@ START_TEST(test_matrix_sizes)
 	 * packing that would interfere with using the vector
 	 * structs directly, as opposed to arrays of floats.
 	 */
-	ck_assert_int_eq(sizeof(MAT2), sizeof(scalar) * 2 * 2);
-	ck_assert_int_eq(sizeof(MAT3), sizeof(scalar) * 3 * 3);
-	ck_assert_int_eq(sizeof(MAT4), sizeof(scalar) * 4 * 4);
+	ck_assert_int_eq(sizeof(struct mat2), sizeof(scalar[4]));
+	ck_assert_int_eq(sizeof(struct mat3), sizeof(scalar[9]));
+	ck_assert_int_eq(sizeof(struct mat4), sizeof(scalar[16]));
 }
 END_TEST
 
 START_TEST(test_mat2_multiply_01)
 {
-	MAT2 a = {1.0f, 5.0f, -2.0f, 0.0f};
-	MAT2 b = {-3.0f, 4.0f, 7.0f, 1.0f/3.0f};
-	MAT2 dest;
+	struct mat2 a = {1.0f, 5.0f, -2.0f, 0.0f};
+	struct mat2 b = {-3.0f, 4.0f, 7.0f, 1.0f/3.0f};
+	struct mat2 dest;
 
 	mat2_multiply(&dest, &a, &b);
 
@@ -44,8 +44,8 @@ END_TEST
 
 START_TEST(test_mat2_inverse_01)
 {
-	MAT2 a = {4.0f, 3.0f, 3.0f, 2.0f};
-	MAT2 inverse;
+	struct mat2 a = {4.0f, 3.0f, 3.0f, 2.0f};
+	struct mat2 inverse;
 
 	mat2_inverse(&inverse, &a);
 
@@ -58,8 +58,8 @@ END_TEST
 
 START_TEST(test_mat2_inverse_02)
 {
-	MAT2 a = {1.0f, 3.0f, 2.0f, 4.0f};
-	MAT2 inverse;
+	struct mat2 a = {1.0f, 3.0f, 2.0f, 4.0f};
+	struct mat2 inverse;
 
 	mat2_inverse(&inverse, &a);
 
@@ -72,7 +72,7 @@ END_TEST
 
 START_TEST(test_mat4_rotation_01)
 {
-	MAT4 dest;
+	struct mat4 dest;
 	VEC3 normal = {1.0f, 0.0f, 0.0f};
 	scalar angle;
 
@@ -103,7 +103,7 @@ END_TEST
 
 START_TEST(test_mat4_identity_01)
 {
-	MAT4 dest;
+	struct mat4 dest;
 
 	mat4_identity(&dest);
 

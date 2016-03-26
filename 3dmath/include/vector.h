@@ -3,53 +3,53 @@
 
 #include "scalar.h"
 
-typedef struct vec2 {
-	scalar x;
-	scalar y;
-} VEC2;
+typedef struct TmVec2 {
+    TmScalar x;
+    TmScalar y;
+} TmVec2;
 
-typedef struct vec3 {
-	scalar x;
-	scalar y;
-	scalar z;
-} VEC3;
+typedef struct TmVec3 {
+    TmScalar x;
+    TmScalar y;
+    TmScalar z;
+} TmVec3;
 
-typedef struct vec4 {
-	scalar x;
-	scalar y;
-	scalar z;
-	scalar w;
-} VEC4;
+typedef struct TmVec4 {
+    TmScalar  x;
+    TmScalar  y;
+    TmScalar  z;
+    TmScalar  w;
+} TmVec4;
 
-VEC2	*vec2_add(VEC2 *dest, const VEC2 *p, const VEC2 *q);
-scalar	 vec2_distance(const VEC2 *p, const VEC2 *q);
-scalar	 vec2_dot(const VEC2 *p, const VEC2 *q);
-scalar	 vec2_length(const VEC2 *p);
-VEC2	*vec2_normalize(VEC2 *dest, const VEC2 *p);
-VEC2	*vec2_projection(VEC2 *p_onto_q, const VEC2 *p, const VEC2 *q);
-VEC2	*vec2_scale(VEC2 *dest, scalar scale, const VEC2 *q);
-scalar	 vec2_sqlength(const VEC2 *p);
-VEC2	*vec2_sub(VEC2 *dest, const VEC2 *p, const VEC2 *q);
+TmVec2 *tmVec2Add(TmVec2 *dest, TmVec2 const *p, TmVec2 const *q);
+TmScalar  tmVec2Distance(TmVec2 const *p, TmVec2 const *q);
+TmScalar  tmVec2Dot(TmVec2 const *p, TmVec2 const *q);
+TmScalar  tmVec2Length(TmVec2 const *p);
+TmVec2 *tmVec2Normalize(TmVec2 *dest, TmVec2 const *p);
+TmVec2 *tmVec2Projection(TmVec2 *pOntoQ, TmVec2 const *p, TmVec2 const *q);
+TmVec2 *tmVec2Scale(TmVec2 *dest, TmScalar scale, TmVec2 const *q);
+TmScalar  tmVec2SqLength(TmVec2 const *p);
+TmVec2 *tmVec2Sub(TmVec2 *dest, TmVec2 const *p, TmVec2 const *q);
 
-VEC3	*vec3_add(VEC3 *dest, const VEC3 *p, const VEC3 *q);
-scalar	 vec3_distance(const VEC3 *p, const VEC3 *q);
-VEC3	*vec3_cross(VEC3 *dest, const VEC3 *p, const VEC3 *q);
-scalar	 vec3_dot(const VEC3 *p, const VEC3 *q);
-scalar	 vec3_length(const VEC3 *p);
-VEC3	*vec3_normalize(VEC3 *dest, const VEC3 *p);
-VEC3	*vec3_projection(VEC3 *p_onto_q, const VEC3 *p, const VEC3 *q);
-VEC3	*vec3_scale(VEC3 *dest, scalar scale, const VEC3 *q);
-scalar	 vec3_sqlength(const VEC3 *p);
-VEC3	*vec3_sub(VEC3 *dest, const VEC3 *p, const VEC3 *q);
+TmVec3 *tmVec3Add(TmVec3 *dest, TmVec3 const *p, TmVec3 const *q);
+TmScalar  tmVec3Distance(TmVec3 const *p, TmVec3 const *q);
+TmVec3 *tmVec3Cross(TmVec3 *dest, TmVec3 const *p, TmVec3 const *q);
+TmScalar  tmVec3Dot(TmVec3 const *p, TmVec3 const *q);
+TmScalar  tmVec3Length(TmVec3 const *p);
+TmVec3 *tmVec3Normalize(TmVec3 *dest, TmVec3 const *p);
+TmVec3 *tmVec3Projection(TmVec3 *pOntoQ, TmVec3 const *p, TmVec3 const *q);
+TmVec3 *tmVec3Scale(TmVec3 *dest, TmScalar scale, TmVec3 const *q);
+TmScalar  tmVec3SqLength(TmVec3 const *p);
+TmVec3 *tmVec3Sub(TmVec3 *dest, TmVec3 const *p, TmVec3 const *q);
 
-VEC4	*vec4_add(VEC4 *dest, const VEC4 *p, const VEC4 *q);
-scalar	 vec4_distance(const VEC4 *p, const VEC4 *q);
-scalar	 vec4_dot(const VEC4 *p, const VEC4 *q);
-scalar	 vec4_length(const VEC4 *p);
-VEC4	*vec4_normalize(VEC4 *dest, const VEC4 *p);
-VEC4	*vec4_projection(VEC4 *p_onto_q, const VEC4 *p, const VEC4 *q);
-VEC4	*vec4_scale(VEC4 *dest, scalar scale, const VEC4 *q);
-scalar	 vec4_sqlength(const VEC4 *p);
-VEC4	*vec4_sub(VEC4 *dest, const VEC4 *p, const VEC4 *q);
+TmVec4 *tmVec4Add(TmVec4 *dest, TmVec4 const *p, TmVec4 const *q);
+TmScalar  tmVec4Distance(TmVec4 const *p, TmVec4 const *q);
+TmScalar  tmVec4Dot(TmVec4 const *p, TmVec4 const *q);
+TmScalar  tmVec4Length(TmVec4 const *p);
+TmVec4 *tmVec4Normalize(TmVec4 *dest, TmVec4 const *p);
+TmVec4 *tmVec4Projection(TmVec4 *pOntoQ, TmVec4 const *p, TmVec4 const *q);
+TmVec4 *tmVec4Scale(TmVec4 *dest, TmScalar scale, TmVec4 const *q);
+TmScalar  tmVec4SqLength(TmVec4 const *p);
+TmVec4 *tmVec4Sub(TmVec4 *dest, TmVec4 const *p, TmVec4 const *q);
 
 #endif /* GRAPHICS_MATH_VECTOR_H */

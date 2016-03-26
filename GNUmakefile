@@ -1,5 +1,5 @@
 CPPFLAGS := -I3dmath/include
-COMMON_CFLAGS := -g -O0 -std=c99 -Wall -Wextra
+COMMON_CFLAGS := -g -O0 -std=c11 -Wall -Wextra
 CFLAGS := $(COMMON_CFLAGS) $(shell sdl2-config --cflags)
 LDFLAGS := -lGLESv2 $(shell sdl2-config --libs)
 EXECUTABLES := sdl_gl_info sdl_gl_test chapter_04 chapter_06 chapter_06-buffer_objects

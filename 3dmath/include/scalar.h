@@ -8,19 +8,18 @@
 #define SCALAR_TYPE SCALAR_TYPE_FLOAT
 
 #if SCALAR_TYPE == SCALAR_TYPE_FLOAT
-typedef float scalar;
+typedef float TmScalar;
 
 #define SCALAR_PI 3.14159265358979323846f
 
 // <tgmath.h> should do the right thing, but does not work correctly on
 // FreeBSD's headers. These defines should be updated if the scalar
 // typedef changes.
-#define scalar_fabs fabsf
-#define scalar_sqrt sqrtf
-#define scalar_tan tanf
-#define scalar_tan tanf
-#define scalar_cos cosf
-#define scalar_sin sinf
+#define tmScalarFabs fabsf
+#define tmScalarSqrt sqrtf
+#define tmScalarTan  tanf
+#define tmScalarCos  cosf
+#define tmScalarSin  sinf
 
 #else
 #error "SCALAR_TYPE set to an invalid value"

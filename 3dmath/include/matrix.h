@@ -4,46 +4,78 @@
 #include "scalar.h"
 #include "vector.h"
 
-typedef struct mat2 {
-	scalar m11, m21;
-	scalar m12, m22;
-} MAT2;
+// Matrices are in column-major order
 
-typedef struct mat3 {
-	scalar m11, m21, m31;
-	scalar m12, m22, m32;
-	scalar m13, m23, m33;
-} MAT3;
+typedef struct TmMat2 {
+    // column 1
+    scalar m11;
+    scalar m21;
+    // column 2
+    scalar m12;
+    scalar m22;
+} TmMat2;
 
-typedef struct mat4 {
-	scalar m11, m21, m31, m41;
-	scalar m12, m22, m32, m42;
-	scalar m13, m23, m33, m43;
-	scalar m14, m24, m34, m44;
-} MAT4;
+typedef struct TmMat3 {
+    // column 1
+    scalar m11;
+    scalar m21;
+    scalar m31;
+    // column 2
+    scalar m12;
+    scalar m22;
+    scalar m32;
+    // column 3
+    scalar m13;
+    scalar m23;
+    scalar m33;
+} TmMat3;
 
-MAT2	*mat2_add(MAT2 *dest, const MAT2 *a, const MAT2 *b);
-scalar	 mat2_determinant(const MAT2 *a);
-MAT2	*mat2_inverse(MAT2 *dest, const MAT2 *a);
-MAT2	*mat2_multiply(MAT2 *dest, const MAT2 *a, const MAT2 *b);
-MAT2	*mat2_scalar_multiply(MAT2 *dest, const MAT2 *a, scalar x);
-MAT2	*mat2_transpose(MAT2 *dest, const MAT2 *a);
+typedef struct TmMat4 {
+    // column 1
+    scalar m11;
+    scalar m21;
+    scalar m31;
+    scalar m41;
+    // column 2
+    scalar m12;
+    scalar m22;
+    scalar m32;
+    scalar m42;
+    // column 3
+    scalar m13;
+    scalar m23;
+    scalar m33;
+    scalar m43;
+    // column 4
+    scalar m14;
+    scalar m24;
+    scalar m34;
+    scalar m44;
+} TmMat4;
 
-MAT3	*mat3_add(MAT3 *dest, const MAT3 *a, const MAT3 *b);
-scalar	 mat3_determinant(const MAT3 *a);
-MAT3	*mat3_inverse(MAT3 *dest, const MAT3 *a);
-MAT3	*mat3_multiply(MAT3 *dest, const MAT3 *a, const MAT3 *b);
-MAT3	*mat3_scalar_multiply(MAT3 *dest, const MAT3 *a, scalar x);
-MAT3	*mat3_transpose(MAT3 *dest, const MAT3 *a);
+TmMat2 *tmMat2Add(TmMat2 *dest, TmMat2 const *a, TmMat2 const *b);
+scalar  tmMat2Determinant(TmMat2 const *a);
+TmMat2 *tmMat2Inverse(TmMat2 *dest, TmMat2 const *a);
+TmMat2 *tmMat2Multiply(TmMat2 *dest, TmMat2 const *a, TmMat2 const *b);
+TmMat2 *tmMat2ScalarMultiply(TmMat2 *dest, TmMat2 const *a, scalar x);
+TmMat2 *tmMat2Transpose(TmMat2 *dest, TmMat2 const *a);
 
-MAT4	*mat4_add(MAT4 *dest, const MAT4 *a, const MAT4 *b);
-scalar	 mat4_determinant(const MAT4 *a);
-MAT4	*mat4_identity(MAT4 *dest);
-MAT4	*mat4_inverse(MAT4 *dest, const MAT4 *a);
-MAT4	*mat4_multiply(MAT4 *dest, const MAT4 *a, const MAT4 *b);
-MAT4	*mat4_rotation(MAT4 *dest, const VEC3 *normal, scalar angle);
-MAT4	*mat4_scalar_multiply(MAT4 *dest, const MAT4 *a, scalar x);
-MAT4	*mat4_transpose(MAT4 *dest, const MAT4 *a);
-MAT4	*mat4_look_at(MAT4 *dest, const VEC3 *eye, const VEC3 *center, const VEC3 *up);
-MAT4	*mat4_perspective(MAT4 *dest, scalar fov_y, scalar aspect_ratio, scalar z_near, scalar z_far);
+TmMat3 *tmMat3Add(TmMat3 *dest, TmMat3 const *a, TmMat3 const *b);
+scalar  tmMat3Determinant(TmMat3 const *a);
+TmMat3 *tmMat3Inverse(TmMat3 *dest, TmMat3 const *a);
+TmMat3 *tmMat3Multiply(TmMat3 *dest, TmMat3 const *a, TmMat3 const *b);
+TmMat3 *tmMat3ScalarMultiply(TmMat3 *dest, TmMat3 const *a, scalar x);
+TmMat3 *tmMat3Transpose(TmMat3 *dest, TmMat3 const *a);
+
+TmMat4 *tmMat4Add(TmMat4 *dest, TmMat4 const *a, TmMat4 const *b);
+scalar  tmMat4Determinant(TmMat4 const *a);
+TmMat4 *tmMat4Identity(TmMat4 *dest);
+TmMat4 *tmMat4Inverse(TmMat4 *dest, TmMat4 const *a);
+TmMat4 *tmMat4Multiply(TmMat4 *dest, TmMat4 const *a, TmMat4 const *b);
+TmMat4 *tmMat4Rotation(TmMat4 *dest, const struct vec3 *normal, scalar angle);
+TmMat4 *tmMat4ScalarMultiply(TmMat4 *dest, TmMat4 const *a, scalar x);
+TmMat4 *tmMat4Transpose(TmMat4 *dest, TmMat4 const *a);
+TmMat4 *tmMat4LookAt(TmMat4 *dest, const struct vec3 *eye, const struct vec3 *center, const struct vec3 *up);
+TmMat4 *tmMat4Perspective(TmMat4 *dest, scalar fovY, scalar aspectRatio, scalar zNear, scalar zFar);
+
 #endif /* GRAPHICS_MATH_MATRIX_H */

@@ -2,327 +2,334 @@
 #include <math.h>
 #include "vector.h"
 
-VEC2 *
-vec2_add(VEC2 *dest, const VEC2 *p, const VEC2 *q)
+static_assert(sizeof(TmVec2) == sizeof(TmScalar[2]), "TmVec2 has unexpected padding");
+static_assert(sizeof(TmVec3) == sizeof(TmScalar[3]), "TmVec3 has unexpected padding");
+static_assert(sizeof(TmVec4) == sizeof(TmScalar[4]), "TmVec4 has unexpected padding");
+
+TmVec2 *
+tmVec2Add(TmVec2 *dest, TmVec2 const *p, TmVec2 const *q)
 {
 	dest->x = p->x + q->x;
 	dest->y = p->y + q->y;
 
-	return (dest);
+	return dest;
 }
 
-scalar
-vec2_distance(const VEC2 *p, const VEC2 *q)
+TmScalar
+tmVec2Distance(TmVec2 const *p, TmVec2 const *q)
 {
-	VEC2 displacement;
-	scalar magnitude_of_displacement;
+	TmVec2 displacement;
+	TmScalar magnitudeOfDisplacement;
 
-	vec2_sub(&displacement, p, q);
-	magnitude_of_displacement = vec2_length(&displacement);
+	tmVec2Sub(&displacement, p, q);
+	magnitudeOfDisplacement = tmVec2Length(&displacement);
 
-	return (magnitude_of_displacement);
+	return magnitudeOfDisplacement;
 }
 
-scalar
-vec2_dot(const VEC2 *p, const VEC2 *q)
+TmScalar
+tmVec2Dot(TmVec2 const *p, TmVec2 const *q)
 {
-	scalar result;
+	TmScalar result;
 
 	result = ((p->x * q->x) + (p->y * q->y));
 
-	return (result);
+	return result;
 }
 
-scalar
-vec2_length(const VEC2 *p)
+TmScalar
+tmVec2Length(TmVec2 const *p)
 {
-	scalar squared_length;
-	scalar length;
+	TmScalar squaredLength;
+	TmScalar length;
 
-	squared_length = vec2_sqlength(p);
-	length = scalar_sqrt(squared_length);
+	squaredLength = tmVec2SqLength(p);
+	length = tmScalarSqrt(squaredLength);
 
-	return (length);
+	return length;
 }
 
-VEC2 *
-vec2_normalize(VEC2 *dest, const VEC2 *p)
+TmVec2 *
+tmVec2Normalize(TmVec2 *dest, TmVec2 const *p)
 {
-	scalar length;
+	TmScalar length;
 
-	length = vec2_length(p);
+	length = tmVec2Length(p);
 	assert(length != 0.0f);
 	dest->x = p->x / length;
 	dest->y = p->y / length;
 
-	return (dest);
+	return dest;
 }
 
-VEC2 *
-vec2_projection(VEC2 *p_onto_q, const VEC2 *p, const VEC2 *q)
+TmVec2 *
+tmVec2Projection(TmVec2 *pOntoQ, TmVec2 const *p, TmVec2 const *q)
 {
-	VEC2 temp;
-	scalar p_dot_q, q_len_squared;
+	TmVec2 temp;
+	TmScalar pDotQ, qLenSquared;
 
-	p_dot_q = vec2_dot(p, q);
-	q_len_squared = vec2_sqlength(q);
-	vec2_scale(&temp, p_dot_q / q_len_squared, q);
-	*p_onto_q = temp;
+	pDotQ = tmVec2Dot(p, q);
+	qLenSquared = tmVec2SqLength(q);
+	tmVec2Scale(&temp, pDotQ / qLenSquared, q);
+	*pOntoQ = temp;
 
-	return (p_onto_q);
+	return pOntoQ;
 }
 
-VEC2 *
-vec2_scale(VEC2 *dest, scalar scale, const VEC2 *p)
+TmVec2 *
+tmVec2Scale(TmVec2 *dest, TmScalar scale, TmVec2 const *p)
 {
 	dest->x = scale * p->x;
 	dest->y = scale * p->y;
 
-	return (dest);
+	return dest;
 }
 
-scalar
-vec2_sqlength(const VEC2 *p)
+TmScalar
+tmVec2SqLength(TmVec2 const *p)
 {
-	scalar squared_length;
+	TmScalar squaredLength;
 
-	squared_length = ((p->x * p->x) + (p->y * p->y));
+	squaredLength = ((p->x * p->x) + (p->y * p->y));
 
-	return (squared_length);
+	return squaredLength;
 }
 
-VEC2 *
-vec2_sub(VEC2 *dest, const VEC2 *p, const VEC2 *q)
+TmVec2 *
+tmVec2Sub(TmVec2 *dest, TmVec2 const *p, TmVec2 const *q)
 {
 	dest->x = p->x - q->x;
 	dest->y = p->y - q->y;
 
-	return (dest);
+	return dest;
 }
 
-VEC3 *
-vec3_add(VEC3 *dest, const VEC3 *p, const VEC3 *q)
+TmVec3 *
+tmVec3Add(TmVec3 *dest, TmVec3 const *p, TmVec3 const *q)
 {
 	dest->x = p->x + q->x;
 	dest->y = p->y + q->y;
 	dest->z = p->z + q->z;
 
-	return (dest);
+	return dest;
 }
 
-VEC3 *
-vec3_cross(VEC3 *dest, const VEC3 *p, const VEC3 *q)
+TmVec3 *
+tmVec3Cross(TmVec3 *dest, TmVec3 const *p, TmVec3 const *q)
 {
 	dest->x = (p->y * q->z) - (p->z * q->y);
 	dest->y = (p->z * q->x) - (p->x * q->z);
 	dest->z = (p->x * q->y) - (p->y * q->x);
 
-	return (dest);
+	return dest;
 }
 
-scalar
-vec3_distance(const VEC3 *p, const VEC3 *q)
+TmScalar
+tmVec3Distance(TmVec3 const *p, TmVec3 const *q)
 {
-	VEC3 displacement;
-	scalar magnitude_of_displacement;
+	TmVec3 displacement;
+	TmScalar magnitudeOfDisplacement;
 
-	vec3_sub(&displacement, p, q);
-	magnitude_of_displacement = vec3_length(&displacement);
+	tmVec3Sub(&displacement, p, q);
+	magnitudeOfDisplacement = tmVec3Length(&displacement);
 
-	return (magnitude_of_displacement);
+	return magnitudeOfDisplacement;
 }
 
-scalar
-vec3_dot(const VEC3 *p, const VEC3 *q)
+TmScalar
+tmVec3Dot(TmVec3 const *p, TmVec3 const *q)
 {
-	scalar dot_product;
+	TmScalar dotProduct;
 
-	dot_product = ((p->x * q->x) +
-	    (p->y * q->y) +
-	    (p->z * q->z));
+	dotProduct = ((p->x * q->x) +
+	              (p->y * q->y) +
+	              (p->z * q->z));
 
-	return (dot_product);
+	return dotProduct;
 }
 
-scalar
-vec3_length(const VEC3 *p)
+TmScalar
+tmVec3Length(TmVec3 const *p)
 {
-	scalar squared_length;
-	scalar length;
+	TmScalar squaredLength;
+	TmScalar length;
 
-	squared_length = vec3_sqlength(p);
-	length = scalar_sqrt(squared_length);
+	squaredLength = tmVec3SqLength(p);
+	length = tmScalarSqrt(squaredLength);
 
-	return (length);
+	return length;
 }
 
-VEC3 *
-vec3_normalize(VEC3 *dest, const VEC3 *p)
+TmVec3 *
+tmVec3Normalize(TmVec3 *dest, TmVec3 const *p)
 {
-	scalar length;
+	TmScalar length;
 
-	length = vec3_length(p);
+	length = tmVec3Length(p);
 	assert(length != 0.0f);
 	dest->x = p->x / length;
 	dest->y = p->y / length;
 	dest->z = p->z / length;
 
-	return (dest);
+	return dest;
 }
 
-VEC3 *
-vec3_projection(VEC3 *p_onto_q, const VEC3 *p, const VEC3 *q)
+TmVec3 *
+tmVec3Projection(TmVec3 *pOntoQ, TmVec3 const *p, TmVec3 const *q)
 {
-	VEC3 temp;
-	scalar p_dot_q, q_len_squared;
+	TmVec3 temp;
+	TmScalar pDotQ;
+    TmScalar qLenSquared;
 
-	p_dot_q = vec3_dot(p, q);
-	q_len_squared = vec3_sqlength(q);
-	vec3_scale(&temp, p_dot_q / q_len_squared, q);
-	*p_onto_q = temp;
+	pDotQ = tmVec3Dot(p, q);
+	qLenSquared = tmVec3SqLength(q);
+	tmVec3Scale(&temp, pDotQ / qLenSquared, q);
+	*pOntoQ = temp;
 
-	return (p_onto_q);
+	return pOntoQ;
 }
 
-VEC3 *
-vec3_scale(VEC3 *dest, scalar scale, const VEC3 *p)
+TmVec3 *
+tmVec3Scale(TmVec3 *dest, TmScalar scale, TmVec3 const *p)
 {
 	dest->x = scale * p->x;
 	dest->y = scale * p->y;
 	dest->z = scale * p->z;
 
-	return (dest);
+	return dest;
 }
 
-scalar
-vec3_sqlength(const VEC3 *p)
+TmScalar
+tmVec3SqLength(TmVec3 const *p)
 {
-	scalar squared_length;
+	TmScalar squaredLength;
 
-	squared_length = ((p->x * p->x) + (p->y * p->y) + (p->z * p->z));
+	squaredLength = ((p->x * p->x) +
+                     (p->y * p->y) +
+                     (p->z * p->z));
 
-	return (squared_length);
+	return squaredLength;
 }
 
-VEC3 *
-vec3_sub(VEC3 *dest, const VEC3 *p, const VEC3 *q)
+TmVec3 *
+tmVec3Sub(TmVec3 *dest, TmVec3 const *p, TmVec3 const *q)
 {
 	dest->x = p->x - q->x;
 	dest->y = p->y - q->y;
 	dest->z = p->z - q->z;
 
-	return (dest);
+	return dest;
 }
 
-VEC4 *
-vec4_add(VEC4 *dest, const VEC4 *p, const VEC4 *q)
+TmVec4 *
+tmVec4Add(TmVec4 *dest, TmVec4 const *p, TmVec4 const *q)
 {
 	dest->x = p->x + q->x;
 	dest->y = p->y + q->y;
 	dest->z = p->z + q->z;
 	dest->w = p->w + q->w;
 
-	return (dest);
+	return dest;
 }
 
-scalar
-vec4_distance(const VEC4 *p, const VEC4 *q)
+TmScalar
+tmVec4Distance(TmVec4 const *p, TmVec4 const *q)
 {
-	VEC4 displacement;
-	scalar magnitude_of_displacement;
+	TmVec4 displacement;
+	TmScalar magnitudeOfDisplacement;
 
-	vec4_sub(&displacement, p, q);
-	magnitude_of_displacement = vec4_length(&displacement);
+	tmVec4Sub(&displacement, p, q);
+	magnitudeOfDisplacement = tmVec4Length(&displacement);
 
-	return (magnitude_of_displacement);
+	return magnitudeOfDisplacement;
 }
 
-scalar
-vec4_dot(const VEC4 *p, const VEC4 *q)
+TmScalar
+tmVec4Dot(TmVec4 const *p, TmVec4 const *q)
 {
-	scalar dot_product;
+	TmScalar dotProduct;
 
-	dot_product = ((p->x * q->x) +
-	    (p->y * q->y) +
-	    (p->z * q->z) +
-	    (p->w * q->w));
+	dotProduct = ((p->x * q->x) +
+	              (p->y * q->y) +
+	              (p->z * q->z) +
+	              (p->w * q->w));
 
-	return (dot_product);
+	return dotProduct;
 }
 
-scalar
-vec4_length(const VEC4 *p)
+TmScalar
+tmVec4Length(TmVec4 const *p)
 {
-	scalar squared_length;
-	scalar length;
+	TmScalar squaredLength;
+	TmScalar length;
 
-	squared_length = vec4_sqlength(p);
-	length = scalar_sqrt(squared_length);
+	squaredLength = tmVec4SqLength(p);
+	length = tmScalarSqrt(squaredLength);
 
-	return (length);
+	return length;
 }
 
-VEC4 *
-vec4_normalize(VEC4 *dest, const VEC4 *p)
+TmVec4 *
+tmVec4Normalize(TmVec4 *dest, TmVec4 const *p)
 {
-	scalar length;
+	TmScalar length;
 
-	length = vec4_length(p);
+	length = tmVec4Length(p);
 	assert(length != 0.0f);
 	dest->x = p->x / length;
 	dest->y = p->y / length;
 	dest->z = p->z / length;
 	dest->w = p->w / length;
 
-	return (dest);
+	return dest;
 }
 
-VEC4 *
-vec4_projection(VEC4 *p_onto_q, const VEC4 *p, const VEC4 *q)
+TmVec4 *
+tmVec4Projection(TmVec4 *pOntoQ, TmVec4 const *p, TmVec4 const *q)
 {
-	VEC4 temp;
-	scalar p_dot_q, q_len_squared;
+	TmVec4 temp;
+	TmScalar pDotQ, qLenSquared;
 
-	p_dot_q = vec4_dot(p, q);
-	q_len_squared = vec4_sqlength(q);
-	vec4_scale(&temp, p_dot_q / q_len_squared, q);
-	*p_onto_q = temp;
+	pDotQ = tmVec4Dot(p, q);
+	qLenSquared = tmVec4SqLength(q);
+	tmVec4Scale(&temp, pDotQ / qLenSquared, q);
+	*pOntoQ = temp;
 
-	return (p_onto_q);
+	return pOntoQ;
 }
 
-VEC4 *
-vec4_scale(VEC4 *dest, scalar scale, const VEC4 *p)
+TmVec4 *
+tmVec4Scale(TmVec4 *dest, TmScalar scale, TmVec4 const *p)
 {
 	dest->x = scale * p->x;
 	dest->y = scale * p->y;
 	dest->z = scale * p->z;
 	dest->w = scale * p->w;
 
-	return (dest);
+	return dest;
 }
 
-scalar
-vec4_sqlength(const VEC4 *p)
+TmScalar
+tmVec4SqLength(TmVec4 const *p)
 {
-	scalar squared_length;
+	TmScalar squaredLength;
 
-	squared_length = ((p->x * p->x) +
-	    (p->y * p->y) +
-	    (p->z * p->z) +
-	    (p->w * p->w));
+	squaredLength = ((p->x * p->x) +
+	                 (p->y * p->y) +
+	                 (p->z * p->z) +
+	                 (p->w * p->w));
 
-  	return (squared_length);
+  	return squaredLength;
 }
 
-VEC4 *
-vec4_sub(VEC4 *dest, const VEC4 *p, const VEC4 *q)
+TmVec4 *
+tmVec4Sub(TmVec4 *dest, TmVec4 const *p, TmVec4 const *q)
 {
 	dest->x = p->x - q->x;
 	dest->y = p->y - q->y;
 	dest->z = p->z - q->z;
 	dest->w = p->w - q->w;
 
-	return (dest);
+	return dest;
 }
 
