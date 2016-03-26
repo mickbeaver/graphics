@@ -3,9 +3,12 @@
 #include "matrix.h"
 #include "vector.h"
 
-static_assert(sizeof(TmMat2) == sizeof(TmScalar[4]), "TmMat2 has unexpected padding");
-static_assert(sizeof(TmMat3) == sizeof(TmScalar[9]), "TmMat3 has unexpected padding");
-static_assert(sizeof(TmMat4) == sizeof(TmScalar[16]), "TmMat4 has unexpected padding");
+static_assert(sizeof(TmMat2) == sizeof(TmScalar[4]),
+              "TmMat2 has unexpected padding");
+static_assert(sizeof(TmMat3) == sizeof(TmScalar[9]),
+              "TmMat3 has unexpected padding");
+static_assert(sizeof(TmMat4) == sizeof(TmScalar[16]),
+              "TmMat4 has unexpected padding");
 
 TmMat2 *
 tmMat2Add(TmMat2 *dest, TmMat2 const *a, TmMat2 const *b)
@@ -15,7 +18,7 @@ tmMat2Add(TmMat2 *dest, TmMat2 const *a, TmMat2 const *b)
     dest->m12 = a->m12 + b->m12;
     dest->m22 = a->m22 + b->m22;
 
-    return (dest);
+    return dest;
 }
 
 TmScalar
@@ -25,7 +28,7 @@ tmMat2Determinant(TmMat2 const *a)
 
     result = (a->m11 * a->m22) - (a->m21 * a->m12);
 
-    return (result);
+    return result;
 }
 
 TmMat2 *
@@ -42,7 +45,7 @@ tmMat2Inverse(TmMat2 *dest, TmMat2 const *a)
     inverse.m22 = a->m11 / determinant;
     *dest = inverse;
 
-    return (dest);
+    return dest;
 }
 
 TmMat2 *
@@ -53,7 +56,7 @@ tmMat2Multiply(TmMat2 *dest, TmMat2 const *a, TmMat2 const *b)
     dest->m12 = (a->m11 * b->m12) + (a->m12 * b->m22);
     dest->m22 = (a->m21 * b->m12) + (a->m22 * b->m22);
 
-    return (dest);
+    return dest;
 }
 
 TmMat2 *
@@ -64,7 +67,7 @@ mat2_TmScalar_multiply(TmMat2 *dest, TmMat2 const *a, TmScalar x)
     dest->m12 = a->m12 * x;
     dest->m22 = a->m22 * x;
 
-    return (dest);
+    return dest;
 }
 
 TmMat2 *
@@ -75,7 +78,7 @@ mat2_transpose(TmMat2 *dest, TmMat2 const *a)
     dest->m12 = a->m21;
     dest->m22 = a->m22;
 
-    return (dest);
+    return dest;
 }
 
 TmMat3 *
@@ -91,7 +94,7 @@ tmMat3Add(TmMat3 *dest, TmMat3 const *a, TmMat3 const *b)
     dest->m23 = a->m23 + b->m23;
     dest->m33 = a->m33 + b->m33;
 
-    return (dest);
+    return dest;
 }
 
 TmMat3 *
@@ -107,7 +110,7 @@ tmMat3Multiply(TmMat3 *dest, TmMat3 const *a, TmMat3 const *b)
     dest->m23 = (a->m21 * b->m13) + (a->m22 * b->m23) + (a->m23 * b->m33);
     dest->m33 = (a->m31 * b->m13) + (a->m32 * b->m23) + (a->m33 * b->m33);
 
-    return (dest);
+    return dest;
 }
 
 TmMat3 *
@@ -123,7 +126,7 @@ mat3_TmScalar_multiply(TmMat3 *dest, TmMat3 const *a, TmScalar x)
     dest->m23 = a->m23 * x;
     dest->m33 = a->m33 * x;
 
-    return (dest);
+    return dest;
 }
 
 TmMat3 *
@@ -139,7 +142,7 @@ mat3_transpose(TmMat3 *dest, TmMat3 const *a)
     dest->m23 = a->m32;
     dest->m33 = a->m33;
 
-    return (dest);
+    return dest;
 }
 
 TmScalar
@@ -148,13 +151,12 @@ tmMat3Determinant(TmMat3 const *a)
     TmScalar result;
 
     // Rule of Sarrus
-    result =
-        (a->m11 * a->m22 * a->m33) +
-        (a->m12 * a->m23 + a->m31) +
-        (a->m13 * a->m21 * a->m32) -
-        (a->m31 * a->m22 * a->m13) -
-        (a->m32 * a->m23 * a->m11) -
-        (a->m33 * a->m21 * a->m12);
+    result = ((a->m11 * a->m22 * a->m33) +
+              (a->m12 * a->m23 + a->m31) +
+              (a->m13 * a->m21 * a->m32) -
+              (a->m31 * a->m22 * a->m13) -
+              (a->m32 * a->m23 * a->m11) -
+              (a->m33 * a->m21 * a->m12));
 
     return (result);
 }
@@ -179,10 +181,10 @@ tmMat3Inverse(TmMat3 *dest, TmMat3 const *a)
     cofactors.m32 = -((a->m11 * a->m23) - (a->m21 * a->m13));
     cofactors.m33 = +((a->m11 * a->m22) - (a->m21 * a->m12));
 
-    mat3_transpose(&adjoint, &cofactors);
-    mat3_TmScalar_multiply(dest, dest, 1.0f / determinant);
+    tmMat3Transpose(&adjoint, &cofactors);
+    tmMat3ScalarMultiply(dest, dest, 1.0f / determinant);
 
-    return (dest);
+    return dest;
 }
 
 TmMat4 *
@@ -205,62 +207,110 @@ tmMat4Add(TmMat4 *dest, TmMat4 const *a, TmMat4 const *b)
     dest->m34 = a->m34 + b->m34;
     dest->m44 = a->m44 + b->m44;
 
-    return (dest);
+    return dest;
 }
 
 TmMat4 *
 tmMat4Multiply(TmMat4 *dest, TmMat4 const *a, TmMat4 const *b)
 {
-    dest->m11 = (a->m11 * b->m11) + (a->m12 * b->m21) + (a->m13 * b->m31) + (a->m14 * b->m41);
-    dest->m21 = (a->m21 * b->m11) + (a->m22 * b->m21) + (a->m23 * b->m31) + (a->m24 * b->m41);
-    dest->m31 = (a->m31 * b->m11) + (a->m32 * b->m21) + (a->m33 * b->m31) + (a->m34 * b->m41);
-    dest->m41 = (a->m41 * b->m11) + (a->m42 * b->m21) + (a->m43 * b->m31) + (a->m44 * b->m41);
-    dest->m12 = (a->m11 * b->m12) + (a->m12 * b->m22) + (a->m13 * b->m32) + (a->m14 * b->m42);
-    dest->m22 = (a->m21 * b->m12) + (a->m22 * b->m22) + (a->m23 * b->m32) + (a->m24 * b->m42);
-    dest->m32 = (a->m31 * b->m12) + (a->m32 * b->m22) + (a->m33 * b->m32) + (a->m34 * b->m42);
-    dest->m42 = (a->m41 * b->m12) + (a->m42 * b->m22) + (a->m43 * b->m32) + (a->m44 * b->m42);
-    dest->m13 = (a->m11 * b->m13) + (a->m12 * b->m23) + (a->m13 * b->m33) + (a->m14 * b->m43);
-    dest->m23 = (a->m21 * b->m13) + (a->m22 * b->m23) + (a->m23 * b->m33) + (a->m24 * b->m43);
-    dest->m33 = (a->m31 * b->m13) + (a->m32 * b->m23) + (a->m33 * b->m33) + (a->m34 * b->m43);
-    dest->m43 = (a->m41 * b->m13) + (a->m42 * b->m23) + (a->m43 * b->m33) + (a->m44 * b->m43);
-    dest->m14 = (a->m11 * b->m14) + (a->m12 * b->m24) + (a->m13 * b->m34) + (a->m14 * b->m44);
-    dest->m24 = (a->m21 * b->m14) + (a->m22 * b->m24) + (a->m23 * b->m34) + (a->m24 * b->m44);
-    dest->m34 = (a->m31 * b->m14) + (a->m32 * b->m24) + (a->m33 * b->m34) + (a->m34 * b->m44);
-    dest->m44 = (a->m41 * b->m14) + (a->m42 * b->m24) + (a->m43 * b->m34) + (a->m44 * b->m44);
+    dest->m11 = ((a->m11 * b->m11) +
+                 (a->m12 * b->m21) +
+                 (a->m13 * b->m31) +
+                 (a->m14 * b->m41));
+    dest->m21 = ((a->m21 * b->m11) +
+                 (a->m22 * b->m21) +
+                 (a->m23 * b->m31) +
+                 (a->m24 * b->m41));
+    dest->m31 = ((a->m31 * b->m11) +
+                 (a->m32 * b->m21) +
+                 (a->m33 * b->m31) +
+                 (a->m34 * b->m41));
+    dest->m41 = ((a->m41 * b->m11) +
+                 (a->m42 * b->m21) +
+                 (a->m43 * b->m31) +
+                 (a->m44 * b->m41));
+    dest->m12 = ((a->m11 * b->m12) +
+                 (a->m12 * b->m22) +
+                 (a->m13 * b->m32) +
+                 (a->m14 * b->m42));
+    dest->m22 = ((a->m21 * b->m12) +
+                 (a->m22 * b->m22) +
+                 (a->m23 * b->m32) +
+                 (a->m24 * b->m42));
+    dest->m32 = ((a->m31 * b->m12) +
+                 (a->m32 * b->m22) +
+                 (a->m33 * b->m32) +
+                 (a->m34 * b->m42));
+    dest->m42 = ((a->m41 * b->m12) +
+                 (a->m42 * b->m22) +
+                 (a->m43 * b->m32) +
+                 (a->m44 * b->m42));
+    dest->m13 = ((a->m11 * b->m13) +
+                 (a->m12 * b->m23) +
+                 (a->m13 * b->m33) +
+                 (a->m14 * b->m43));
+    dest->m23 = ((a->m21 * b->m13) +
+                 (a->m22 * b->m23) +
+                 (a->m23 * b->m33) +
+                 (a->m24 * b->m43));
+    dest->m33 = ((a->m31 * b->m13) +
+                 (a->m32 * b->m23) +
+                 (a->m33 * b->m33) +
+                 (a->m34 * b->m43));
+    dest->m43 = ((a->m41 * b->m13) +
+                 (a->m42 * b->m23) +
+                 (a->m43 * b->m33) +
+                 (a->m44 * b->m43));
+    dest->m14 = ((a->m11 * b->m14) +
+                 (a->m12 * b->m24) +
+                 (a->m13 * b->m34) +
+                 (a->m14 * b->m44));
+    dest->m24 = ((a->m21 * b->m14) +
+                 (a->m22 * b->m24) +
+                 (a->m23 * b->m34) +
+                 (a->m24 * b->m44));
+    dest->m34 = ((a->m31 * b->m14) +
+                 (a->m32 * b->m24) +
+                 (a->m33 * b->m34) +
+                 (a->m34 * b->m44));
+    dest->m44 = ((a->m41 * b->m14) +
+                 (a->m42 * b->m24) +
+                 (a->m43 * b->m34) +
+                 (a->m44 * b->m44));
 
-    return (dest);
+    return dest;
 }
 
 TmMat4 *
-mat4_rotation(TmMat4 *dest, const struct vec3 *normal, TmScalar angle)
+mat4_rotation(TmMat4 *dest, TmVec3 const *normal, TmScalar angle)
 {
-    TmScalar angle_cos;
-    TmScalar angle_sin;
-    TmScalar one_minus_angle_cos;
-    TmScalar nx_times_ny;
-    TmScalar nx_times_nz;
-    TmScalar ny_times_nz;
+    TmScalar angleCos;
+    TmScalar angleSin;
+    TmScalar oneMinusAngleCos;
+    TmScalar normalXTimesNormalY;
+    TmScalar normalXTimesNormalZ;
+    TmScalar normalYTimesNormalZ;
 
-    angle_cos = TmScalar_cos(angle);
-    angle_sin = TmScalar_sin(angle);
-    one_minus_angle_cos = 1.0f - angle_cos;
-    nx_times_ny = normal->x * normal->y;
-    nx_times_nz = normal->x * normal->z;
-    ny_times_nz = normal->y * normal->z;
+    angleCos = tmScalarCos(angle);
+    angleSin = tmScalarSin(angle);
+    oneMinusAngleCos = 1.0f - angleCos;
+    normalXTimesNormalY = normal->x * normal->y;
+    normalXTimesNormalZ = normal->x * normal->z;
+    normalYTimesNormalZ = normal->y * normal->z;
     
-    dest->m11 = normal->x * normal->x * one_minus_angle_cos + angle_cos;
-    dest->m21 = nx_times_ny * one_minus_angle_cos + normal->z * angle_sin;
-    dest->m31 = nx_times_nz * one_minus_angle_cos - normal->y * angle_sin;
+    dest->m11 = normal->x * normal->x * oneMinusAngleCos + angleCos;
+    dest->m21 = normalXTimesNormalY * oneMinusAngleCos + normal->z * angleSin;
+    dest->m31 = normalXTimesNormalZ * oneMinusAngleCos - normal->y * angleSin;
     dest->m41 = 0.0f;
 
-    dest->m12 = nx_times_ny * one_minus_angle_cos - normal->z * angle_sin;
-    dest->m22 = normal->y * normal->y * one_minus_angle_cos + angle_cos;
-    dest->m32 = ny_times_nz * one_minus_angle_cos + normal->x * angle_sin;
+    dest->m12 = normalXTimesNormalY * oneMinusAngleCos - normal->z * angleSin;
+    dest->m22 = normal->y * normal->y * oneMinusAngleCos + angleCos;
+    dest->m32 = normalYTimesNormalZ * oneMinusAngleCos + normal->x * angleSin;
     dest->m42 = 0.0f;
 
-    dest->m13 = nx_times_nz * one_minus_angle_cos + normal->y * angle_sin;
-    dest->m23 = ny_times_nz * one_minus_angle_cos - normal->x * angle_sin;
-    dest->m33 = normal->z * normal->z * one_minus_angle_cos + angle_cos;
+    dest->m13 = normalXTimesNormalZ * oneMinusAngleCos + normal->y * angleSin;
+    dest->m23 = normalYTimesNormalZ * oneMinusAngleCos - normal->x * angleSin;
+    dest->m33 = normal->z * normal->z * oneMinusAngleCos + angleCos;
     dest->m43 = 0.0f;
 
     dest->m14 = 0.0f;
@@ -268,11 +318,11 @@ mat4_rotation(TmMat4 *dest, const struct vec3 *normal, TmScalar angle)
     dest->m34 = 0.0f;
     dest->m44 = 1.0f;
 
-    return (dest);
+    return dest;
 }
 
 TmMat4 *
-mat4_TmScalar_multiply(TmMat4 *dest, TmMat4 const *a, TmScalar x)
+tmMat4ScalarMultiply(TmMat4 *dest, TmMat4 const *a, TmScalar x)
 {
     dest->m11 = a->m11 * x;
     dest->m21 = a->m21 * x;
@@ -291,11 +341,11 @@ mat4_TmScalar_multiply(TmMat4 *dest, TmMat4 const *a, TmScalar x)
     dest->m34 = a->m34 * x;
     dest->m44 = a->m44 * x;
 
-    return (dest);
+    return dest;
 }
 
 TmMat4 *
-mat4_transpose(TmMat4 *dest, TmMat4 const *a)
+tmMat4Transpose(TmMat4 *dest, TmMat4 const *a)
 {
     dest->m11 = a->m11;
     dest->m21 = a->m12;
@@ -314,15 +364,15 @@ mat4_transpose(TmMat4 *dest, TmMat4 const *a)
     dest->m34 = a->m43;
     dest->m44 = a->m44;
 
-    return (dest);
+    return dest;
 }
 
-#define MAT3_DET(m11, m12, m13, m21, m22, m23, m31, m32, m33) \
-    (((m11) * (m22) * (m33)) +                                \
-     ((m12) * (m23) + (m31)) +                                \
-     ((m13) * (m21) * (m32)) -                                \
-     ((m31) * (m22) * (m13)) -                                \
-     ((m32) * (m23) * (m11)) -                                \
+#define MAT3_DET(m11, m12, m13, m21, m22, m23, m31, m32, m33)   \
+    (((m11) * (m22) * (m33)) +                                  \
+     ((m12) * (m23) + (m31)) +                                  \
+     ((m13) * (m21) * (m32)) -                                  \
+     ((m31) * (m22) * (m13)) -                                  \
+     ((m32) * (m23) * (m11)) -                                  \
      ((m33) * (m21) * (m12)))
 
 TmScalar
@@ -334,32 +384,31 @@ tmMat4Determinant(TmMat4 const *a)
     TmScalar minor_m13;
     TmScalar minor_m14;
     
-    minor_m11 = MAT3_DET(
-        a->m22, a->m23, a->m24,
-        a->m32, a->m33, a->m34,
-        a->m42, a->m43, a->m44);
-    minor_m12 = MAT3_DET(
-        a->m21, a->m23, a->m24,
-        a->m31, a->m33, a->m34,
-        a->m41, a->m43, a->m44);
-    minor_m13 = MAT3_DET(
-        a->m21, a->m22, a->m24,
-        a->m31, a->m32, a->m34,
-        a->m41, a->m42, a->m44);
-    minor_m14 = MAT3_DET(
-        a->m21, a->m22, a->m23,
-        a->m31, a->m32, a->m33,
-        a->m41, a->m42, a->m43);
+    minor_m11 = MAT3_DET(a->m22, a->m23, a->m24,
+                         a->m32, a->m33, a->m34,
+                         a->m42, a->m43, a->m44);
+    minor_m12 = MAT3_DET(a->m21, a->m23, a->m24,
+                         a->m31, a->m33, a->m34,
+                         a->m41, a->m43, a->m44);
+    minor_m13 = MAT3_DET(a->m21, a->m22, a->m24,
+                         a->m31, a->m32, a->m34,
+                         a->m41, a->m42, a->m44);
+    minor_m14 = MAT3_DET(a->m21, a->m22, a->m23,
+                         a->m31, a->m32, a->m33,
+                         a->m41, a->m42, a->m43);
 
-    result = (a->m11 * minor_m11) - (a->m12 * minor_m12) + (a->m13 * minor_m13) - (a->m14 * minor_m14);
+    result = ((a->m11 * minor_m11) -
+              (a->m12 * minor_m12) +
+              (a->m13 * minor_m13) -
+              (a->m14 * minor_m14));
     
-    return (result);
+    return result;
 }
 
 #undef MAT3_DET
 
 TmMat4 *
-mat4_identity(TmMat4 *dest)
+tmMat4Identity(TmMat4 *dest)
 {
     dest->m11 = 1.0f;
     dest->m21 = 0.0f;
@@ -381,7 +430,7 @@ mat4_identity(TmMat4 *dest)
     dest->m34 = 0.0f;
     dest->m44 = 1.0f;
 
-    return (dest);
+    return dest;
 }
 
 TmMat4 *
@@ -396,26 +445,26 @@ tmMat4Inverse(TmMat4 *dest, TmMat4 const *a)
     assert(determinant != 0.0f);
     //*dest = inverse;
 
-    return (dest);
+    return dest;
 }
 
 TmMat4 *
-tmMat4LookAt(TmMat4 *dest, const struct vec3 *eye, const struct vec3 *center, const struct vec3 *up)
+tmMat4LookAt(TmMat4 *dest, TmVec3 const *eye, TmVec3 const *center, TmVec3 const *up)
 {
-    struct vec3 forward_component;
-    struct vec3 right_component;
-    struct vec3 up_component;
-    struct vec3 up_normalized;
+    TmVec3 forward_component;
+    TmVec3 right_component;
+    TmVec3 up_component;
+    TmVec3 up_normalized;
 
     // TODO: This is not finished
     assert(0);
 
-    vec3_sub(&forward_component, center, eye);
-    vec3_normalize(&forward_component, &forward_component);
-    vec3_normalize(&up_normalized, up);
-    vec3_cross(&right_component, &forward_component, &up_normalized);
-    vec3_normalize(&right_component, &right_component);
-    vec3_cross(&up_component, &right_component, &forward_component);
+    tmVec3Sub(&forward_component, center, eye);
+    tmVec3Normalize(&forward_component, &forward_component);
+    tmVec3Normalize(&up_normalized, up);
+    tmVec3Cross(&right_component, &forward_component, &up_normalized);
+    tmVec3Normalize(&right_component, &right_component);
+    tmVec3Cross(&up_component, &right_component, &forward_component);
     /*
      * Don't need to normalize up_component, since we know
      * right_component and forward_component are both unit length
@@ -424,7 +473,7 @@ tmMat4LookAt(TmMat4 *dest, const struct vec3 *eye, const struct vec3 *center, co
      * |right x forward| = |right| * |forward| * sin(pi/2) 
      *                   = 1       * 1         * 1
      */
-    //vec3_normalize(&up_component, &up_component)
+    //tmVec3Normalize(&up_component, &up_component)
     dest->m11 = right_component.x;
     dest->m21 = up_component.x;
     dest->m31 = -forward_component.x;
@@ -437,44 +486,44 @@ tmMat4LookAt(TmMat4 *dest, const struct vec3 *eye, const struct vec3 *center, co
     dest->m23 = up_component.z;
     dest->m33 = -forward_component.z;
     dest->m43 = 0.0f;
-    dest->m14 = -vec3_dot(&right_component, eye);
-    dest->m14 = -vec3_dot(&up_component, eye);
-    dest->m14 = -vec3_dot(&forward_component, eye);
+    dest->m14 = -tmVec3Dot(&right_component, eye);
+    dest->m14 = -tmVec3Dot(&up_component, eye);
+    dest->m14 = -tmVec3Dot(&forward_component, eye);
     dest->m14 = 1.0f;
 
-    return (dest);
+    return dest;
 }
 
 TmMat4 *
-mat4_perspective(TmMat4 *dest, TmScalar fov_y, TmScalar aspect_ratio, TmScalar z_near, TmScalar z_far)
+tmMat4Perspective(TmMat4 *dest, TmScalar fovY, TmScalar aspectRatio, TmScalar zNear, TmScalar zFar)
 {
-    TmScalar fov_y_radians;
-    TmScalar cot_of_half_fov_y;
+    TmScalar fovYRadians;
+    TmScalar cotOfHalfFovY;
 
     // TODO: this is not finished
     assert(0);
 
-    fov_y_radians = (180.0f * fov_y) / SCALAR_PI;
-    cot_of_half_fov_y = 1.0f / TmScalar_tan(fov_y_radians / 2.0f);
+    fovYRadians = (180.0f * fovY) / TM_SCALAR_PI;
+    cotOfHalfFovY = 1.0f / tmScalarTan(fovYRadians / 2.0f);
 
-    assert(aspect_ratio >= 0.0f);
-    assert(z_near - z_far != 0.0f);
-    dest->m11 = cot_of_half_fov_y / aspect_ratio;
+    assert(aspectRatio >= 0.0f);
+    assert(zNear - zFar != 0.0f);
+    dest->m11 = cotOfHalfFovY / aspectRatio;
     dest->m21 = 0.0f;
     dest->m31 = 0.0f;
     dest->m41 = 0.0f;
     dest->m12 = 0.0f;
-    dest->m22 = cot_of_half_fov_y;
+    dest->m22 = cotOfHalfFovY;
     dest->m32 = 0.0f;
     dest->m42 = 0.0f;
     dest->m13 = 0.0f;
     dest->m23 = 0.0f;
-    dest->m33 = (z_far + z_near) / (z_near - z_far);
+    dest->m33 = (zFar + zNear) / (zNear - zFar);
     dest->m43 = -1.0f;
     dest->m14 = 0.0f;
     dest->m24 = 0.0f;
-    dest->m34 = (2.0f * z_far * z_near) / (z_near - z_far);
+    dest->m34 = (2.0f * zFar * zNear) / (zNear - zFar);
     dest->m44 = 0.0f;
 
-    return (dest);
+    return dest;
 }

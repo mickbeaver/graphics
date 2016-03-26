@@ -2,9 +2,12 @@
 #include <math.h>
 #include "vector.h"
 
-static_assert(sizeof(TmVec2) == sizeof(TmScalar[2]), "TmVec2 has unexpected padding");
-static_assert(sizeof(TmVec3) == sizeof(TmScalar[3]), "TmVec3 has unexpected padding");
-static_assert(sizeof(TmVec4) == sizeof(TmScalar[4]), "TmVec4 has unexpected padding");
+static_assert(sizeof(TmVec2) == sizeof(TmScalar[2]),
+              "TmVec2 has unexpected padding");
+static_assert(sizeof(TmVec3) == sizeof(TmScalar[3]),
+              "TmVec3 has unexpected padding");
+static_assert(sizeof(TmVec4) == sizeof(TmScalar[4]),
+              "TmVec4 has unexpected padding");
 
 TmVec2 *
 tmVec2Add(TmVec2 *dest, TmVec2 const *p, TmVec2 const *q)
