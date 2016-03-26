@@ -60,7 +60,7 @@ tmMat2Multiply(TmMat2 *dest, TmMat2 const *a, TmMat2 const *b)
 }
 
 TmMat2 *
-mat2_TmScalar_multiply(TmMat2 *dest, TmMat2 const *a, TmScalar x)
+tmMat2ScalarMultiply(TmMat2 *dest, TmMat2 const *a, TmScalar x)
 {
     dest->m11 = a->m11 * x;
     dest->m21 = a->m21 * x;
@@ -71,7 +71,7 @@ mat2_TmScalar_multiply(TmMat2 *dest, TmMat2 const *a, TmScalar x)
 }
 
 TmMat2 *
-mat2_transpose(TmMat2 *dest, TmMat2 const *a)
+tmMat2Transpose(TmMat2 *dest, TmMat2 const *a)
 {
     dest->m11 = a->m11;
     dest->m21 = a->m12;
@@ -114,7 +114,7 @@ tmMat3Multiply(TmMat3 *dest, TmMat3 const *a, TmMat3 const *b)
 }
 
 TmMat3 *
-mat3_TmScalar_multiply(TmMat3 *dest, TmMat3 const *a, TmScalar x)
+tmMat3ScalarMultiply(TmMat3 *dest, TmMat3 const *a, TmScalar x)
 {
     dest->m11 = a->m11 * x;
     dest->m21 = a->m21 * x;
@@ -130,7 +130,7 @@ mat3_TmScalar_multiply(TmMat3 *dest, TmMat3 const *a, TmScalar x)
 }
 
 TmMat3 *
-mat3_transpose(TmMat3 *dest, TmMat3 const *a)
+tmMat3Transpose(TmMat3 *dest, TmMat3 const *a)
 {
     dest->m11 = a->m11;
     dest->m21 = a->m12;
@@ -282,7 +282,7 @@ tmMat4Multiply(TmMat4 *dest, TmMat4 const *a, TmMat4 const *b)
 }
 
 TmMat4 *
-mat4_rotation(TmMat4 *dest, TmVec3 const *normal, TmScalar angle)
+tmMat4Rotation(TmMat4 *dest, TmVec3 const *normal, TmScalar angle)
 {
     TmScalar angleCos;
     TmScalar angleSin;

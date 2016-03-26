@@ -8,12 +8,13 @@
 
 #define TEST_FLOAT_EPSILON (0.000001f)
 
-#define ASSERT_FLOAT_APPROX_EQ(float1, float2) do {                  \
-    ck_assert_msg(tmScalarFabs(float1 - float2) < TEST_FLOAT_EPSILON, \
-                  "(" #float1 "=%f) !~= (" #float2 "=%f)",           \
-                  float1,                                            \
-                  float2);                                           \
-} while (0)
+#define ASSERT_FLOAT_APPROX_EQ(float1, float2)                            \
+    do {                                                                  \
+        ck_assert_msg(tmScalarFabs(float1 - float2) < TEST_FLOAT_EPSILON, \
+                      "(" #float1 "=%f) !~= (" #float2 "=%f)",            \
+                      float1,                                             \
+                      float2);                                            \
+    } while (0)
 
 START_TEST(vectorSizes)
 {
