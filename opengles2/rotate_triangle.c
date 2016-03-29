@@ -138,10 +138,11 @@ draw(void)
     static TmVec3 const yAxis = {0.0f, 1.0f, 0.0};
 
     Uint32 const currentTicks = SDL_GetTicks();
+	static Uint32 const skRotationTicks = 2000;
     if (currentTicks > sNextReset) {
-        sNextReset = currentTicks + 1000;
+        sNextReset = currentTicks + skRotationTicks;
     }
-    float const rotationPercentage = (sNextReset - currentTicks) / 1000.0f;
+    float const rotationPercentage = (sNextReset - currentTicks) / (float) skRotationTicks;
     
     tmMat4Rotation(&rotationMatrix, &yAxis, (2 * TM_SCALAR_PI) * rotationPercentage);
     glUniformMatrix4fv(sRotationIndex, 1, GL_FALSE, (GLfloat*)&rotationMatrix);
