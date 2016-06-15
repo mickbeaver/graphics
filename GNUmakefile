@@ -7,7 +7,7 @@ TEST_EXECUTABLES := check_vector check_matrix
 TEST_CFLAGS := $(COMMON_CFLAGS)
 TEST_LDFLAGS := -lcheck -lm
 
-vpath %c 3dmath/src 3dmath/tests opengles2
+vpath %c 3dmath/src 3dmath/tests opengles2 gltut/framework gltut/tut_01_hello_triangle
 vpath %h 3dmath/include
 
 .PHONY: all clean tests
@@ -30,6 +30,9 @@ chapter_06-buffer_objects: chapter_06-buffer_objects.o | chapter_06.vert chapter
 	$(LINK.c) -o $@ $^ $(LDFLAGS)
 
 rotate_triangle: rotate_triangle.o matrix.o | rotate_triangle.vert rotate_triangle.frag
+	$(LINK.c) -o $@ $^ $(LDFLAGS)
+
+tut1: tut1.o framework.o
 	$(LINK.c) -o $@ $^ $(LDFLAGS)
 
 check_vector: CFLAGS = $(TEST_CFLAGS)
