@@ -2,13 +2,15 @@ CPPFLAGS := -I3dmath/include
 COMMON_CFLAGS := -g -O0 -std=c11 -Wall -Wextra
 CFLAGS := $(COMMON_CFLAGS) $(shell sdl2-config --cflags)
 LDFLAGS := -lGLESv2 $(shell sdl2-config --libs) -lm
-EXECUTABLES := sdl_gl_info sdl_gl_test chapter_04 chapter_06 chapter_06-buffer_objects rotate_triangle tut1 tut1_exercises
+EXECUTABLES := sdl_gl_info sdl_gl_test chapter_04 chapter_06 chapter_06-buffer_objects rotate_triangle tut1 tut1_exercises frag_position
 TEST_EXECUTABLES := check_vector check_matrix
 TEST_CFLAGS := $(COMMON_CFLAGS)
 TEST_LDFLAGS := -lcheck -lm
 
-vpath %c 3dmath/src 3dmath/tests opengles2 gltut/framework gltut/tut_01_hello_triangle
-vpath %h 3dmath/include
+vpath %.c 3dmath/src 3dmath/tests opengles2 gltut/framework gltut/tut_01_hello_triangle gltut/tut_02_playing_with_colors
+vpath %.h 3dmath/include
+vpath %.glsl.vert opengles2/shaders gltut/tut_02_playing_with_colors
+vpath %.glsl.frag opengles2/shaders gltut/tut_02_playing_with_colors
 
 .PHONY: all clean tests
 
@@ -38,6 +40,9 @@ tut1: tut1.o framework.o
 tut1_exercises: tut1_exercises.o framework.o
 	$(LINK.c) -o $@ $^ $(LDFLAGS)
 
+frag_position: frag_position.o framework.o | frag_position.vert frag_position.frag
+	$(LINK.c) -o $@ $^ $(LDFLAGS)
+
 check_vector: CFLAGS = $(TEST_CFLAGS)
 check_vector: LDFLAGS = $(TEST_LDFLAGS)
 check_vector: check_vector.o vector.o
@@ -57,11 +62,11 @@ sdl_gl_test: sdl_gl_test.o
 # shaders
 # Get glslangValidator from:
 #   https://github.com/KhronosGroup/glslang.git
-%.vert: opengles2/shaders/%.vert
+%.vert: %.glsl.vert
 	glslangValidator $<
 	cp $< $@
 
-%.frag: opengles2/shaders/%.frag
+%.frag: %.glsl.frag
 	glslangValidator $<
 	cp $< $@
 

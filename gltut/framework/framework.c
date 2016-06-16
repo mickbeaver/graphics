@@ -1,10 +1,118 @@
 #include <assert.h>
+#include <errno.h>
 #include <stdbool.h>
+#include <GLES2/gl2.h>
 #include "SDL.h"
 #include "framework.h"
 
-static void simulationLoop(SDL_Window *window);
-static bool handleEvent(SDL_Event *event);
+static void      simulationLoop(SDL_Window *window);
+static bool      handleEvent(SDL_Event *event);
+static GLchar   *loadTextFileIntoString(const char *filename);
+
+static GLchar *
+loadTextFileIntoString(const char *filename)
+{
+    int ret;
+
+    FILE * const inputObj = fopen(filename, "rb");
+    assert(inputObj != NULL);
+    ret = fseek(inputObj, 0, SEEK_END);
+    assert(ret == 0);
+    long const fileLength = ftell(inputObj);
+    assert(fileLength > 0);
+    ret = fseek(inputObj, 0, SEEK_SET);
+    assert(ret == 0);
+    char * const buffer = (GLchar *)malloc((unsigned long)fileLength + 1 /*NUL*/);
+    
+    size_t totalBytesRead = 0;
+    do {
+        size_t const currentBytesRead = fread(buffer, 1, (unsigned long)fileLength, inputObj);
+        if (currentBytesRead == 0 && ferror(inputObj) != 0) {
+            printf("Error reading from %s. errno is %d\n", filename, errno);
+            assert(0);
+        }
+        totalBytesRead += currentBytesRead;
+    } while (totalBytesRead < (size_t)fileLength);
+
+    fclose(inputObj);
+    buffer[fileLength] = '\0';
+
+    return buffer;
+}
+
+GLuint
+frameworkLoadShader(GLenum shaderType, const char *filename)
+{
+    GLuint shader;
+    GLint status;
+    const GLchar *shaderSource;
+
+    shader = glCreateShader(shaderType);
+    shaderSource = loadTextFileIntoString(filename);
+    glShaderSource(shader, 1, &shaderSource, NULL);
+
+    glCompileShader(shader);
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+    if (status == GL_FALSE) {
+        GLint infoLogLength;
+        GLchar *strInfoLog;
+        const char *strShaderType;
+
+        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength);
+        strInfoLog = (GLchar *)malloc(infoLogLength + 1);
+        glGetShaderInfoLog(shader, infoLogLength, NULL, strInfoLog);
+        switch (shaderType) {
+        case GL_VERTEX_SHADER:
+            strShaderType = "vertex";
+            break;
+        case GL_FRAGMENT_SHADER:
+            strShaderType = "fragment";
+            break;
+        default:
+            strShaderType = "unknown";
+            break;
+        }
+        fprintf(stderr, "Compile failure in %s shader:\n%s\n", strShaderType, strInfoLog);
+        free(strInfoLog);
+    }
+    free((void *)shaderSource);
+
+    return shader;
+}
+
+GLuint
+frameworkCreateProgram(GLuint vertexShader,
+                       GLuint fragmentShader,
+                       const FrameworkShaderAttribLocation *attribLocations,
+                       size_t attribLocationCount)
+{
+    GLuint program;
+    GLint status;
+
+    program = glCreateProgram();
+    glAttachShader(program, vertexShader);
+    glAttachShader(program, fragmentShader);
+    for (size_t i = 0; i < attribLocationCount; ++i) {
+        glBindAttribLocation(program, attribLocations[i].location, attribLocations[i].name);
+    }
+    glLinkProgram(program);
+
+    glGetProgramiv(program, GL_LINK_STATUS, &status);
+    if (status == GL_FALSE) {
+        GLint infoLogLength;
+        GLchar *strInfoLog;
+
+        glGetProgramiv(program, GL_INFO_LOG_LENGTH, &infoLogLength);
+        strInfoLog = (char *)malloc(infoLogLength + 1);
+        glGetProgramInfoLog(program, infoLogLength, NULL, strInfoLog);
+        fprintf(stderr, "Linker failure: %s\n", strInfoLog);
+        free(strInfoLog);
+    }
+    glDetachShader(program, vertexShader);
+    glDetachShader(program, fragmentShader);
+
+    return program;
+}
 
 static bool
 handleEvent(SDL_Event *event)

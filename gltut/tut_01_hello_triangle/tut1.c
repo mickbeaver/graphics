@@ -29,7 +29,7 @@ static const GLchar * const skFragmentShader =
     "void                                             \n"
     "main()                                           \n"
     "{                                                \n"
-    "    gl_FragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f); \n"
+    "    gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);     \n"
     "}                                                \n";
 
 static void     initializeProgram();

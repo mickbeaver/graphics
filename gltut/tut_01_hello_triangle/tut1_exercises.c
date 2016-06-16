@@ -32,7 +32,7 @@ static const GLchar * const skFragmentShader =
     "void                                             \n"
     "main()                                           \n"
     "{                                                \n"
-    "    gl_FragColor = vec4(1.0f, 1.0f, 0.0f, 1.0f); \n"
+    "    gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);     \n"
     "}                                                \n";
 
 static void     initializeProgram();
@@ -133,8 +133,9 @@ initializeVertexBuffer()
 void
 gltutDefaultSettingsInit(GltutDefaultSettings *settings)
 {
-    // empty
-    (void) settings;
+    settings->windowWidth = 640;
+    settings->windowHeight = 360;
+    settings->windowTitle = "tut1_exercises";
 }
 
 void
