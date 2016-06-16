@@ -4,6 +4,29 @@
 #include "framework.h"
 
 static void simulationLoop(SDL_Window *window);
+static bool handleEvent(SDL_Event *event);
+
+static bool
+handleEvent(SDL_Event *event)
+{
+    bool isDone = false;
+    
+    switch(event->type) {
+    case SDL_QUIT:
+    case SDL_KEYDOWN:
+        isDone = true;
+        break;
+    case SDL_WINDOWEVENT:
+        if (event->window.event == SDL_WINDOWEVENT_RESIZED) {
+            gltutReshape(event->window.data1, event->window.data2);
+        }
+        break;
+    default:
+        break;
+    }
+
+    return isDone;
+}
 
 static void
 simulationLoop(SDL_Window *window)
@@ -15,10 +38,7 @@ simulationLoop(SDL_Window *window)
     // @TODO Handle reshape
 	while (!isDone) {
 		while(SDL_PollEvent(&event) == 1) {
-			if (event.type == SDL_QUIT)
-				isDone = true;
-			else if (event.type == SDL_KEYDOWN)
-				isDone = true;;
+            isDone = handleEvent(&event);
 		}
         gltutDisplay();
 		SDL_GL_SwapWindow(window);
@@ -52,7 +72,7 @@ main(int argc, char** argv)
                                   SDL_WINDOWPOS_CENTERED,
                                   settings.windowWidth,
                                   settings.windowHeight,
-                                  SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+                                  SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
     assert(mainWindow != NULL);
 
     mainContext = SDL_GL_CreateContext(mainWindow);

@@ -134,6 +134,11 @@ gltutDefaultSettingsInit(GltutDefaultSettings *settings)
     (void) settings;
 }
 
+void
+gltutReshape(int width, int height)
+{
+    glViewport(0, 0, (GLsizei)width, (GLsizei)height);
+}
 
 void
 gltutPostRenderSystemInit(void)
@@ -151,11 +156,11 @@ gltutDisplay(void)
     glUseProgram(sTheProgram);
 
     glBindBuffer(GL_ARRAY_BUFFER, sPositionBufferObject);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(VERTEX_ATTR_INDEX_POSITION);
+    glVertexAttribPointer(VERTEX_ATTR_INDEX_POSITION, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
-    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(VERTEX_ATTR_INDEX_POSITION);
     glUseProgram(0);
 }
