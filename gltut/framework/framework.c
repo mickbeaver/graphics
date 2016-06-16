@@ -34,10 +34,8 @@ simulationLoop(SDL_Window *window)
 	SDL_Event event;
 	bool isDone = false;
 
-    // @TODO Handle keyboard and mouse
-    // @TODO Handle reshape
 	while (!isDone) {
-		while(SDL_PollEvent(&event) == 1) {
+		while(SDL_PollEvent(&event) == 1 && !isDone) {
             isDone = handleEvent(&event);
 		}
         gltutDisplay();

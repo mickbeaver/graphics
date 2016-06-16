@@ -2,7 +2,7 @@ CPPFLAGS := -I3dmath/include
 COMMON_CFLAGS := -g -O0 -std=c11 -Wall -Wextra
 CFLAGS := $(COMMON_CFLAGS) $(shell sdl2-config --cflags)
 LDFLAGS := -lGLESv2 $(shell sdl2-config --libs) -lm
-EXECUTABLES := sdl_gl_info sdl_gl_test chapter_04 chapter_06 chapter_06-buffer_objects rotate_triangle
+EXECUTABLES := sdl_gl_info sdl_gl_test chapter_04 chapter_06 chapter_06-buffer_objects rotate_triangle tut1 tut1_exercises
 TEST_EXECUTABLES := check_vector check_matrix
 TEST_CFLAGS := $(COMMON_CFLAGS)
 TEST_LDFLAGS := -lcheck -lm
@@ -33,6 +33,9 @@ rotate_triangle: rotate_triangle.o matrix.o | rotate_triangle.vert rotate_triang
 	$(LINK.c) -o $@ $^ $(LDFLAGS)
 
 tut1: tut1.o framework.o
+	$(LINK.c) -o $@ $^ $(LDFLAGS)
+
+tut1_exercises: tut1_exercises.o framework.o
 	$(LINK.c) -o $@ $^ $(LDFLAGS)
 
 check_vector: CFLAGS = $(TEST_CFLAGS)
