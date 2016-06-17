@@ -19,3 +19,7 @@ add_executable(chapter_06-buffer_objects chapter_06-buffer_objects.c ${PLATFORM_
 add_dependencies(chapter_06-buffer_objects opengles2_shaders)
 target_link_libraries(chapter_06-buffer_objects ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES})
 
+add_executable(rotate_triangle rotate_triangle.c ${PLATFORM_SRCS})
+add_dependencies(rotate_triangle opengles2_shaders)
+target_link_libraries(rotate_triangle 3dmath ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES})
+

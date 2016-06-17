@@ -223,7 +223,7 @@ main(int argc, char *argv[])
  
     SDL_GLContext const mainContext = SDL_GL_CreateContext(mainWindow);
 
-    GLuint const shaderProgram = loadProgram("rotate_triangle.vert", "rotate_triangle.frag");
+    GLuint const shaderProgram = loadProgram("shaders/rotate_triangle.vert", "shaders/rotate_triangle.frag");
     glUseProgram(shaderProgram);
     sRotationIndex = glGetUniformLocation(shaderProgram, "uRotation");
 
