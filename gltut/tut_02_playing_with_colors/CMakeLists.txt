@@ -3,3 +3,8 @@ target_link_libraries(frag_position ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES})
 add_shader_project(frag_position_shaders frag_position.vert frag_position.frag)
 add_dependencies(frag_position frag_position_shaders)
 
+add_executable(vertex_colors vertex_colors.c ../framework/framework.c)
+target_link_libraries(vertex_colors ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES})
+add_shader_project(vertex_colors_shaders vertex_colors.vert vertex_colors.frag)
+add_dependencies(vertex_colors vertex_colors_shaders)
+
