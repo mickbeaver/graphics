@@ -1,7 +1,7 @@
 #ifdef GLSYS_GL_ES
 
 void
-glsys_load_extensions(void)
+glsysInit(void)
 {
 }
 

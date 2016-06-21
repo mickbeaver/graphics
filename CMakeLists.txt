@@ -49,6 +49,7 @@ endif()
 
 find_library(OPENGL_LIBRARIES NAMES GLESv2 GL opengl32)
 if(${OPENGL_LIBRARIES} MATCHES GLESv2)
+  message(STATUS "Using OpenGL ES 2 library.")
   add_definitions(-DGLSYS_GL_ES)
 endif()
 if(NOT OPENGL_LIBRARIES)
