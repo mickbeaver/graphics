@@ -170,6 +170,7 @@ main(int argc, char** argv)
     retval = SDL_Init(SDL_INIT_VIDEO);
     assert(retval == 0);
     
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -186,9 +187,11 @@ main(int argc, char** argv)
     mainContext = SDL_GL_CreateContext(mainWindow);
     errorStr = SDL_GetError();
     if (*errorStr != '\0') {
-    fprintf(stderr, "SDL_GetError() returned: %s\n", errorStr);
-        //assert(0);
+        fprintf(stderr, "SDL_GetError() returned: %s\n", errorStr);
+        SDL_ClearError();
     }
+
+    glsysInit();
 
     gltutPostRenderSystemInit();
 

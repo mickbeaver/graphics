@@ -224,6 +224,7 @@ main(int argc, char *argv[])
 		sdl_print_error_and_exit("Unable to initialize SDL");
 	}
   
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -243,7 +244,9 @@ main(int argc, char *argv[])
 	main_context = SDL_GL_CreateContext(main_window);
 	sdl_check_error();
 
-	shader_program = load_program("chapter_06.vert", "chapter_06.frag");
+    glsysInit();
+
+	shader_program = load_program("shaders/chapter_06.vert", "shaders/chapter_06.frag");
 	glUseProgram(shader_program);
 
 	setup_buffers();

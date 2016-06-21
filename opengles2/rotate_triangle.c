@@ -222,6 +222,7 @@ main(int argc, char *argv[])
     assert(mainWindow != NULL);
  
     SDL_GLContext const mainContext = SDL_GL_CreateContext(mainWindow);
+    glsysInit();
 
     GLuint const shaderProgram = loadProgram("shaders/rotate_triangle.vert", "shaders/rotate_triangle.frag");
     glUseProgram(shaderProgram);

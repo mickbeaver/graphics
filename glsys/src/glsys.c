@@ -5,7 +5,7 @@ glsys_load_extensions(void)
 {
 }
 
-#else
+ #else
 
 #include "SDL_video.h"
 #include "glsys.h"
@@ -28,8 +28,10 @@ PFNGLGETPROGRAMINFOLOGPROC        glGetProgramInfoLog;
 PFNGLGETPROGRAMIVPROC             glGetProgramiv;
 PFNGLGETSHADERINFOLOGPROC         glGetShaderInfoLog;
 PFNGLGETSHADERIVPROC              glGetShaderiv;
+PFNGLGETUNIFORMLOCATIONPROC       glGetUniformLocation;
 PFNGLLINKPROGRAMPROC              glLinkProgram;
 PFNGLSHADERSOURCEPROC             glShaderSource;
+PFNGLUNIFORMMATRIX4FVPROC         glUniformMatrix4fv;
 PFNGLUSEPROGRAMPROC               glUseProgram;
 PFNGLVERTEXATTRIBPOINTERPROC      glVertexAttribPointer;
 
@@ -42,7 +44,7 @@ PFNGLVERTEXATTRIBPOINTERPROC      glVertexAttribPointer;
 #endif
 #endif // GCC only
 void
-glsys_load_extensions(void)
+glsysInit(void)
 {
 	glAttachShader             = (PFNGLATTACHSHADERPROC)SDL_GL_GetProcAddress("glAttachShader");
 	glBindAttribLocation       = (PFNGLBINDATTRIBLOCATIONPROC)SDL_GL_GetProcAddress("glBindAttribLocation");
@@ -60,11 +62,13 @@ glsys_load_extensions(void)
 	glGetProgramiv             = (PFNGLGETPROGRAMIVPROC)SDL_GL_GetProcAddress("glGetProgramiv");
 	glGetShaderInfoLog         = (PFNGLGETSHADERINFOLOGPROC)SDL_GL_GetProcAddress("glGetShaderInfoLog");
 	glGetShaderiv              = (PFNGLGETSHADERIVPROC)SDL_GL_GetProcAddress("glGetShaderiv");
+    glGetUniformLocation       = (PFNGLGETUNIFORMLOCATIONPROC)SDL_GL_GetProcAddress("glGetUniformLocation");
 	glLinkProgram              = (PFNGLLINKPROGRAMPROC)SDL_GL_GetProcAddress("glLinkProgram");
 	glShaderSource             = (PFNGLSHADERSOURCEPROC)SDL_GL_GetProcAddress("glShaderSource");
 	glVertexAttribPointer      = (PFNGLVERTEXATTRIBPOINTERPROC)SDL_GL_GetProcAddress("glVertexAttribPointer");
     glDeleteShader             = (PFNGLDELETESHADERPROC)SDL_GL_GetProcAddress("glDeleteShader");
     glDetachShader             = (PFNGLDETACHSHADERPROC)SDL_GL_GetProcAddress("glDetachShader");
+    glUniformMatrix4fv         = (PFNGLUNIFORMMATRIX4FVPROC)SDL_GL_GetProcAddress("glUniformMatrix4fv");
     glUseProgram               = (PFNGLUSEPROGRAMPROC)SDL_GL_GetProcAddress("glUseProgram");
 }
 #if defined(__GNUC__) && !defined(__clang__) // GCC only

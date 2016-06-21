@@ -28,8 +28,10 @@ extern PFNGLGETPROGRAMINFOLOGPROC        glGetProgramInfoLog;
 extern PFNGLGETPROGRAMIVPROC             glGetProgramiv;
 extern PFNGLGETSHADERINFOLOGPROC         glGetShaderInfoLog;
 extern PFNGLGETSHADERIVPROC              glGetShaderiv;
+extern PFNGLGETUNIFORMLOCATIONPROC       glGetUniformLocation;
 extern PFNGLLINKPROGRAMPROC              glLinkProgram;
 extern PFNGLSHADERSOURCEPROC             glShaderSource;
+extern PFNGLUNIFORMMATRIX4FVPROC         glUniformMatrix4fv;
 extern PFNGLUSEPROGRAMPROC               glUseProgram;
 extern PFNGLVERTEXATTRIBPOINTERPROC      glVertexAttribPointer;
 

@@ -183,11 +183,12 @@ main(int argc, char *argv[])
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 		sdl_print_error_and_exit("Unable to initialize SDL");
   
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
- 
+
 	main_window = SDL_CreateWindow("Yeah buddy",
 	    SDL_WINDOWPOS_CENTERED,
 	    SDL_WINDOWPOS_CENTERED,
@@ -201,7 +202,9 @@ main(int argc, char *argv[])
 	main_context = SDL_GL_CreateContext(main_window);
 	sdl_check_error();
 
-	shader_program = load_program("hello_triangle.vert", "hello_triangle.frag");
+    glsysInit();
+    
+	shader_program = load_program("shaders/hello_triangle.vert", "shaders/hello_triangle.frag");
 	glUseProgram(shader_program);
  
 	SDL_GL_SetSwapInterval(1); /* Sync with the refresh rate */
