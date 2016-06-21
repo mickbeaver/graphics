@@ -1,2 +1,3 @@
+include_directories(../glsys/include)
 add_subdirectory(tut_01_hello_triangle)
 add_subdirectory(tut_02_playing_with_colors)

@@ -1,7 +1,7 @@
 #ifndef GLTUT_FRAMEWORK_H
 #define GLTUT_FRAMEWORK_H
 
-#include <GLES2/gl2.h>
+#include "glsys.h"
 
 typedef struct GltutDefaultSettings {
     int          windowWidth;

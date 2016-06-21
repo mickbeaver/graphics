@@ -20,3 +20,4 @@ add_test(check_vector check_vector)
 add_executable(check_matrix tests/check_matrix.c)
 target_link_libraries(check_matrix 3dmath ${check_libs} ${math_library})
 add_test(check_matrix check_matrix)
+

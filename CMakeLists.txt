@@ -22,42 +22,37 @@ endfunction(add_shader_project)
 
 enable_testing()
 
-if(UNIX)
-  include_directories(/usr/local/include)
-  link_directories(/usr/local/lib)
+include_directories(/usr/local/include)
+link_directories(/usr/local/lib)
 
-  if(Clang STREQUAL ${CMAKE_C_COMPILER_ID})
-    add_definitions(
-      -Werror
-      -Weverything
-      -Wno-documentation
-      -Wno-missing-noreturn
-      -Wno-padded
-      -pedantic-errors
-      -std=c11
-      )
-  elseif(GNU STREQUAL ${CMAKE_C_COMPILER_ID})
-    add_definitions(
-      -Wall
-      -Werror
-      -Wextra
-      -pedantic-errors
-      -std=c11
-      )
-  else()
-    message(FATAL_ERROR "Unknown compiler. Please add your identifier and flags")
-  endif()
+if(Clang STREQUAL ${CMAKE_C_COMPILER_ID})
+  add_definitions(
+    -Werror
+    -Weverything
+    -Wno-documentation
+    -Wno-missing-noreturn
+    -Wno-padded
+    -pedantic-errors
+    -std=c11
+    )
+elseif(GNU STREQUAL ${CMAKE_C_COMPILER_ID})
+  add_definitions(
+    -Wall
+    -Werror
+    -Wextra
+    -pedantic-errors
+    -std=c11
+    )
 else()
-  message(FATAL_ERROR "Only UNIX supported.")
+  message(FATAL_ERROR "Unknown compiler. Please add your identifier and flags")
 endif()
 
-if (armv6l STREQUAL ${CMAKE_HOST_SYSTEM_PROCESSOR})
-  message(STATUS "CPU is armv6l. Assuming Raspberry Pi and OpenGL ES 2.")
-  set(OPENGL_LIBRARIES GLESv2)
-elseif(CYGWIN)
-  set(OPENGL_LIBRARIES opengl32)
-else()
-  set(OPENGL_LIBRARIES GLESv2)
+find_library(OPENGL_LIBRARIES NAMES GLESv2 GL opengl32)
+if(${OPENGL_LIBRARIES} MATCHES GLESv2)
+  add_definitions(-DGLSYS_GL_ES)
+endif()
+if(NOT OPENGL_LIBRARIES)
+  message(FATAL_ERROR "No usuable OpenGL library found.")
 endif()
 
 find_package(PkgConfig)
@@ -66,6 +61,7 @@ add_compile_options(${SDL2_PC_CFLAGS})
 set(SDL2_LIBRARIES ${SDL2_PC_LDFLAGS})
 
 add_subdirectory(3dmath)
+add_subdirectory(glsys)
 add_subdirectory(opengles2)
 add_subdirectory(gltut)
 
