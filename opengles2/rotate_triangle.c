@@ -1,4 +1,3 @@
-#include <GLES2/gl2.h>
 #include <assert.h>
 #include <errno.h>
 #include <stdbool.h>
@@ -7,6 +6,7 @@
 
 #include "SDL.h"
 #include "SDL_timer.h"
+#include "glsys.h"
 #include "matrix.h"
 
 typedef enum EVertexAttrIndex {

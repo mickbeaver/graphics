@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "framework.h"
 #include "glsys.h"
-#include "../framework/framework.h"
 
 typedef enum EVertexAttrIndex {
     VERTEX_ATTR_INDEX_POSITION

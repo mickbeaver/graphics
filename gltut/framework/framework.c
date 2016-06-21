@@ -1,9 +1,11 @@
 #include <assert.h>
 #include <errno.h>
 #include <stdbool.h>
-#include <GLES2/gl2.h>
+#include <stdio.h>
+
 #include "SDL.h"
 #include "framework.h"
+#include "glsys.h"
 
 static void      simulationLoop(SDL_Window *window);
 static bool      handleEvent(SDL_Event *event);
@@ -183,7 +185,10 @@ main(int argc, char** argv)
 
     mainContext = SDL_GL_CreateContext(mainWindow);
     errorStr = SDL_GetError();
-    assert(*errorStr == '\0');
+    if (*errorStr != '\0') {
+    fprintf(stderr, "SDL_GetError() returned: %s\n", errorStr);
+        //assert(0);
+    }
 
     gltutPostRenderSystemInit();
 

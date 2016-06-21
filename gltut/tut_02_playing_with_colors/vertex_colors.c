@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <GLES2/gl2.h>
-#include "../framework/framework.h"
+#include "framework.h"
+#include "glsys.h"
 
 #define ARRAY_COUNT(array) (sizeof(array)/sizeof(array[0]))
 

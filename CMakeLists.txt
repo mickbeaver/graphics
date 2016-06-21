@@ -60,6 +60,8 @@ pkg_check_modules(SDL2_PC REQUIRED sdl2)
 add_compile_options(${SDL2_PC_CFLAGS})
 set(SDL2_LIBRARIES ${SDL2_PC_LDFLAGS})
 
+include_directories(glsys/include 3dmath/include)
+
 add_subdirectory(3dmath)
 add_subdirectory(glsys)
 add_subdirectory(opengles2)

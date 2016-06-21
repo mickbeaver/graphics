@@ -1,11 +1,10 @@
-#include <GLES2/gl2.h>
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "SDL.h"
-#include "vector.h"
+#include "glsys.h"
 
 #define sdl_print_error_and_exit(user_message) sdl_print_error_and_exit_func(__FILE__, __LINE__, user_message)
 #ifdef NDEBUG
@@ -103,7 +102,7 @@ print_sorted_gl_exts(const GLubyte *gl_exts)
 		const char *extension_printf_padding;
 
 		extensions = (char **)malloc(sizeof(char *) * num_extensions);
-		printf("There are %zu extensions\n", num_extensions);
+		printf("There are %u extensions\n", (unsigned)num_extensions);
 		current_extension = strtok(extensions_dup, " ");
 
 		current_extension_index = 0;

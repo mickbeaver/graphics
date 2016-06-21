@@ -1,10 +1,10 @@
-#include <GLES2/gl2.h>
 #include <assert.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "SDL.h"
+#include "glsys.h"
 
 
 #define sdl_print_error_and_exit(user_message) sdl_print_error_and_exit_func(__FILE__, __LINE__, user_message)

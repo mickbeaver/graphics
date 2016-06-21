@@ -1,5 +1,3 @@
-include_directories(include)
-
 set(math_library m)
 set(check_libs check)
 
