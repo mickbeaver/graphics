@@ -60,7 +60,6 @@ endif()
 
 find_package(PkgConfig)
 pkg_check_modules(SDL2_PC REQUIRED sdl2)
-add_compile_options(${SDL2_PC_CFLAGS})
 set(SDL2_LIBRARIES ${SDL2_PC_LDFLAGS})
 
 include_directories(glsys/include 3dmath/include)

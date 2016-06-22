@@ -1,3 +1,4 @@
+add_compile_options(${SDL2_PC_CFLAGS})
 add_subdirectory(shaders)
 
 add_executable(sdl_gl_info sdl_gl_info.c)
