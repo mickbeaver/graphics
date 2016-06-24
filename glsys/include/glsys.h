@@ -1,7 +1,7 @@
 #ifndef GL_SYS_H
 #define GL_SYS_H
 
-#ifdef GLSYS_GL_ES
+#ifdef GL_ES
 
 #include <GLES2/gl2.h>
 

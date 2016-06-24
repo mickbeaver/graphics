@@ -1,5 +1,3 @@
-#version 100
-
 uniform mat4 uRotation;
 attribute vec4 aPosition;
 attribute vec4 aColor;

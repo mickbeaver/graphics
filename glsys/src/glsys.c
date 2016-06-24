@@ -1,4 +1,4 @@
-#ifdef GLSYS_GL_ES
+#ifdef GL_ES
 
 void
 glsysInit(void)

@@ -7,9 +7,12 @@ function(add_shader_project)
   list(REMOVE_AT ARGN 0)
   foreach(GLSL_FILE ${ARGN})
     add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${GLSL_FILE}
-      COMMAND glslangValidator ${CMAKE_CURRENT_SOURCE_DIR}/${GLSL_FILE}
-      COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${GLSL_FILE}
-      ${CMAKE_CURRENT_BINARY_DIR}/${GLSL_FILE}
+      COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/${GLSL_FILE}.pending
+      COMMAND echo \"${GLSL_VERSION_STRING}\" > ${CMAKE_CURRENT_BINARY_DIR}/${GLSL_FILE}.pending/${GLSL_FILE}
+      COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/${GLSL_FILE} >> ${CMAKE_CURRENT_BINARY_DIR}/${GLSL_FILE}.pending/${GLSL_FILE}
+      COMMAND glslangValidator ${CMAKE_CURRENT_BINARY_DIR}/${GLSL_FILE}.pending/${GLSL_FILE}
+      COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/${GLSL_FILE}.pending/${GLSL_FILE} ${CMAKE_CURRENT_BINARY_DIR}/${GLSL_FILE}
+      COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_CURRENT_BINARY_DIR}/${GLSL_FILE}.pending
       DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/${GLSL_FILE}")
     list(APPEND GLSL_DEST_FILES ${CMAKE_CURRENT_BINARY_DIR}/${GLSL_FILE})
   endforeach()
@@ -50,9 +53,11 @@ endif()
 find_library(OPENGL_LIBRARIES NAMES GLESv2 GL opengl32)
 if(${OPENGL_LIBRARIES} MATCHES GLESv2)
   message(STATUS "Using OpenGL ES 2 library.")
-  add_definitions(-DGLSYS_GL_ES)
+  add_definitions(-DGL_ES)
+  set(GLSL_VERSION_STRING "#version" "100") # Space between tokens for CMake
 else()
   message(STATUS "Using desktop OpenGL library.")
+  set(GLSL_VERSION_STRING "#version" "110") # Space between tokens for CMake
 endif()
 if(NOT OPENGL_LIBRARIES)
   message(FATAL_ERROR "No usuable OpenGL library found.")

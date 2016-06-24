@@ -16,7 +16,11 @@ static const float skVertexPositions[] = {
 static GLuint sTheProgram;
 static GLuint sPositionBufferObject;
 static const GLchar * const skVertexShader =
+#ifdef GL_ES
     "#version 100                 \n"
+#else
+    "#version 110                 \n"
+#endif
     "attribute vec4 aPosition;    \n"
     "void                         \n"
     "main()                       \n"
@@ -24,7 +28,11 @@ static const GLchar * const skVertexShader =
     "    gl_Position = aPosition; \n"
     "}                            \n";
 static const GLchar * const skFragmentShader =
+#ifdef GL_ES
     "#version 100                                     \n"
+#else
+    "#version 110                                     \n"
+#endif
     "precision mediump float;                         \n"
     "void                                             \n"
     "main()                                           \n"
