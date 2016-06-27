@@ -85,7 +85,7 @@ frameworkLoadShader(GLenum shaderType, const char *filename)
 GLuint
 frameworkCreateProgram(GLuint vertexShader,
                        GLuint fragmentShader,
-                       const FrameworkShaderAttribLocation *attribLocations,
+                       const FrameworkShaderAttribLocation *pAttribLocations,
                        size_t attribLocationCount)
 {
     GLuint program;
@@ -95,7 +95,7 @@ frameworkCreateProgram(GLuint vertexShader,
     glAttachShader(program, vertexShader);
     glAttachShader(program, fragmentShader);
     for (size_t i = 0; i < attribLocationCount; ++i) {
-        glBindAttribLocation(program, attribLocations[i].location, attribLocations[i].name);
+        glBindAttribLocation(program, pAttribLocations[i].location, pAttribLocations[i].name);
     }
     glLinkProgram(program);
 

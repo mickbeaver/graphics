@@ -14,6 +14,7 @@ PFNGLATTACHSHADERPROC             glAttachShader;
 PFNGLBINDATTRIBLOCATIONPROC       glBindAttribLocation;
 PFNGLBINDBUFFERPROC               glBindBuffer;
 PFNGLBUFFERDATAPROC               glBufferData;
+PFNGLBUFFERSUBDATAPROC            glBufferSubData;
 PFNGLCOMPILESHADERPROC            glCompileShader;
 PFNGLCREATEPROGRAMPROC            glCreateProgram;
 PFNGLCREATESHADERPROC             glCreateShader;
@@ -50,6 +51,7 @@ glsysInit(void)
 	glBindAttribLocation       = (PFNGLBINDATTRIBLOCATIONPROC)SDL_GL_GetProcAddress("glBindAttribLocation");
 	glBindBuffer               = (PFNGLBINDBUFFERPROC)SDL_GL_GetProcAddress("glBindBuffer");
 	glBufferData               = (PFNGLBUFFERDATAPROC)SDL_GL_GetProcAddress("glBufferData");
+	glBufferSubData            = (PFNGLBUFFERSUBDATAPROC)SDL_GL_GetProcAddress("glBufferSubData");
 	glCompileShader            = (PFNGLCOMPILESHADERPROC)SDL_GL_GetProcAddress("glCompileShader");
 	glCreateProgram            = (PFNGLCREATEPROGRAMPROC)SDL_GL_GetProcAddress("glCreateProgram");
 	glCreateShader             = (PFNGLCREATESHADERPROC)SDL_GL_GetProcAddress("glCreateShader");

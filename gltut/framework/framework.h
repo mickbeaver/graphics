@@ -20,12 +20,12 @@ typedef struct FrameworkShaderAttribLocation {
 void    gltutPostRenderSystemInit(void);
 void    gltutDisplay(void);
 void    gltutReshape(int width, int height);
-void    gltutDefaultSettingsInit(GltutDefaultSettings *settings);
+void    gltutDefaultSettingsInit(GltutDefaultSettings *pSettings);
 
 GLuint  frameworkLoadShader(GLenum shaderType, const char *filename);
 GLuint  frameworkCreateProgram(GLuint vertexShader,
                                GLuint fragmentShader,
-                               const FrameworkShaderAttribLocation *attribLocations,
+                               const FrameworkShaderAttribLocation *pAttribLocations,
                                size_t attribLocationCount);
 
 #endif // GLTUT_FRAMEWORK_H
