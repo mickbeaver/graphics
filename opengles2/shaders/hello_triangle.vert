@@ -1,4 +1,4 @@
-attribute vec4 vPosition;
+VS_IN vec4 vPosition;
 
 void
 main()

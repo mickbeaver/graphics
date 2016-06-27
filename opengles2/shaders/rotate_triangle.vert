@@ -1,7 +1,7 @@
 uniform mat4 uRotation;
-attribute vec4 aPosition;
-attribute vec4 aColor;
-varying vec4 vColor;
+VS_IN vec4 aPosition;
+VS_IN vec4 aColor;
+VS_OUT vec4 vColor;
 
 void
 main()

@@ -23,13 +23,12 @@ static const float skVertexPositions[] = {
 };
 
 static GLuint sTheProgram;
+static GLint  sOffsetLocation;
 static GLuint sPositionBufferObject;
 
 static void     initializeProgram();
 static void     initializeVertexBuffer();
-static void     initializeVertexArray();
 static void     computePositionOffsets(float *pXOffset, float *pYOffset);
-static void     adjustVertexData(float xOffset, float yOffset);
 
 static void
 initializeProgram()
@@ -37,10 +36,11 @@ initializeProgram()
     GLuint vertexShader;
     GLuint fragmentShader;
 
-    vertexShader = frameworkLoadShader(GL_VERTEX_SHADER, "standard.vert");
+    vertexShader = frameworkLoadShader(GL_VERTEX_SHADER, "position_offset.vert");
     fragmentShader = frameworkLoadShader(GL_FRAGMENT_SHADER, "standard.frag");
 
     sTheProgram = frameworkCreateProgram(vertexShader, fragmentShader, skShaderAttribLocations, ARRAY_COUNT(skShaderAttribLocations));
+    sOffsetLocation = glGetUniformLocation(sTheProgram, "uOffset");
 
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
@@ -58,8 +58,7 @@ initializeVertexBuffer()
 void
 gltutDefaultSettingsInit(GltutDefaultSettings *pSettings)
 {
-    // empty
-    (void) pSettings;
+    pSettings->windowTitle = "vert_position_offset.c";
 }
 
 void
@@ -68,23 +67,11 @@ gltutReshape(int width, int height)
     glViewport(0, 0, (GLsizei)width, (GLsizei)height);
 }
 
-static void
-initializeVertexArray(void)
-{
-#ifndef GL_ES
-    GLuint vao;
-
-    glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-#endif
-}
-
 void
 gltutPostRenderSystemInit(void)
 {
     initializeProgram();
     initializeVertexBuffer();
-    initializeVertexArray();
 }
 
 static void
@@ -101,24 +88,6 @@ computePositionOffsets(float *pXOffset, float *pYOffset)
     *pYOffset = sinf(currentTimeThroughLoop * skScale) * 0.5f;
 }
 
-static void
-adjustVertexData(float xOffset, float yOffset)
-{
-    float newVertexPositions[ARRAY_COUNT(skVertexPositions)];
-    static_assert(sizeof(skVertexPositions) == sizeof(newVertexPositions),
-                  "vertex buffer size mismatch");
-
-    (void)memcpy(newVertexPositions, skVertexPositions, sizeof(skVertexPositions));
-    for (size_t i = 0; i < ARRAY_COUNT(skVertexPositions); i += 4) {
-        newVertexPositions[i] += xOffset;
-        newVertexPositions[i + 1] += yOffset;
-    }
-
-    glBindBuffer(GL_ARRAY_BUFFER, sPositionBufferObject);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(newVertexPositions), newVertexPositions);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
-
 void
 gltutDisplay(void)
 {
@@ -126,12 +95,12 @@ gltutDisplay(void)
     float yOffset = 0.0f;
 
     computePositionOffsets(&xOffset, &yOffset);
-    adjustVertexData(xOffset, yOffset);
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     glUseProgram(sTheProgram);
+    glUniform2f(sOffsetLocation, xOffset, yOffset);
 
     glBindBuffer(GL_ARRAY_BUFFER, sPositionBufferObject);
     glEnableVertexAttribArray(VERTEX_ATTR_VS_INDEX_POSITION);

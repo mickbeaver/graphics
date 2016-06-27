@@ -7,6 +7,8 @@
 #include "glsys.h"
 
 #define ARRAY_COUNT(array) (sizeof(array)/sizeof(array[0]))
+#define LOOP_DURATION 5.0f
+#define FRAG_LOOP_DURATION 5.0f
 
 typedef enum EVertexAttrIndex {
     VERTEX_ATTR_VS_INDEX_POSITION
@@ -23,24 +25,36 @@ static const float skVertexPositions[] = {
 };
 
 static GLuint sTheProgram;
+static GLint  sTimeUniformIndex;
 static GLuint sPositionBufferObject;
 
 static void     initializeProgram();
 static void     initializeVertexBuffer();
 static void     initializeVertexArray();
-static void     computePositionOffsets(float *pXOffset, float *pYOffset);
-static void     adjustVertexData(float xOffset, float yOffset);
 
 static void
 initializeProgram()
 {
     GLuint vertexShader;
     GLuint fragmentShader;
+    GLint loopDurationUniformIndex;
+    GLint fragLoopDurationUniformIndex;
 
-    vertexShader = frameworkLoadShader(GL_VERTEX_SHADER, "standard.vert");
-    fragmentShader = frameworkLoadShader(GL_FRAGMENT_SHADER, "standard.frag");
+    vertexShader = frameworkLoadShader(GL_VERTEX_SHADER, "calc_offset.vert");
+    fragmentShader = frameworkLoadShader(GL_FRAGMENT_SHADER, "calc_color.frag");
 
-    sTheProgram = frameworkCreateProgram(vertexShader, fragmentShader, skShaderAttribLocations, ARRAY_COUNT(skShaderAttribLocations));
+    sTheProgram = frameworkCreateProgram(vertexShader,
+                                         fragmentShader,
+                                         skShaderAttribLocations,
+                                         ARRAY_COUNT(skShaderAttribLocations));
+    sTimeUniformIndex = glGetUniformLocation(sTheProgram, "uTime");
+    loopDurationUniformIndex = glGetUniformLocation(sTheProgram, "uLoopDuration");
+    fragLoopDurationUniformIndex = glGetUniformLocation(sTheProgram, "uFragLoopDuration");
+
+    glUseProgram(sTheProgram);
+    glUniform1f(loopDurationUniformIndex, LOOP_DURATION);
+    glUniform1f(fragLoopDurationUniformIndex, FRAG_LOOP_DURATION);
+    glUseProgram(0);
 
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
@@ -58,8 +72,7 @@ initializeVertexBuffer()
 void
 gltutDefaultSettingsInit(GltutDefaultSettings *pSettings)
 {
-    // empty
-    (void) pSettings;
+    pSettings->windowTitle = "vert_calc_offset.c";
 }
 
 void
@@ -87,51 +100,14 @@ gltutPostRenderSystemInit(void)
     initializeVertexArray();
 }
 
-static void
-computePositionOffsets(float *pXOffset, float *pYOffset)
-{
-    static float const skLoopDuration = 5.0f;
-    float const skScale = 3.14159f * 2.0f / skLoopDuration;
-    float elapsedTime;
-    float currentTimeThroughLoop;
-
-    elapsedTime = SDL_GetTicks() / 1000.f;
-    currentTimeThroughLoop = fmodf(elapsedTime, skLoopDuration);
-    *pXOffset = cosf(currentTimeThroughLoop * skScale) * 0.5f;
-    *pYOffset = sinf(currentTimeThroughLoop * skScale) * 0.5f;
-}
-
-static void
-adjustVertexData(float xOffset, float yOffset)
-{
-    float newVertexPositions[ARRAY_COUNT(skVertexPositions)];
-    static_assert(sizeof(skVertexPositions) == sizeof(newVertexPositions),
-                  "vertex buffer size mismatch");
-
-    (void)memcpy(newVertexPositions, skVertexPositions, sizeof(skVertexPositions));
-    for (size_t i = 0; i < ARRAY_COUNT(skVertexPositions); i += 4) {
-        newVertexPositions[i] += xOffset;
-        newVertexPositions[i + 1] += yOffset;
-    }
-
-    glBindBuffer(GL_ARRAY_BUFFER, sPositionBufferObject);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(newVertexPositions), newVertexPositions);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
-
 void
 gltutDisplay(void)
 {
-    float xOffset = 0.0f;
-    float yOffset = 0.0f;
-
-    computePositionOffsets(&xOffset, &yOffset);
-    adjustVertexData(xOffset, yOffset);
-
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     glUseProgram(sTheProgram);
+    glUniform1f(sTimeUniformIndex, SDL_GetTicks() / 1000.0f);
 
     glBindBuffer(GL_ARRAY_BUFFER, sPositionBufferObject);
     glEnableVertexAttribArray(VERTEX_ATTR_VS_INDEX_POSITION);

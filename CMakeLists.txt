@@ -9,6 +9,9 @@ function(add_shader_project)
     add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${GLSL_FILE}
       COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/${GLSL_FILE}.pending
       COMMAND echo \"${GLSL_VERSION_STRING}\" > ${CMAKE_CURRENT_BINARY_DIR}/${GLSL_FILE}.pending/${GLSL_FILE}
+      COMMAND echo \"${GLSL_DEFINE_VS_IN}\" >> ${CMAKE_CURRENT_BINARY_DIR}/${GLSL_FILE}.pending/${GLSL_FILE}
+      COMMAND echo \"${GLSL_DEFINE_VS_OUT}\" >> ${CMAKE_CURRENT_BINARY_DIR}/${GLSL_FILE}.pending/${GLSL_FILE}
+      COMMAND echo \"\" >> ${CMAKE_CURRENT_BINARY_DIR}/${GLSL_FILE}.pending/${GLSL_FILE}
       COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/${GLSL_FILE} >> ${CMAKE_CURRENT_BINARY_DIR}/${GLSL_FILE}.pending/${GLSL_FILE}
       COMMAND glslangValidator ${CMAKE_CURRENT_BINARY_DIR}/${GLSL_FILE}.pending/${GLSL_FILE}
       COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/${GLSL_FILE}.pending/${GLSL_FILE} ${CMAKE_CURRENT_BINARY_DIR}/${GLSL_FILE}
@@ -54,10 +57,16 @@ find_library(OPENGL_LIBRARIES NAMES GLESv2 GL opengl32)
 if(${OPENGL_LIBRARIES} MATCHES GLESv2)
   message(STATUS "Using OpenGL ES 2 library.")
   add_definitions(-DGL_ES)
-  set(GLSL_VERSION_STRING "#version" "100") # Space between tokens for CMake
+  # Space between tokens for CMake
+  set(GLSL_VERSION_STRING "#version" "100")
+  set(GLSL_DEFINE_VS_IN      "#define" "VS_IN" "attribute")
+  set(GLSL_DEFINE_VS_OUT     "#define" "VS_OUT" "varying")
 else()
-  message(STATUS "Using desktop OpenGL library.")
-  set(GLSL_VERSION_STRING "#version" "110") # Space between tokens for CMake
+  message(STATUS "Using desktop OpenGL (3.2 core) library.")
+  # Space between tokens for CMake
+  set(GLSL_VERSION_STRING "#version" "150")
+  set(GLSL_DEFINE_VS_IN      "#define" "VS_IN" "in")
+  set(GLSL_DEFINE_VS_OUT     "#define" "VS_OUT" "out")
 endif()
 if(NOT OPENGL_LIBRARIES)
   message(FATAL_ERROR "No usuable OpenGL library found.")

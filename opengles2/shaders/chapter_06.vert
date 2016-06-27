@@ -1,6 +1,7 @@
-attribute vec4 a_position;
-attribute vec4 a_color;
-varying vec4 v_color;
+VS_IN vec4 a_position;
+VS_IN vec4 a_color;
+VS_OUT vec4 v_color;
+
 void
 main()
 {
