@@ -5,11 +5,11 @@ add_shader_project(position_offset_vert position_offset.vert)
 add_shader_project(calc_color_frag calc_color.frag)
 
 add_executable(cpu_position_offset cpu_position_offset.c ../framework/framework.c)
-target_link_libraries(cpu_position_offset glsys ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES})
+target_link_libraries(cpu_position_offset glsys ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} m)
 add_dependencies(cpu_position_offset standard_vert standard_frag)
 
 add_executable(vert_position_offset vert_position_offset.c ../framework/framework.c)
-target_link_libraries(vert_position_offset glsys ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES})
+target_link_libraries(vert_position_offset glsys ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} m)
 add_dependencies(vert_position_offset position_offset_vert standard_frag)
 
 add_executable(vert_calc_offset vert_calc_offset.c ../framework/framework.c)

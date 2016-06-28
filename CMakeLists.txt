@@ -53,23 +53,25 @@ else()
   message(FATAL_ERROR "Unknown compiler. Please add your identifier and flags")
 endif()
 
-find_library(OPENGL_LIBRARIES NAMES GLESv2 GL opengl32)
+find_library(OPENGL_LIBRARIES
+  NAMES GLESv2 GL opengl32
+  PATHS /opt/vc/lib)
+if(NOT OPENGL_LIBRARIES)
+  message(FATAL_ERROR "No usuable OpenGL library found.")
+endif()
 if(${OPENGL_LIBRARIES} MATCHES GLESv2)
-  message(STATUS "Using OpenGL ES 2 library.")
+  message(STATUS "Using OpenGL ES 2 library (${OPENGL_LIBRARIES}).")
   add_definitions(-DGL_ES)
   # Space between tokens for CMake
   set(GLSL_VERSION_STRING "#version" "100")
   set(GLSL_DEFINE_VS_IN      "#define" "VS_IN" "attribute")
   set(GLSL_DEFINE_VS_OUT     "#define" "VS_OUT" "varying")
 else()
-  message(STATUS "Using desktop OpenGL (3.2 core) library.")
+  message(STATUS "Using desktop OpenGL (3.2 core) library (${OPENGL_LIBRARIES}).")
   # Space between tokens for CMake
   set(GLSL_VERSION_STRING "#version" "150")
   set(GLSL_DEFINE_VS_IN      "#define" "VS_IN" "in")
   set(GLSL_DEFINE_VS_OUT     "#define" "VS_OUT" "out")
-endif()
-if(NOT OPENGL_LIBRARIES)
-  message(FATAL_ERROR "No usuable OpenGL library found.")
 endif()
 
 find_package(PkgConfig)
