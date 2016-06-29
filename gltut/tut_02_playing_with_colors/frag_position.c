@@ -21,9 +21,11 @@ static const float skVertexPositions[] = {
 
 static GLuint sTheProgram;
 static GLuint sPositionBufferObject;
+static GLint sWindowHeightUniform;
 
 static void     initializeProgram();
 static void     initializeVertexBuffer();
+static void     initializeVertexArray();
 
 void
 initializeProgram()
@@ -35,6 +37,11 @@ initializeProgram()
     fragmentShader = frameworkLoadShader(GL_FRAGMENT_SHADER, "frag_position.frag");
 
     sTheProgram = frameworkCreateProgram(vertexShader, fragmentShader, skShaderAttribLocations, ARRAY_COUNT(skShaderAttribLocations));
+
+    sWindowHeightUniform = glGetUniformLocation(sTheProgram, "uWindowHeight");
+    glUseProgram(sTheProgram);
+    glUniform1f(sWindowHeightUniform, (float)GLTUT_DEFAULT_WINDOW_HEIGHT);
+    glUseProgram(0);
 
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
@@ -60,6 +67,20 @@ void
 gltutReshape(int width, int height)
 {
     glViewport(0, 0, (GLsizei)width, (GLsizei)height);
+    glUseProgram(sTheProgram);
+    glUniform1f(sWindowHeightUniform, (float)height);
+    glUseProgram(0);
+}
+
+static void
+initializeVertexArray(void)
+{
+#ifndef GL_ES
+    GLuint vao;
+
+    glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+#endif
 }
 
 void
@@ -67,6 +88,7 @@ gltutPostRenderSystemInit(void)
 {
     initializeProgram();
     initializeVertexBuffer();
+    initializeVertexArray();
 }
 
 void

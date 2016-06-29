@@ -7,6 +7,7 @@
 #include "glsys.h"
 
 #define ARRAY_COUNT(array) (sizeof(array)/sizeof(array[0]))
+#define LOOP_DURATION (5.0f)
 
 typedef enum EVertexAttrIndex {
     VERTEX_ATTR_VS_INDEX_POSITION
@@ -45,7 +46,7 @@ initializeProgram()
     loopDurationUniformIndex = glGetUniformLocation(sTheProgram, "uLoopDuration");
 
     glUseProgram(sTheProgram);
-    glUniform1f(loopDurationUniformIndex, 5.0f);
+    glUniform1f(loopDurationUniformIndex, LOOP_DURATION);
     glUseProgram(0);
 
     glDeleteShader(vertexShader);
@@ -95,16 +96,22 @@ gltutPostRenderSystemInit(void)
 void
 gltutDisplay(void)
 {
+    float timeInSeconds;
+
+    timeInSeconds = SDL_GetTicks() / 1000.0f;
+    
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     glUseProgram(sTheProgram);
-    glUniform1f(sTimeUniformIndex, SDL_GetTicks() / 1000.0f);
+    glUniform1f(sTimeUniformIndex, timeInSeconds);
 
     glBindBuffer(GL_ARRAY_BUFFER, sPositionBufferObject);
     glEnableVertexAttribArray(VERTEX_ATTR_VS_INDEX_POSITION);
     glVertexAttribPointer(VERTEX_ATTR_VS_INDEX_POSITION, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glUniform1f(sTimeUniformIndex, timeInSeconds + LOOP_DURATION / 2.0f);
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
     glDisableVertexAttribArray(VERTEX_ATTR_VS_INDEX_POSITION);

@@ -9,8 +9,13 @@ typedef struct GltutDefaultSettings {
     const char  *windowTitle;
 } GltutDefaultSettings;
 
-#define GLTUT_DEFAULT_SETTINGS_INITIALIZER \
-    {.windowWidth=500, .windowHeight=500, .windowTitle="gltut"}
+#define GLTUT_DEFAULT_WINDOW_HEIGHT 500
+#define GLTUT_DEFAULT_WINDOW_WIDTH  500
+#define GLTUT_DEFAULT_WINDOW_TITLE  "gltut"
+#define GLTUT_DEFAULT_SETTINGS_INITIALIZER      \
+    {.windowWidth=GLTUT_DEFAULT_WINDOW_WIDTH,   \
+     .windowHeight=GLTUT_DEFAULT_WINDOW_HEIGHT, \
+     .windowTitle=GLTUT_DEFAULT_WINDOW_TITLE}
 
 typedef struct FrameworkShaderAttribLocation {
     const char  *name;
