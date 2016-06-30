@@ -11,6 +11,7 @@ function(add_shader_project)
       COMMAND echo \"${GLSL_VERSION_STRING}\" > ${CMAKE_CURRENT_BINARY_DIR}/${GLSL_FILE}.pending/${GLSL_FILE}
       COMMAND echo \"${GLSL_DEFINE_VS_IN}\" >> ${CMAKE_CURRENT_BINARY_DIR}/${GLSL_FILE}.pending/${GLSL_FILE}
       COMMAND echo \"${GLSL_DEFINE_VS_OUT}\" >> ${CMAKE_CURRENT_BINARY_DIR}/${GLSL_FILE}.pending/${GLSL_FILE}
+      COMMAND echo \"${GLSL_DEFINE_PS_IN}\" >> ${CMAKE_CURRENT_BINARY_DIR}/${GLSL_FILE}.pending/${GLSL_FILE}
       COMMAND echo \"\" >> ${CMAKE_CURRENT_BINARY_DIR}/${GLSL_FILE}.pending/${GLSL_FILE}
       COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/${GLSL_FILE} >> ${CMAKE_CURRENT_BINARY_DIR}/${GLSL_FILE}.pending/${GLSL_FILE}
       COMMAND glslangValidator ${CMAKE_CURRENT_BINARY_DIR}/${GLSL_FILE}.pending/${GLSL_FILE}
@@ -64,14 +65,16 @@ if(${OPENGL_LIBRARIES} MATCHES GLESv2)
   add_definitions(-DGL_ES)
   # Space between tokens for CMake
   set(GLSL_VERSION_STRING "#version" "100")
-  set(GLSL_DEFINE_VS_IN      "#define" "VS_IN" "attribute")
-  set(GLSL_DEFINE_VS_OUT     "#define" "VS_OUT" "varying")
+  set(GLSL_DEFINE_VS_IN   "#define" "VS_IN" "attribute")
+  set(GLSL_DEFINE_VS_OUT  "#define" "VS_OUT" "varying")
+  set(GLSL_DEFINE_PS_IN   "#define" "PS_IN" "varying")
 else()
   message(STATUS "Using desktop OpenGL (3.2 core) library (${OPENGL_LIBRARIES}).")
   # Space between tokens for CMake
   set(GLSL_VERSION_STRING "#version" "150")
-  set(GLSL_DEFINE_VS_IN      "#define" "VS_IN" "in")
-  set(GLSL_DEFINE_VS_OUT     "#define" "VS_OUT" "out")
+  set(GLSL_DEFINE_VS_IN   "#define" "VS_IN" "in")
+  set(GLSL_DEFINE_VS_OUT  "#define" "VS_OUT" "out")
+  set(GLSL_DEFINE_PS_IN   "#define" "PS_IN" "in")
 endif()
 
 find_package(PkgConfig)

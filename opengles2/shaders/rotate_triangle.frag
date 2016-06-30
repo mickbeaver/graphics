@@ -2,7 +2,7 @@
 precision mediump float;
 #endif
 
-VS_OUT vec4 vColor;
+PS_IN vec4 vColor;
 
 void
 main()
