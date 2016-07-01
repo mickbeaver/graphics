@@ -2,7 +2,7 @@ add_compile_options(${SDL2_PC_CFLAGS})
 add_subdirectory(shaders)
 
 add_executable(sdl_gl_info sdl_gl_info.c)
-target_link_libraries(sdl_gl_info 3dmath glsys ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES})
+target_link_libraries(sdl_gl_info glsys ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES})
 
 add_executable(sdl_gl_test sdl_gl_test.c ${PLATFORM_SRCS})
 target_link_libraries(sdl_gl_test glsys ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES})
