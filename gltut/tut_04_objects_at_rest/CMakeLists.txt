@@ -15,3 +15,7 @@ add_executable(matrix_perspective matrix_perspective.c ../framework/framework.c)
 target_link_libraries(matrix_perspective glsys ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} m)
 add_dependencies(matrix_perspective matrix_perspective_vert standard_colors_frag)
 
+add_executable(aspect_ratio aspect_ratio.c ../framework/framework.c)
+target_link_libraries(aspect_ratio glsys ${SDL2_LIBRARIES} ${OPENGL_LIBRARIES} m)
+add_dependencies(aspect_ratio matrix_perspective_vert standard_colors_frag)
+
