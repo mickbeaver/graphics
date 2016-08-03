@@ -36,6 +36,7 @@ PFNGLLINKPROGRAMPROC              glLinkProgram;
 PFNGLSHADERSOURCEPROC             glShaderSource;
 PFNGLUNIFORM1FPROC                glUniform1f;
 PFNGLUNIFORM2FPROC                glUniform2f;
+PFNGLUNIFORM3FPROC                glUniform3f;
 PFNGLUNIFORMMATRIX4FVPROC         glUniformMatrix4fv;
 PFNGLUSEPROGRAMPROC               glUseProgram;
 PFNGLVERTEXATTRIBPOINTERPROC      glVertexAttribPointer;
@@ -78,6 +79,7 @@ glsysInit(void)
     glDetachShader             = (PFNGLDETACHSHADERPROC)SDL_GL_GetProcAddress("glDetachShader");
     glUniform1f                = (PFNGLUNIFORM1FPROC)SDL_GL_GetProcAddress("glUniform1f");
     glUniform2f                = (PFNGLUNIFORM2FPROC)SDL_GL_GetProcAddress("glUniform2f");
+    glUniform3f                = (PFNGLUNIFORM3FPROC)SDL_GL_GetProcAddress("glUniform3f");
     glUniformMatrix4fv         = (PFNGLUNIFORMMATRIX4FVPROC)SDL_GL_GetProcAddress("glUniformMatrix4fv");
     glUseProgram               = (PFNGLUSEPROGRAMPROC)SDL_GL_GetProcAddress("glUseProgram");
 }

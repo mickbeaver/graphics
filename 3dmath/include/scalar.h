@@ -21,6 +21,8 @@ typedef float TmScalar;
 #define tmScalarCos  cosf
 #define tmScalarSin  sinf
 
+TmScalar    tmScalarMix(TmScalar x, TmScalar y, TmScalar a);
+
 #else
 #error "TM_SCALAR_TYPE set to an invalid value"
 #endif

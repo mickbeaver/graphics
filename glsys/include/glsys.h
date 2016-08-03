@@ -8,7 +8,7 @@
 #else
 
 #include <GL/gl.h>
-#include "glext.h"
+#include "./glext.h"
 
 extern PFNGLATTACHSHADERPROC             glAttachShader;
 extern PFNGLBINDATTRIBLOCATIONPROC       glBindAttribLocation;
@@ -36,6 +36,7 @@ extern PFNGLLINKPROGRAMPROC              glLinkProgram;
 extern PFNGLSHADERSOURCEPROC             glShaderSource;
 extern PFNGLUNIFORM1FPROC                glUniform1f;
 extern PFNGLUNIFORM2FPROC                glUniform2f;
+extern PFNGLUNIFORM3FPROC                glUniform3f;
 extern PFNGLUNIFORMMATRIX4FVPROC         glUniformMatrix4fv;
 extern PFNGLUSEPROGRAMPROC               glUseProgram;
 extern PFNGLVERTEXATTRIBPOINTERPROC      glVertexAttribPointer;

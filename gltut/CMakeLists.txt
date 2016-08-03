@@ -4,3 +4,6 @@ add_subdirectory(tut_01_hello_triangle)
 add_subdirectory(tut_02_playing_with_colors)
 add_subdirectory(tut_03_opengls_moving_triangle)
 add_subdirectory(tut_04_objects_at_rest)
+add_subdirectory(tut_05_objects_in_depth)
+add_subdirectory(tut_06_objects_in_motion)
+

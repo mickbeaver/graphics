@@ -1,11 +1,12 @@
 set(math_library m)
 
 set(math_srcs
+    include/matrix.h
     include/scalar.h
     include/vector.h
-    include/matrix.h
-    src/vector.c
-    src/matrix.c)
+    src/matrix.c
+    src/scalar.c
+    src/vector.c)
 
 add_library(3dmath ${math_srcs})
 target_link_libraries(3dmath ${math_library})
