@@ -10,6 +10,9 @@
 #include <GL/gl.h>
 #include "./glext.h"
 
+#define glDepthRangef glDepthRange
+#define glClearDepthf glClearDepth
+
 extern PFNGLATTACHSHADERPROC             glAttachShader;
 extern PFNGLBINDATTRIBLOCATIONPROC       glBindAttribLocation;
 extern PFNGLBINDBUFFERPROC               glBindBuffer;

@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include "SDL.h"
+#include "SDL_keycode.h"
 #include "framework.h"
 #include "glsys.h"
 
@@ -124,7 +125,9 @@ handleEvent(SDL_Event *event)
     switch(event->type) {
     case SDL_QUIT:
     case SDL_KEYDOWN:
-        isDone = true;
+        if (event->key.keysym.sym == SDLK_ESCAPE) {
+            isDone = true;
+        }
         break;
     case SDL_WINDOWEVENT:
         if (event->window.event == SDL_WINDOWEVENT_RESIZED) {
@@ -141,16 +144,16 @@ handleEvent(SDL_Event *event)
 static void
 simulationLoop(SDL_Window *window)
 {
-	SDL_Event event;
-	bool isDone = false;
+    SDL_Event event;
+    bool isDone = false;
 
-	while (!isDone) {
-		while(SDL_PollEvent(&event) == 1 && !isDone) {
+    while (!isDone) {
+        while(SDL_PollEvent(&event) == 1 && !isDone) {
             isDone = handleEvent(&event);
-		}
+        }
         gltutDisplay();
-		SDL_GL_SwapWindow(window);
-	}
+        SDL_GL_SwapWindow(window);
+    }
 }
 
 int
@@ -162,8 +165,8 @@ main(int argc, char** argv)
     int retval;
     const char *errorStr;
 
-	(void) argc;
-	(void) argv;
+    (void) argc;
+    (void) argv;
 
     gltutDefaultSettingsInit(&settings);
 
@@ -172,15 +175,15 @@ main(int argc, char** argv)
     
 #ifdef GL_ES
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 #else
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 #endif
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
     mainWindow = SDL_CreateWindow(settings.windowTitle,
                                   SDL_WINDOWPOS_CENTERED,
