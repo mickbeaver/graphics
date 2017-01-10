@@ -1,11 +1,11 @@
 var gl;
 var VERTEX_SHADER_SRC = `#version 100
-    attribute vec4 aPosition;
+    attribute vec4 a_position;
 
     void
     main()
     {
-        gl_Position = aPosition;
+        gl_Position = a_position;
     }
 `
 var FRAGMENT_SHADER_SRC = `#version 100
