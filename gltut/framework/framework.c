@@ -124,6 +124,8 @@ handleEvent(SDL_Event *event)
     
     switch(event->type) {
     case SDL_QUIT:
+        isDone = true;
+        break;
     case SDL_KEYDOWN:
         if (event->key.keysym.sym == SDLK_ESCAPE) {
             isDone = true;
