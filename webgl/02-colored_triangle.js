@@ -155,9 +155,5 @@ function start() {
 
         window.requestAnimationFrame(draw);
     };
-    var firstDraw = function (timeInMilliseconds) {
-        nextRotationReset = timeInMilliseconds;
-        draw(timeInMilliseconds);
-    };
-    window.requestAnimationFrame(firstDraw);
+    window.requestAnimationFrame(draw);
 }
