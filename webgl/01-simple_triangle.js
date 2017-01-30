@@ -25,9 +25,8 @@ const TRIANGLE_MESH = new Float32Array([
     -0.5, -0.5, 0.0,
      0.5, -0.5, 0.0,
 ]);
-const SIZE_OF_FLOAT = 4;
 const NUM_COMPONENTS_POSITION = 3;
-const VERTEX_STRIDE_BYTES = SIZE_OF_FLOAT * NUM_COMPONENTS_POSITION;
+const VERTEX_STRIDE_BYTES = Float32Array.BYTES_PER_ELEMENT * NUM_COMPONENTS_POSITION;
 
 var gl;
 var theProgram;

@@ -79,10 +79,9 @@ const CUBE_MESH = new Float32Array([
     -0.5, -0.5, -0.5, // face 5, vert 23
      0.0,  1.0,  1.0, // cyan
 ]);
-const SIZE_OF_FLOAT = 4;
 const NUM_COMPONENTS_POSITION = 3;
 const NUM_COMPONENTS_COLOR = 3;
-const VERTEX_STRIDE_BYTES = SIZE_OF_FLOAT * (NUM_COMPONENTS_POSITION + NUM_COMPONENTS_COLOR);
+const VERTEX_STRIDE_BYTES = Float32Array.BYTES_PER_ELEMENT * (NUM_COMPONENTS_POSITION + NUM_COMPONENTS_COLOR);
 
 var gl;
 var theProgram;
@@ -474,7 +473,7 @@ function start() {
                                gl.FLOAT,
                                false,
                                VERTEX_STRIDE_BYTES,
-                               SIZE_OF_FLOAT * NUM_COMPONENTS_POSITION);
+                               Float32Array.BYTES_PER_ELEMENT * NUM_COMPONENTS_POSITION);
         gl.drawElements(gl.TRIANGLES, CUBE_INDICES.length, gl.UNSIGNED_SHORT, 0);
         gl.disableVertexAttribArray(VERTEX_ATTR_INDEX_POSITION);
         gl.disableVertexAttribArray(VERTEX_ATTR_INDEX_COLOR);
