@@ -34,7 +34,7 @@ const TRIANGLE_MESH = new Float32Array([
      0.5, -0.5, 0.0,
      0.0,  0.0, 1.0, // blue
 ]);
-const TRIANGLE_INDICES = new Int16Array([0, 1, 2]);
+const TRIANGLE_INDICES = new Uint16Array([0, 1, 2]);
 const SIZE_OF_FLOAT = 4;
 const NUM_COMPONENTS_POSITION = 3;
 const NUM_COMPONENTS_COLOR = 3;
