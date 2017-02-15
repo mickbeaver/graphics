@@ -12,6 +12,7 @@ LINK.o      := $(LINK.cc)
 GLEW_O      := external/glew-2.0.0/src/glew.o
 EXECUTABLES := test/HelloWorld
 EXECUTABLES := $(EXECUTABLES) 008-using_glew/TestGlew
+EXECUTABLES := $(EXECUTABLES) 010-using_glm/TestGlm
 
 .PHONY: all clean
 
@@ -24,3 +25,5 @@ clean:
 test/HelloWorld: test/HelloWorld.o $(GLEW_O)
 
 008-using_glew/TestGlew: 008-using_glew/TestGlew.o $(GLEW_O)
+
+010-using_glm/TestGlm: 010-using_glm/TestGlm.o $(GLEW_O)
