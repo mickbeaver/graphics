@@ -10,9 +10,12 @@ CPPFLAGS    := -DGLEW_STATIC -Iexternal/glew-2.0.0/include -Iexternal/glm-0.9.8.
 LDLIBS      := -lopengl32 $(SDL2_LIBS)
 LINK.o      := $(LINK.cc)
 GLEW_O      := external/glew-2.0.0/src/glew.o
+
 EXECUTABLES := test/HelloWorld
 EXECUTABLES := $(EXECUTABLES) 008-using_glew/TestGlew
 EXECUTABLES := $(EXECUTABLES) 010-using_glm/TestGlm
+EXECUTABLES := $(EXECUTABLES) 013-determining_version/DetermineVersion
+EXECUTABLES := $(EXECUTABLES) 015-compiling_a_shader/CompilingAShader
 
 .PHONY: all clean
 
@@ -27,3 +30,8 @@ test/HelloWorld: test/HelloWorld.o $(GLEW_O)
 008-using_glew/TestGlew: 008-using_glew/TestGlew.o $(GLEW_O)
 
 010-using_glm/TestGlm: 010-using_glm/TestGlm.o $(GLEW_O)
+
+013-determining_version/DetermineVersion: 013-determining_version/DetermineVersion.o $(GLEW_O)
+
+015-compiling_a_shader/CompilingAShader: 015-compiling_a_shader/CompilingAShader.o 015-compiling_a_shader/FileUtil.o $(GLEW_O)
+
