@@ -8,14 +8,27 @@
 
 #define WINDOW_SIZE 640
 
+void printShaderInfoLog(GLuint shaderHandle) {
+    GLint logLength;
+    glGetShaderiv(shaderHandle, GL_INFO_LOG_LENGTH, &logLength);
+    if (logLength > 0) {
+        char* logBuffer = new char[logLength];
+        GLsizei bytesCopied;
+        glGetShaderInfoLog(shaderHandle, logLength, &bytesCopied, logBuffer);
+        (void)fprintf(stderr, "Shader info log:\n%s\n", logBuffer);
+        delete [] logBuffer;
+        exit(EXIT_FAILURE);
+    }
+}
+
 int
 main(int argc, char** argv) {
-    (void) argc;
-    (void) argv;
+    (void)argc;
+    (void)argv;
 
     int retval = SDL_Init(SDL_INIT_VIDEO);
     if (retval != 0) {
-        fprintf(stderr, "SDL_Init() failed: %s\n", SDL_GetError());
+        (void)fprintf(stderr, "SDL_Init() failed: %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
     }
     
@@ -33,25 +46,25 @@ main(int argc, char** argv) {
                                               WINDOW_SIZE,
                                               SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
     if (mainWindow == NULL) {
-        fprintf(stderr, "SDL_CreateWindow() failed: %s\n", SDL_GetError());
+        (void)fprintf(stderr, "SDL_CreateWindow() failed: %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
     }
 
     SDL_GLContext mainContext = SDL_GL_CreateContext(mainWindow);
     if (mainContext == NULL) {
-        fprintf(stderr, "SDL_GL_CreateContext() failed: %s\n", SDL_GetError());
+        (void)fprintf(stderr, "SDL_GL_CreateContext() failed: %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
     }
 
     GLenum err = glewInit();
     if (err != GLEW_OK) {
-        fprintf(stderr, "Error Initializing GLEW: %s\n", glewGetErrorString(err));
+        (void)fprintf(stderr, "Error Initializing GLEW: %s\n", glewGetErrorString(err));
         exit(EXIT_FAILURE);
     }
 
     GLuint vertShader = glCreateShader(GL_VERTEX_SHADER);
     if (vertShader == 0) {
-        fprintf(stderr, "Error creating vertex shader.\n");
+        (void)fprintf(stderr, "Error creating vertex shader.\n");
         exit(EXIT_FAILURE);
     }
     const GLchar* shaderCode = FileUtil::loadFileAsString("basic.vert");
@@ -62,18 +75,12 @@ main(int argc, char** argv) {
     GLint result;
     glGetShaderiv(vertShader, GL_COMPILE_STATUS, &result);
     if (result == GL_FALSE) {
-        fprintf(stderr, "Vertex shader compilation failed!\n");
-
-        GLint logLength;
-        glGetShaderiv(vertShader, GL_INFO_LOG_LENGTH, &logLength);
-        if (logLength > 0) {
-            char* logBuffer = new char[logLength];
-            GLsizei bytesCopied;
-            glGetShaderInfoLog(vertShader, logLength, &bytesCopied, logBuffer);
-            fprintf(stderr, "Shader info log:\n%s\n", logBuffer);
-            delete [] logBuffer;
-            exit(EXIT_FAILURE);
-        }
+        (void)fprintf(stderr, "Vertex shader compilation failed!\n");
+        printShaderInfoLog(vertShader);
+    } else {
+        (void)printf("Shader compiled successfully!\n");
+        // Print warnings, if available
+        printShaderInfoLog(vertShader);
     }
    
     SDL_GL_DeleteContext(mainContext);
