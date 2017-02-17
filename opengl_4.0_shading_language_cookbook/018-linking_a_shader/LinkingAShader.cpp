@@ -115,7 +115,7 @@ main(int argc, char** argv) {
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
     SDL_ClearError();
-    SDL_Window* mainWindow = SDL_CreateWindow("Compiling a Shader",
+    SDL_Window* mainWindow = SDL_CreateWindow("Linking a Shader",
                                               SDL_WINDOWPOS_CENTERED,
                                               SDL_WINDOWPOS_CENTERED,
                                               WINDOW_SIZE,
