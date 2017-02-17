@@ -44,7 +44,7 @@ main(int argc, char** argv) {
                                               SDL_WINDOWPOS_CENTERED,
                                               WINDOW_SIZE,
                                               WINDOW_SIZE,
-                                              SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+                                              SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
     if (mainWindow == NULL) {
         (void)fprintf(stderr, "SDL_CreateWindow() failed: %s\n", SDL_GetError());
         exit(EXIT_FAILURE);

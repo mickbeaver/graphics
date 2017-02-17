@@ -29,7 +29,7 @@ main(int argc, char** argv) {
                                               SDL_WINDOWPOS_CENTERED,
                                               WINDOW_SIZE,
                                               WINDOW_SIZE,
-                                              SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+                                              SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
     if (mainWindow == NULL) {
         std::cerr << "SDL_CreateWindow() failed: " << SDL_GetError() << std::endl;
         exit(EXIT_FAILURE);

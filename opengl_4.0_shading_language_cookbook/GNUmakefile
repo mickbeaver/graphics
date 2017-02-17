@@ -16,6 +16,7 @@ EXECUTABLES := $(EXECUTABLES) 008-using_glew/TestGlew
 EXECUTABLES := $(EXECUTABLES) 010-using_glm/TestGlm
 EXECUTABLES := $(EXECUTABLES) 013-determining_version/DetermineVersion
 EXECUTABLES := $(EXECUTABLES) 015-compiling_a_shader/CompilingAShader
+EXECUTABLES := $(EXECUTABLES) 018-linking_a_shader/LinkingAShader
 
 .PHONY: all clean
 
@@ -34,4 +35,6 @@ test/HelloWorld: test/HelloWorld.o $(GLEW_O)
 013-determining_version/DetermineVersion: 013-determining_version/DetermineVersion.o $(GLEW_O)
 
 015-compiling_a_shader/CompilingAShader: 015-compiling_a_shader/CompilingAShader.o 015-compiling_a_shader/FileUtil.o $(GLEW_O)
+
+018-linking_a_shader/LinkingAShader: 018-linking_a_shader/LinkingAShader.o 018-linking_a_shader/FileUtil.o $(GLEW_O)
 
