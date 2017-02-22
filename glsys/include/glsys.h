@@ -22,6 +22,7 @@ extern PFNGLBUFFERSUBDATAPROC            glBufferSubData;
 extern PFNGLCOMPILESHADERPROC            glCompileShader;
 extern PFNGLCREATEPROGRAMPROC            glCreateProgram;
 extern PFNGLCREATESHADERPROC             glCreateShader;
+extern PFNGLDELETEPROGRAMPROC            glDeleteProgram;
 extern PFNGLDELETESHADERPROC             glDeleteShader;
 extern PFNGLDETACHSHADERPROC             glDetachShader;
 extern PFNGLDISABLEVERTEXATTRIBARRAYPROC glDisableVertexAttribArray;
