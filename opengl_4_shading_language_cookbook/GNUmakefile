@@ -1,18 +1,15 @@
-#vpath %.c external/glew-2.0.0/src
-#vpath %.cpp test
-
 CC          := x86_64-w64-mingw32-clang
 CXX         := x86_64-w64-mingw32-clang++
 SDL2_CFLAGS := $(shell x86_64-w64-mingw32-pkg-config sdl2 --cflags)
 SDL2_LIBS   := $(shell x86_64-w64-mingw32-pkg-config sdl2 --libs)
 CXXFLAGS    := -g -O0 -std=c++11 -Wall -Werror $(SDL2_CFLAGS)
-CPPFLAGS    := -DGLEW_STATIC -Iexternal/glew-2.0.0/include -Iexternal/glm-0.9.8.4
+CPPFLAGS    := -Iglsys/include -Iexternal/glm-0.9.8.4
+GLSYS_O     := glsys/src/glsys.o
 LDLIBS      := -lopengl32 $(SDL2_LIBS)
 LINK.o      := $(LINK.cc)
-GLEW_O      := external/glew-2.0.0/src/glew.o
 
 EXECUTABLES := test/HelloWorld
-EXECUTABLES := $(EXECUTABLES) 008-using_glew/TestGlew
+EXECUTABLES := $(EXECUTABLES) 010-using_function_loader/TestFunctionLoader
 EXECUTABLES := $(EXECUTABLES) 010-using_glm/TestGlm
 EXECUTABLES := $(EXECUTABLES) 013-determining_version/DetermineVersion
 EXECUTABLES := $(EXECUTABLES) 015-compiling_a_shader/CompilingAShader
@@ -28,18 +25,18 @@ clean:
 	find . -name "*.o" -type f -delete
 	rm -f $(EXECUTABLES)
 
-test/HelloWorld: test/HelloWorld.o $(GLEW_O)
+test/HelloWorld: test/HelloWorld.o $(GLSYS_O)
 
-008-using_glew/TestGlew: 008-using_glew/TestGlew.o $(GLEW_O)
+010-using_function_loader/TestFunctionLoader: 010-using_function_loader/TestFunctionLoader.o $(GLSYS_O)
 
-010-using_glm/TestGlm: 010-using_glm/TestGlm.o $(GLEW_O)
+010-using_glm/TestGlm: 010-using_glm/TestGlm.o $(GLSYS_O)
 
-013-determining_version/DetermineVersion: 013-determining_version/DetermineVersion.o $(GLEW_O)
+013-determining_version/DetermineVersion: 013-determining_version/DetermineVersion.o $(GLSYS_O)
 
-015-compiling_a_shader/CompilingAShader: 015-compiling_a_shader/CompilingAShader.o 015-compiling_a_shader/FileUtil.o $(GLEW_O)
+015-compiling_a_shader/CompilingAShader: 015-compiling_a_shader/CompilingAShader.o 015-compiling_a_shader/FileUtil.o $(GLSYS_O)
 
-018-linking_a_shader/LinkingAShader: 018-linking_a_shader/LinkingAShader.o 018-linking_a_shader/FileUtil.o $(GLEW_O)
+018-linking_a_shader/LinkingAShader: 018-linking_a_shader/LinkingAShader.o 018-linking_a_shader/FileUtil.o $(GLSYS_O)
 
-022-sending_data/SendingData: 022-sending_data/SendingData.o 022-sending_data/FileUtil.o $(GLEW_O)
+022-sending_data/SendingData: 022-sending_data/SendingData.o 022-sending_data/FileUtil.o $(GLSYS_O)
 
-029-active_attributes/ListActiveAttributes: 029-active_attributes/ListActiveAttributes.o 029-active_attributes/FileUtil.o $(GLEW_O)
+029-active_attributes/ListActiveAttributes: 029-active_attributes/ListActiveAttributes.o 029-active_attributes/FileUtil.o $(GLSYS_O)

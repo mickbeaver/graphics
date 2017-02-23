@@ -1,8 +1,8 @@
 #include <cstdlib>
 #include <iostream>
 
-#include <GL/glew.h>
 #include <SDL2/SDL.h>
+#include "glsys.h"
 
 #define WINDOW_SIZE 640
 
@@ -41,11 +41,11 @@ main(int argc, char** argv) {
         exit(EXIT_FAILURE);
     }
 
-    GLenum err = glewInit();
-    if (err == GLEW_OK) {
-        std::cout << "glewInit() was successful!\n";
+    retval = glsysLoadFunctions((glsysFunctionLoader)SDL_GL_GetProcAddress);
+    if (retval == 0) {
+        std::cout << "glsysLoadFunctions() was successful!\n";
     } else {
-        std::cerr << "Error Initializing GLEW: " << glewGetErrorString(err) << std::endl;
+        std::cerr << "Error Initializing GL functions" << std::endl;
         exit(EXIT_FAILURE);
     }
     
