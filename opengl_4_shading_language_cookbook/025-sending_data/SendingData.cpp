@@ -9,6 +9,7 @@
 
 #define WINDOW_SIZE 640
 #define ARRAY_COUNT(array) (sizeof(array) / sizeof(array[0]))
+#define DSA_ENABLED 1
 
 struct ShaderProgramSource {
     GLenum shaderType;
@@ -179,6 +180,13 @@ void Simulation::initializeBuffers()
     GLuint& positionBufferHandle = m_vboHandles[0];
     GLuint& colorBufferHandle = m_vboHandles[1];
 
+#if DSA_ENABLED
+    // Position buffer
+    glNamedBufferData(positionBufferHandle, sizeof(positionData), positionData, GL_STATIC_DRAW);
+
+    // Color buffer
+    glNamedBufferData(colorBufferHandle, sizeof(colorData), colorData, GL_STATIC_DRAW);
+#else
     // Position buffer
     glBindBuffer(GL_ARRAY_BUFFER, positionBufferHandle);
     glBufferData(GL_ARRAY_BUFFER, sizeof(positionData), positionData, GL_STATIC_DRAW);
@@ -186,9 +194,22 @@ void Simulation::initializeBuffers()
     // Color buffer
     glBindBuffer(GL_ARRAY_BUFFER, colorBufferHandle);
     glBufferData(GL_ARRAY_BUFFER, sizeof(colorData), colorData, GL_STATIC_DRAW);
+#endif
 
     // Vertex array object
     glGenVertexArrays(1, &m_vaoHandle);
+
+#if DSA_ENABLED
+    glEnableVertexArrayAttrib(m_vaoHandle, 0);
+    glBindVertexBuffer(m_vaoHandle, 0, positionBufferHandle, 0, 0);
+    glVertexArrayAttribFormat(m_vaoHandle, 0, 3, GL_FLOAT, GL_FALSE, 0);
+    glVertexArrayAttribBinding(m_vaoHandle, 0 /*attribindex*/, 0 /*bindingindex*/);
+
+    glEnableVertexArrayAttrib(m_vaoHandle, 1);
+    glBindVertexBuffer(m_vaoHandle, 1, colorBufferHandle, 0, 0);
+    glVertexArrayAttribFormat(m_vaoHandle, 1, 3, GL_FLOAT, GL_FALSE, 0);
+    glVertexArrayAttribBinding(m_vaoHandle, 1 /*attribindex*/, 1 /*bindingindex*/);
+#else
     glBindVertexArray(m_vaoHandle);
 
     glEnableVertexAttribArray(0);
@@ -202,6 +223,7 @@ void Simulation::initializeBuffers()
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+#endif
 }
 
 Simulation::Simulation(SDL_Window* window)
