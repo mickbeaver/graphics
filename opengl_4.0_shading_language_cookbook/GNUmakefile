@@ -5,7 +5,7 @@ CC          := x86_64-w64-mingw32-clang
 CXX         := x86_64-w64-mingw32-clang++
 SDL2_CFLAGS := $(shell x86_64-w64-mingw32-pkg-config sdl2 --cflags)
 SDL2_LIBS   := $(shell x86_64-w64-mingw32-pkg-config sdl2 --libs)
-CXXFLAGS    := -g -O0 -std=c++11 -Wall $(SDL2_CFLAGS)
+CXXFLAGS    := -g -O0 -std=c++11 -Wall -Werror $(SDL2_CFLAGS)
 CPPFLAGS    := -DGLEW_STATIC -Iexternal/glew-2.0.0/include -Iexternal/glm-0.9.8.4
 LDLIBS      := -lopengl32 $(SDL2_LIBS)
 LINK.o      := $(LINK.cc)
@@ -18,6 +18,7 @@ EXECUTABLES := $(EXECUTABLES) 013-determining_version/DetermineVersion
 EXECUTABLES := $(EXECUTABLES) 015-compiling_a_shader/CompilingAShader
 EXECUTABLES := $(EXECUTABLES) 018-linking_a_shader/LinkingAShader
 EXECUTABLES := $(EXECUTABLES) 022-sending_data/SendingData
+EXECUTABLES := $(EXECUTABLES) 029-active_attributes/ListActiveAttributes
 
 .PHONY: all clean
 
@@ -39,5 +40,6 @@ test/HelloWorld: test/HelloWorld.o $(GLEW_O)
 
 018-linking_a_shader/LinkingAShader: 018-linking_a_shader/LinkingAShader.o 018-linking_a_shader/FileUtil.o $(GLEW_O)
 
-#022-sending_data/SendingData : 022-sending_data/SendingData.o 022-sending_data/FileUtil.o 022-sending_data/glsys.o
-022-sending_data/SendingData : 022-sending_data/SendingData.o 022-sending_data/FileUtil.o $(GLEW_O)
+022-sending_data/SendingData: 022-sending_data/SendingData.o 022-sending_data/FileUtil.o $(GLEW_O)
+
+029-active_attributes/ListActiveAttributes: 029-active_attributes/ListActiveAttributes.o 029-active_attributes/FileUtil.o $(GLEW_O)
