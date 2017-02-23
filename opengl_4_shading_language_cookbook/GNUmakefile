@@ -11,7 +11,7 @@ LINK.o      := $(LINK.cc)
 EXECUTABLES := test/HelloWorld
 EXECUTABLES := $(EXECUTABLES) 010-using_function_loader/TestFunctionLoader
 EXECUTABLES := $(EXECUTABLES) 013-using_glm/TestGlm
-EXECUTABLES := $(EXECUTABLES) 013-determining_version/DetermineVersion
+EXECUTABLES := $(EXECUTABLES) 015-determining_version/DetermineVersion
 EXECUTABLES := $(EXECUTABLES) 015-compiling_a_shader/CompilingAShader
 EXECUTABLES := $(EXECUTABLES) 018-linking_a_shader/LinkingAShader
 EXECUTABLES := $(EXECUTABLES) 022-sending_data/SendingData
@@ -31,7 +31,7 @@ test/HelloWorld: test/HelloWorld.o $(GLSYS_O)
 
 013-using_glm/TestGlm: 013-using_glm/TestGlm.o $(GLSYS_O)
 
-013-determining_version/DetermineVersion: 013-determining_version/DetermineVersion.o $(GLSYS_O)
+015-determining_version/DetermineVersion: 015-determining_version/DetermineVersion.o $(GLSYS_O)
 
 015-compiling_a_shader/CompilingAShader: 015-compiling_a_shader/CompilingAShader.o 015-compiling_a_shader/FileUtil.o $(GLSYS_O)
 
