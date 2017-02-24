@@ -186,15 +186,10 @@ void Simulation::initializeBuffers()
     const GLuint colorAttribIndex = 1;
 
 #if DSA_ENABLED
-    //glCreateBuffers(ARRAY_COUNT(m_vboHandles), m_vboHandles);
-    //GLuint& positionBufferHandle = m_vboHandles[0];
-    //GLuint& colorBufferHandle = m_vboHandles[1];
-    //glCreateVertexArrays(1, &m_vaoHandle);
-
-    glGenBuffers(ARRAY_COUNT(m_vboHandles), m_vboHandles);
+    glCreateBuffers(ARRAY_COUNT(m_vboHandles), m_vboHandles);
     GLuint& positionBufferHandle = m_vboHandles[0];
     GLuint& colorBufferHandle = m_vboHandles[1];
-    glGenVertexArrays(1, &m_vaoHandle);
+    glCreateVertexArrays(1, &m_vaoHandle);
 
     GLuint bindingIndex = 0;
     glNamedBufferData(positionBufferHandle, sizeof(positionData), positionData, GL_STATIC_DRAW);

@@ -73,7 +73,7 @@ GLuint linkShaderProgram(const ShaderProgramSource* sources, size_t numSources)
     assert(numSources != 0);
     GLuint programHandle = glCreateProgram();
     if (programHandle != 0) {
-        for (int i = 0; i < numSources; ++i) {
+        for (size_t i = 0; i < numSources; ++i) {
             GLuint shaderHandle = compileShader(sources[i].shaderType, sources[i].sourceFilename);
             if (shaderHandle != 0) {
                 glAttachShader(programHandle, shaderHandle);

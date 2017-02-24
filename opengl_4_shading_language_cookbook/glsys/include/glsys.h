@@ -7,6 +7,13 @@ extern "C" {
 #include <GL/gl.h>
 #include "glext.h"
 
+/*[[[cog
+import cog
+functions = sorted([x.strip() for x in open(input_filename).readlines() if x.strip()])
+width = len('PFN' + max(functions, key=len) + 'PROC')
+for function in functions:
+    cog.outl('extern {0:<{width}} {1};'.format('PFN' + function.upper() + 'PROC', function, width=width))
+]]]*/
 extern PFNGLATTACHSHADERPROC             glAttachShader;
 extern PFNGLBINDATTRIBLOCATIONPROC       glBindAttribLocation;
 extern PFNGLBINDBUFFERPROC               glBindBuffer;
@@ -50,6 +57,7 @@ extern PFNGLVERTEXARRAYATTRIBBINDINGPROC glVertexArrayAttribBinding;
 extern PFNGLVERTEXARRAYATTRIBFORMATPROC  glVertexArrayAttribFormat;
 extern PFNGLVERTEXARRAYVERTEXBUFFERPROC  glVertexArrayVertexBuffer;
 extern PFNGLVERTEXATTRIBPOINTERPROC      glVertexAttribPointer;
+//[[[end]]] (checksum: 8a28fb371dba599ccb63c9921afa5c40)
 
 typedef void (*glsysFuncPtr)();
 typedef glsysFuncPtr (*glsysFunctionLoader)(const char*);

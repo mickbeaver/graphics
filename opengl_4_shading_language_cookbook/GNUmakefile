@@ -1,5 +1,5 @@
-CC           := x86_64-w64-mingw32-clang
-CXX          := x86_64-w64-mingw32-clang++
+CC           := x86_64-w64-mingw32-gcc
+CXX          := x86_64-w64-mingw32-g++
 SDL2_CFLAGS  := $(shell x86_64-w64-mingw32-pkg-config sdl2 --cflags)
 SDL2_LIBS    := $(shell x86_64-w64-mingw32-pkg-config sdl2 --libs)
 SHARED_FLAGS := -g -O0 -Wall -Werror -pedantic-errors $(SDL2_CFLAGS)
