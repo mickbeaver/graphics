@@ -4,7 +4,8 @@
 extern "C" {
 #endif
 
-#include "glcorearb.h"
+#include <GL/gl.h>
+#include "glext.h"
 
 extern PFNGLATTACHSHADERPROC             glAttachShader;
 extern PFNGLBINDATTRIBLOCATIONPROC       glBindAttribLocation;
@@ -13,30 +14,29 @@ extern PFNGLBINDVERTEXARRAYPROC          glBindVertexArray;
 extern PFNGLBUFFERDATAPROC               glBufferData;
 extern PFNGLBUFFERSUBDATAPROC            glBufferSubData;
 extern PFNGLCOMPILESHADERPROC            glCompileShader;
+extern PFNGLCREATEBUFFERSPROC            glCreateBuffers;
 extern PFNGLCREATEPROGRAMPROC            glCreateProgram;
 extern PFNGLCREATESHADERPROC             glCreateShader;
+extern PFNGLCREATEVERTEXARRAYSPROC       glCreateVertexArrays;
+extern PFNGLDEBUGMESSAGECALLBACKPROC     glDebugMessageCallback;
+extern PFNGLDEBUGMESSAGECONTROLPROC      glDebugMessageControl;
 extern PFNGLDELETEBUFFERSPROC            glDeleteBuffers;
 extern PFNGLDELETEPROGRAMPROC            glDeleteProgram;
 extern PFNGLDELETESHADERPROC             glDeleteShader;
 extern PFNGLDELETEVERTEXARRAYSPROC       glDeleteVertexArrays;
 extern PFNGLDETACHSHADERPROC             glDetachShader;
 extern PFNGLDISABLEVERTEXATTRIBARRAYPROC glDisableVertexAttribArray;
-extern PFNGLDRAWARRAYSPROC               glDrawArrays;
 extern PFNGLENABLEVERTEXARRAYATTRIBPROC  glEnableVertexArrayAttrib;
 extern PFNGLENABLEVERTEXATTRIBARRAYPROC  glEnableVertexAttribArray;
 extern PFNGLGENBUFFERSPROC               glGenBuffers;
-extern PFNGLGENBUFFERSPROC               glGenBuffers;
-extern PFNGLGENVERTEXARRAYSPROC          glGenVertexArrays;
 extern PFNGLGENVERTEXARRAYSPROC          glGenVertexArrays;
 extern PFNGLGETACTIVEATTRIBPROC          glGetActiveAttrib;
 extern PFNGLGETATTRIBLOCATIONPROC        glGetAttribLocation;
-extern PFNGLGETINTEGERVPROC              glGetIntegerv;
 extern PFNGLGETPROGRAMINFOLOGPROC        glGetProgramInfoLog;
 extern PFNGLGETPROGRAMIVPROC             glGetProgramiv;
 extern PFNGLGETSHADERINFOLOGPROC         glGetShaderInfoLog;
 extern PFNGLGETSHADERIVPROC              glGetShaderiv;
 extern PFNGLGETSTRINGIPROC               glGetStringi;
-extern PFNGLGETSTRINGPROC                glGetString;
 extern PFNGLGETUNIFORMLOCATIONPROC       glGetUniformLocation;
 extern PFNGLLINKPROGRAMPROC              glLinkProgram;
 extern PFNGLNAMEDBUFFERDATAPROC          glNamedBufferData;
@@ -54,7 +54,23 @@ extern PFNGLVERTEXATTRIBPOINTERPROC      glVertexAttribPointer;
 typedef void (*glsysFuncPtr)();
 typedef glsysFuncPtr (*glsysFunctionLoader)(const char*);
 
+// load GL function pionters (single context only!)
 int glsysLoadFunctions(glsysFunctionLoader functionLoader);
+
+// enum-to-string helper functions
+const char* glsysGetDebugSeverityString(GLenum severity);
+const char* glsysGetDebugSourceString(GLenum source);
+const char* glsysGetDebugTypeString(GLenum type);
+const char* glsysGetErrorString(GLenum error);
+
+// a default callback that will just print a message
+void glsysDebugCallback(GLenum source,
+                        GLenum type,
+                        GLuint id,
+                        GLenum severity,
+                        GLsizei length,
+                        const GLchar* message,
+                        const void* param);
 
 #ifdef __cplusplus
 }

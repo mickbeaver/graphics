@@ -1,12 +1,14 @@
-CC          := x86_64-w64-mingw32-clang
-CXX         := x86_64-w64-mingw32-clang++
-SDL2_CFLAGS := $(shell x86_64-w64-mingw32-pkg-config sdl2 --cflags)
-SDL2_LIBS   := $(shell x86_64-w64-mingw32-pkg-config sdl2 --libs)
-CXXFLAGS    := -g -O0 -std=c++11 -Wall -Werror $(SDL2_CFLAGS)
-CPPFLAGS    := -DDEBUG -Iglsys/include -Iexternal/glm-0.9.8.4
-GLSYS_O     := glsys/src/glsys.o
-LDLIBS      := -lopengl32 $(SDL2_LIBS)
-LINK.o      := $(LINK.cc)
+CC           := x86_64-w64-mingw32-clang
+CXX          := x86_64-w64-mingw32-clang++
+SDL2_CFLAGS  := $(shell x86_64-w64-mingw32-pkg-config sdl2 --cflags)
+SDL2_LIBS    := $(shell x86_64-w64-mingw32-pkg-config sdl2 --libs)
+SHARED_FLAGS := -g -O0 -Wall -Werror -pedantic-errors $(SDL2_CFLAGS)
+CFLAGS       := $(SHARED_FLAGS) -std=c11
+CXXFLAGS     := $(SHARED_FLAGS) -std=c++11
+CPPFLAGS     := -DDEBUG -Iglsys/include -Iexternal/glm-0.9.8.4
+GLSYS_O      := glsys/src/glsys.o
+LDLIBS       := -lopengl32 $(SDL2_LIBS)
+LINK.o       := $(LINK.cc)
 
 EXECUTABLES := test/HelloWorld
 EXECUTABLES := $(EXECUTABLES) 010-using_function_loader/TestFunctionLoader

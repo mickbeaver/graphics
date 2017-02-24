@@ -140,14 +140,19 @@ bool Simulation::handleEvent(SDL_Event *event)
 
     return isDone;
 }
+
 void Simulation::render()
 {
+    glClear(GL_COLOR_BUFFER_BIT);
+
     glUseProgram(m_programHandle);
     glBindVertexArray(m_vaoHandle);
     glDrawArrays(GL_TRIANGLES, 0, 3);
     glBindVertexArray(0);
     glUseProgram(0);
-}
+
+    SDL_GL_SwapWindow(m_window);
+}   
 
 void Simulation::runLoop()
 {
@@ -159,7 +164,6 @@ void Simulation::runLoop()
             isDone = handleEvent(&event);
         }
         render();
-        SDL_GL_SwapWindow(m_window);
     }
 }
 
@@ -170,56 +174,58 @@ void Simulation::initializeBuffers()
         0.8f, -0.8f,  0.0f,
         0.0f, 0.8f, 0.0f
     };
+    const size_t positionStride = 3 * sizeof(GLfloat);
+    const GLuint positionAttribIndex = 0;
+
     const float colorData[] = {
         1.0f, 0.0f, 0.0f,
         0.0f, 1.0f, 0.0f,
         0.0f, 0.0f, 1.0f
     };
+    const size_t colorStride = 3 * sizeof(GLfloat);
+    const GLuint colorAttribIndex = 1;
+
+#if DSA_ENABLED
+    //glCreateBuffers(ARRAY_COUNT(m_vboHandles), m_vboHandles);
+    //GLuint& positionBufferHandle = m_vboHandles[0];
+    //GLuint& colorBufferHandle = m_vboHandles[1];
+    //glCreateVertexArrays(1, &m_vaoHandle);
 
     glGenBuffers(ARRAY_COUNT(m_vboHandles), m_vboHandles);
     GLuint& positionBufferHandle = m_vboHandles[0];
     GLuint& colorBufferHandle = m_vboHandles[1];
-
-#if DSA_ENABLED
-    // Position buffer
-    glNamedBufferData(positionBufferHandle, sizeof(positionData), positionData, GL_STATIC_DRAW);
-
-    // Color buffer
-    glNamedBufferData(colorBufferHandle, sizeof(colorData), colorData, GL_STATIC_DRAW);
-#else
-    // Position buffer
-    glBindBuffer(GL_ARRAY_BUFFER, positionBufferHandle);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(positionData), positionData, GL_STATIC_DRAW);
-
-    // Color buffer
-    glBindBuffer(GL_ARRAY_BUFFER, colorBufferHandle);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(colorData), colorData, GL_STATIC_DRAW);
-#endif
-
-    // Vertex array object
     glGenVertexArrays(1, &m_vaoHandle);
 
-#if DSA_ENABLED
-    glEnableVertexArrayAttrib(m_vaoHandle, 0);
-    glVertexArrayVertexBuffer(m_vaoHandle, 0, positionBufferHandle, 0, 3 * sizeof(GLfloat));
-    glVertexArrayAttribFormat(m_vaoHandle, 0, 3, GL_FLOAT, GL_FALSE, 0);
-    glVertexArrayAttribBinding(m_vaoHandle, 0 /*attribindex*/, 0 /*bindingindex*/);
-
-    glEnableVertexArrayAttrib(m_vaoHandle, 1);
-    glVertexArrayVertexBuffer(m_vaoHandle, 1, colorBufferHandle, 0, 3 * sizeof(GLfloat));
-    glVertexArrayAttribFormat(m_vaoHandle, 1, 3, GL_FLOAT, GL_FALSE, 0);
-    glVertexArrayAttribBinding(m_vaoHandle, 1 /*attribindex*/, 1 /*bindingindex*/);
+    GLuint bindingIndex = 0;
+    glNamedBufferData(positionBufferHandle, sizeof(positionData), positionData, GL_STATIC_DRAW);
+    glEnableVertexArrayAttrib(m_vaoHandle, positionAttribIndex);
+    glVertexArrayVertexBuffer(m_vaoHandle, bindingIndex, positionBufferHandle, 0, positionStride);
+    glVertexArrayAttribBinding(m_vaoHandle, positionAttribIndex, bindingIndex);
+    glVertexArrayAttribFormat(m_vaoHandle, positionAttribIndex, 3, GL_FLOAT, GL_FALSE, 0);
+   
+    bindingIndex++;
+    glNamedBufferData(colorBufferHandle, sizeof(colorData), colorData, GL_STATIC_DRAW);
+    glEnableVertexArrayAttrib(m_vaoHandle, colorAttribIndex);
+    glVertexArrayVertexBuffer(m_vaoHandle, bindingIndex, colorBufferHandle, 0, colorStride);
+    glVertexArrayAttribBinding(m_vaoHandle, colorAttribIndex, bindingIndex);
+    glVertexArrayAttribFormat(m_vaoHandle, colorAttribIndex, 3, GL_FLOAT, GL_FALSE, 0);
 #else
+    glGenBuffers(ARRAY_COUNT(m_vboHandles), m_vboHandles);
+    GLuint& positionBufferHandle = m_vboHandles[0];
+    GLuint& colorBufferHandle = m_vboHandles[1];
+    glGenVertexArrays(1, &m_vaoHandle);
+
     glBindVertexArray(m_vaoHandle);
 
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-
     glBindBuffer(GL_ARRAY_BUFFER, positionBufferHandle);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(positionData), positionData, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(positionAttribIndex);
+    glVertexAttribPointer(positionAttribIndex, 3, GL_FLOAT, GL_FALSE, positionStride, (void *)0);
 
     glBindBuffer(GL_ARRAY_BUFFER, colorBufferHandle);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(colorData), colorData, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(colorAttribIndex);
+    glVertexAttribPointer(colorAttribIndex, 3, GL_FLOAT, GL_FALSE, colorStride, (void *)0);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
@@ -230,6 +236,7 @@ Simulation::Simulation(SDL_Window* window)
   : m_window(window)
   , m_programHandle(0)
 {
+
     ShaderProgramSource programSources[] = {{GL_VERTEX_SHADER, "basic.vert"},
                                             {GL_FRAGMENT_SHADER, "basic.frag"}};
     m_programHandle = linkShaderProgram(programSources, ARRAY_COUNT(programSources));
@@ -259,7 +266,7 @@ int main(int argc, char** argv)
     
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     Uint32 glContextFlags = SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG;
-#ifdef DEBUG
+#if DEBUG
     glContextFlags |= SDL_GL_CONTEXT_DEBUG_FLAG;
 #endif
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, glContextFlags);
@@ -292,6 +299,12 @@ int main(int argc, char** argv)
         exit(EXIT_FAILURE);
     }
 
+#if DEBUG
+    glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+    glDebugMessageCallback(glsysDebugCallback, NULL);
+    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, NULL, GL_TRUE);
+#endif
+    
     printf("Starting simulation\n");
     Simulation* simulation = new Simulation(mainWindow);
     simulation->runLoop();
