@@ -16,6 +16,7 @@ PFNGLDELETEVERTEXARRAYSPROC       glDeleteVertexArrays;
 PFNGLDETACHSHADERPROC             glDetachShader;
 PFNGLDISABLEVERTEXATTRIBARRAYPROC glDisableVertexAttribArray;
 PFNGLDRAWARRAYSPROC               glDrawArrays;
+PFNGLENABLEVERTEXARRAYATTRIBPROC  glEnableVertexArrayAttrib;
 PFNGLENABLEVERTEXATTRIBARRAYPROC  glEnableVertexAttribArray;
 PFNGLGENBUFFERSPROC               glGenBuffers;
 PFNGLGENBUFFERSPROC               glGenBuffers;
@@ -32,16 +33,21 @@ PFNGLGETSTRINGIPROC               glGetStringi;
 PFNGLGETSTRINGPROC                glGetString;
 PFNGLGETUNIFORMLOCATIONPROC       glGetUniformLocation;
 PFNGLLINKPROGRAMPROC              glLinkProgram;
+PFNGLNAMEDBUFFERDATAPROC          glNamedBufferData;
 PFNGLSHADERSOURCEPROC             glShaderSource;
 PFNGLUNIFORM1FPROC                glUniform1f;
 PFNGLUNIFORM2FPROC                glUniform2f;
 PFNGLUNIFORM3FPROC                glUniform3f;
 PFNGLUNIFORMMATRIX4FVPROC         glUniformMatrix4fv;
 PFNGLUSEPROGRAMPROC               glUseProgram;
+PFNGLVERTEXARRAYATTRIBBINDINGPROC glVertexArrayAttribBinding;
+PFNGLVERTEXARRAYATTRIBFORMATPROC  glVertexArrayAttribFormat;
+PFNGLVERTEXARRAYVERTEXBUFFERPROC  glVertexArrayVertexBuffer;
 PFNGLVERTEXATTRIBPOINTERPROC      glVertexAttribPointer;
 
 int glsysLoadFunctions(glsysFunctionLoader functionLoader)
 {
+    glAttachShader             = (PFNGLATTACHSHADERPROC)functionLoader("glAttachShader");
     glAttachShader             = (PFNGLATTACHSHADERPROC)functionLoader("glAttachShader");
     glBindAttribLocation       = (PFNGLBINDATTRIBLOCATIONPROC)functionLoader("glBindAttribLocation");
     glBindBuffer               = (PFNGLBINDBUFFERPROC)functionLoader("glBindBuffer");
@@ -58,6 +64,7 @@ int glsysLoadFunctions(glsysFunctionLoader functionLoader)
     glDetachShader             = (PFNGLDETACHSHADERPROC)functionLoader("glDetachShader");
     glDisableVertexAttribArray = (PFNGLDISABLEVERTEXATTRIBARRAYPROC)functionLoader("glEnableVertexAttribArray");
     glDrawArrays               = (PFNGLDRAWARRAYSPROC)functionLoader("glDrawArrays");
+    glEnableVertexArrayAttrib  = (PFNGLENABLEVERTEXARRAYATTRIBPROC)functionLoader("glEnableVertexArrayAttrib");
     glEnableVertexAttribArray  = (PFNGLENABLEVERTEXATTRIBARRAYPROC)functionLoader("glEnableVertexAttribArray");
     glGenBuffers               = (PFNGLGENBUFFERSPROC)functionLoader("glGenBuffers");
     glGenBuffers               = (PFNGLGENBUFFERSPROC)functionLoader("glGenBuffers");
@@ -74,12 +81,16 @@ int glsysLoadFunctions(glsysFunctionLoader functionLoader)
     glGetStringi               = (PFNGLGETSTRINGIPROC)functionLoader("glGetStringi");
     glGetUniformLocation       = (PFNGLGETUNIFORMLOCATIONPROC)functionLoader("glGetUniformLocation");
     glLinkProgram              = (PFNGLLINKPROGRAMPROC)functionLoader("glLinkProgram");
+    glNamedBufferData          = (PFNGLNAMEDBUFFERDATAPROC)functionLoader("glNamedBufferData");
     glShaderSource             = (PFNGLSHADERSOURCEPROC)functionLoader("glShaderSource");
     glUniform1f                = (PFNGLUNIFORM1FPROC)functionLoader("glUniform1f");
     glUniform2f                = (PFNGLUNIFORM2FPROC)functionLoader("glUniform2f");
     glUniform3f                = (PFNGLUNIFORM3FPROC)functionLoader("glUniform3f");
     glUniformMatrix4fv         = (PFNGLUNIFORMMATRIX4FVPROC)functionLoader("glUniformMatrix4fv");
     glUseProgram               = (PFNGLUSEPROGRAMPROC)functionLoader("glUseProgram");
+    glVertexArrayAttribBinding = (PFNGLVERTEXARRAYATTRIBBINDINGPROC)functionLoader("glVertexArrayAttribBinding");
+    glVertexArrayAttribFormat  = (PFNGLVERTEXARRAYATTRIBFORMATPROC)functionLoader("glVertexArrayAttribFormat");
+    glVertexArrayVertexBuffer  = (PFNGLVERTEXARRAYVERTEXBUFFERPROC)functionLoader("glVertexArrayVertexBuffer");
     glVertexAttribPointer      = (PFNGLVERTEXATTRIBPOINTERPROC)functionLoader("glVertexAttribPointer");
 
     return 0;

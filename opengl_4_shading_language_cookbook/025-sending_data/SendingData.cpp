@@ -201,12 +201,12 @@ void Simulation::initializeBuffers()
 
 #if DSA_ENABLED
     glEnableVertexArrayAttrib(m_vaoHandle, 0);
-    glBindVertexArrayVertexBuffer(m_vaoHandle, 0, positionBufferHandle, 0, 3 * sizeof(GLfloat));
+    glVertexArrayVertexBuffer(m_vaoHandle, 0, positionBufferHandle, 0, 3 * sizeof(GLfloat));
     glVertexArrayAttribFormat(m_vaoHandle, 0, 3, GL_FLOAT, GL_FALSE, 0);
     glVertexArrayAttribBinding(m_vaoHandle, 0 /*attribindex*/, 0 /*bindingindex*/);
 
     glEnableVertexArrayAttrib(m_vaoHandle, 1);
-    glBindVertexArrayVertexBuffer(m_vaoHandle, 1, colorBufferHandle, 0, 3 * sizeof(GLfloat));
+    glVertexArrayVertexBuffer(m_vaoHandle, 1, colorBufferHandle, 0, 3 * sizeof(GLfloat));
     glVertexArrayAttribFormat(m_vaoHandle, 1, 3, GL_FLOAT, GL_FALSE, 0);
     glVertexArrayAttribBinding(m_vaoHandle, 1 /*attribindex*/, 1 /*bindingindex*/);
 #else
