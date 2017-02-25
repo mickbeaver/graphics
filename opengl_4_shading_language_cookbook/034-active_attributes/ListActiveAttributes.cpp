@@ -103,6 +103,7 @@ GLuint linkShaderProgram(const ShaderProgramSource* sources, size_t numSources)
 
 void printActiveAttributes(GLuint programHandle)
 {
+#if 0
     GLint maxLength;
     GLint numAttribs;
 
@@ -123,6 +124,31 @@ void printActiveAttributes(GLuint programHandle)
     }
     
     delete [] nameBuffer;
+#else
+    GLint numAttribs;
+    glGetProgramInterfaceiv(programHandle, GL_PROGRAM_INPUT, GL_ACTIVE_RESOURCES, &numAttribs);
+
+    //GLint maxLength;
+    //glGetProgramInterfaceiv(programHandle, GL_PROGRAM_INPUT, GL_MAX_NAME_LENGTH, &maxLength);
+
+    GLenum properties[] = {GL_NAME_LENGTH, GL_TYPE, GL_LOCATION};
+    (void)printf("Active input resources:\n");
+    for (int i = 0; i < numAttribs; i++) {
+        GLint propertyValues[ARRAY_COUNT(properties)];
+        glGetProgramResourceiv(programHandle,
+                               GL_PROGRAM_INPUT,
+                               i,
+                               ARRAY_COUNT(properties),
+                               properties,
+                               ARRAY_COUNT(propertyValues),
+                               NULL,
+                               propertyValues);
+        char* nameBuffer = new char[propertyValues[0]];
+        glGetProgramResourceName(programHandle, GL_PROGRAM_INPUT, i, propertyValues[0], NULL, nameBuffer);
+        (void)printf("%-5d %s (%s)\n", propertyValues[2], nameBuffer, glsysGetTypeString(propertyValues[1]));
+        delete [] nameBuffer;
+    }
+#endif
 }
 
 int

@@ -40,6 +40,9 @@ extern PFNGLGENVERTEXARRAYSPROC          glGenVertexArrays;
 extern PFNGLGETACTIVEATTRIBPROC          glGetActiveAttrib;
 extern PFNGLGETATTRIBLOCATIONPROC        glGetAttribLocation;
 extern PFNGLGETPROGRAMINFOLOGPROC        glGetProgramInfoLog;
+extern PFNGLGETPROGRAMINTERFACEIVPROC    glGetProgramInterfaceiv;
+extern PFNGLGETPROGRAMRESOURCENAMEPROC   glGetProgramResourceName;
+extern PFNGLGETPROGRAMRESOURCEIVPROC     glGetProgramResourceiv;
 extern PFNGLGETPROGRAMIVPROC             glGetProgramiv;
 extern PFNGLGETSHADERINFOLOGPROC         glGetShaderInfoLog;
 extern PFNGLGETSHADERIVPROC              glGetShaderiv;
@@ -57,7 +60,7 @@ extern PFNGLVERTEXARRAYATTRIBBINDINGPROC glVertexArrayAttribBinding;
 extern PFNGLVERTEXARRAYATTRIBFORMATPROC  glVertexArrayAttribFormat;
 extern PFNGLVERTEXARRAYVERTEXBUFFERPROC  glVertexArrayVertexBuffer;
 extern PFNGLVERTEXATTRIBPOINTERPROC      glVertexAttribPointer;
-//[[[end]]] (checksum: 8a28fb371dba599ccb63c9921afa5c40)
+//[[[end]]] (checksum: c9d5be75062171c33d5143340e1f3f82)
 
 typedef void (*glsysFuncPtr)();
 typedef glsysFuncPtr (*glsysFunctionLoader)(const char*);
@@ -70,6 +73,7 @@ const char* glsysGetDebugSeverityString(GLenum severity);
 const char* glsysGetDebugSourceString(GLenum source);
 const char* glsysGetDebugTypeString(GLenum type);
 const char* glsysGetErrorString(GLenum error);
+const char* glsysGetTypeString(GLenum error);
 
 // a default callback that will just print a message
 void glsysDebugCallback(GLenum source,

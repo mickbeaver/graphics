@@ -36,6 +36,9 @@ PFNGLGENVERTEXARRAYSPROC          glGenVertexArrays;
 PFNGLGETACTIVEATTRIBPROC          glGetActiveAttrib;
 PFNGLGETATTRIBLOCATIONPROC        glGetAttribLocation;
 PFNGLGETPROGRAMINFOLOGPROC        glGetProgramInfoLog;
+PFNGLGETPROGRAMINTERFACEIVPROC    glGetProgramInterfaceiv;
+PFNGLGETPROGRAMRESOURCENAMEPROC   glGetProgramResourceName;
+PFNGLGETPROGRAMRESOURCEIVPROC     glGetProgramResourceiv;
 PFNGLGETPROGRAMIVPROC             glGetProgramiv;
 PFNGLGETSHADERINFOLOGPROC         glGetShaderInfoLog;
 PFNGLGETSHADERIVPROC              glGetShaderiv;
@@ -53,7 +56,7 @@ PFNGLVERTEXARRAYATTRIBBINDINGPROC glVertexArrayAttribBinding;
 PFNGLVERTEXARRAYATTRIBFORMATPROC  glVertexArrayAttribFormat;
 PFNGLVERTEXARRAYVERTEXBUFFERPROC  glVertexArrayVertexBuffer;
 PFNGLVERTEXATTRIBPOINTERPROC      glVertexAttribPointer;
-//[[[end]]] (checksum: c497f636d6af368ff2e27a08d216797b)
+//[[[end]]] (checksum: 4c7deb695c4eee591683445960714af7)
 
 const char* glsysGetDebugSourceString(GLenum source)
 {
@@ -138,6 +141,81 @@ const char* glsysGetErrorString(GLenum error)
     return "<unknown error>";
 }
 
+const char* glsysGetTypeString(GLenum type)
+{
+    switch (type) {
+    case GL_FLOAT:
+        return "float";
+    case GL_FLOAT_VEC2:
+        return "vec2";
+    case GL_FLOAT_VEC3:
+        return "vec3";
+    case GL_FLOAT_VEC4:
+        return "vec4";
+    case GL_FLOAT_MAT2:
+        return "mat2";
+    case GL_FLOAT_MAT3:
+        return "mat3";
+    case GL_FLOAT_MAT4:
+        return "mat4";
+    case GL_FLOAT_MAT2x3:
+        return "mat2x3";
+    case GL_FLOAT_MAT2x4:
+        return "mat2x4";
+    case GL_FLOAT_MAT3x2:
+        return "mat3x2";
+    case GL_FLOAT_MAT3x4:
+        return "mat3x4";
+    case GL_FLOAT_MAT4x2:
+        return "mat4x2";
+    case GL_FLOAT_MAT4x3:
+        return "mat4x3";
+    case GL_INT:
+        return "int";
+    case GL_INT_VEC2:
+        return "ivec2";
+    case GL_INT_VEC3:
+        return "ivec3";
+    case GL_INT_VEC4:
+        return "ivec4";
+    case GL_UNSIGNED_INT:
+        return "uint";
+    case GL_UNSIGNED_INT_VEC2:
+        return "uvec2";
+    case GL_UNSIGNED_INT_VEC3:
+        return "uvec3";
+    case GL_UNSIGNED_INT_VEC4:
+        return "uvec4";
+    case GL_DOUBLE:
+        return "double";
+    case GL_DOUBLE_VEC2:
+        return "dvec2";
+    case GL_DOUBLE_VEC3:
+        return "dvec3";
+    case GL_DOUBLE_VEC4:
+        return "dvec4";
+    case GL_DOUBLE_MAT2:
+        return "dmat2";
+    case GL_DOUBLE_MAT3:
+        return "dmat3";
+    case GL_DOUBLE_MAT4:
+        return "dmat4";
+    case GL_DOUBLE_MAT2x3:
+        return "dmat2x3";
+    case GL_DOUBLE_MAT2x4:
+        return "dmat2x4";
+    case GL_DOUBLE_MAT3x2:
+        return "dmat3x2";
+    case GL_DOUBLE_MAT3x4:
+        return "dmat3x4";
+    case GL_DOUBLE_MAT4x2:
+        return "dmat4x2";
+    case GL_DOUBLE_MAT4x3:
+        return "dmat4x3";
+    }
+    return "<unknown type>";
+}
+
 void glsysDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* param)
 {
     const char* sourceStr = glsysGetDebugSourceString(source);
@@ -186,6 +264,9 @@ int glsysLoadFunctions(glsysFunctionLoader functionLoader)
     glGetActiveAttrib          = (PFNGLGETACTIVEATTRIBPROC)functionLoader("glGetActiveAttrib");
     glGetAttribLocation        = (PFNGLGETATTRIBLOCATIONPROC)functionLoader("glGetAttribLocation");
     glGetProgramInfoLog        = (PFNGLGETPROGRAMINFOLOGPROC)functionLoader("glGetProgramInfoLog");
+    glGetProgramInterfaceiv    = (PFNGLGETPROGRAMINTERFACEIVPROC)functionLoader("glGetProgramInterfaceiv");
+    glGetProgramResourceName   = (PFNGLGETPROGRAMRESOURCENAMEPROC)functionLoader("glGetProgramResourceName");
+    glGetProgramResourceiv     = (PFNGLGETPROGRAMRESOURCEIVPROC)functionLoader("glGetProgramResourceiv");
     glGetProgramiv             = (PFNGLGETPROGRAMIVPROC)functionLoader("glGetProgramiv");
     glGetShaderInfoLog         = (PFNGLGETSHADERINFOLOGPROC)functionLoader("glGetShaderInfoLog");
     glGetShaderiv              = (PFNGLGETSHADERIVPROC)functionLoader("glGetShaderiv");
@@ -229,6 +310,9 @@ int glsysLoadFunctions(glsysFunctionLoader functionLoader)
     assert(glGetActiveAttrib          != NULL);
     assert(glGetAttribLocation        != NULL);
     assert(glGetProgramInfoLog        != NULL);
+    assert(glGetProgramInterfaceiv    != NULL);
+    assert(glGetProgramResourceName   != NULL);
+    assert(glGetProgramResourceiv     != NULL);
     assert(glGetProgramiv             != NULL);
     assert(glGetShaderInfoLog         != NULL);
     assert(glGetShaderiv              != NULL);
@@ -246,7 +330,7 @@ int glsysLoadFunctions(glsysFunctionLoader functionLoader)
     assert(glVertexArrayAttribFormat  != NULL);
     assert(glVertexArrayVertexBuffer  != NULL);
     assert(glVertexAttribPointer      != NULL);
-    //[[[end]]] (checksum: d555b8fb47f3c96cb08532feaa6312a4)
+    //[[[end]]] (checksum: d0eb9894136fc661b4c1ed0d04ccafe4)
 
     return 0;
 }

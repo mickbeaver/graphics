@@ -24,6 +24,9 @@ glGenVertexArrays
 glGetActiveAttrib
 glGetAttribLocation
 glGetProgramInfoLog
+glGetProgramInterfaceiv
+glGetProgramResourceName
+glGetProgramResourceiv
 glGetProgramiv
 glGetShaderInfoLog
 glGetShaderiv
