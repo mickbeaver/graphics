@@ -18,6 +18,7 @@ EXECUTABLES := $(EXECUTABLES) 017-compiling_a_shader/CompilingAShader
 EXECUTABLES := $(EXECUTABLES) 021-linking_a_shader/LinkingAShader
 EXECUTABLES := $(EXECUTABLES) 025-sending_data/SendingData
 EXECUTABLES := $(EXECUTABLES) 034-active_attributes/ListActiveAttributes
+EXECUTABLES := $(EXECUTABLES) 037-using_uniforms/UsingUniforms
 
 .PHONY: all clean
 
@@ -42,3 +43,5 @@ test/HelloWorld: test/HelloWorld.o $(GLSYS_O)
 025-sending_data/SendingData: 025-sending_data/SendingData.o 025-sending_data/FileUtil.o $(GLSYS_O)
 
 034-active_attributes/ListActiveAttributes: 034-active_attributes/ListActiveAttributes.o 034-active_attributes/FileUtil.o $(GLSYS_O)
+
+037-using_uniforms/UsingUniforms: 037-using_uniforms/UsingUniforms.o 037-using_uniforms/FileUtil.o $(GLSYS_O)
