@@ -13,6 +13,7 @@ for function in functions:
 PFNGLATTACHSHADERPROC             glAttachShader;
 PFNGLBINDATTRIBLOCATIONPROC       glBindAttribLocation;
 PFNGLBINDBUFFERPROC               glBindBuffer;
+PFNGLBINDBUFFERBASEPROC           glBindBufferBase;
 PFNGLBINDVERTEXARRAYPROC          glBindVertexArray;
 PFNGLBUFFERDATAPROC               glBufferData;
 PFNGLBUFFERSUBDATAPROC            glBufferSubData;
@@ -34,6 +35,8 @@ PFNGLENABLEVERTEXATTRIBARRAYPROC  glEnableVertexAttribArray;
 PFNGLGENBUFFERSPROC               glGenBuffers;
 PFNGLGENVERTEXARRAYSPROC          glGenVertexArrays;
 PFNGLGETACTIVEATTRIBPROC          glGetActiveAttrib;
+PFNGLGETACTIVEUNIFORMBLOCKIVPROC  glGetActiveUniformBlockiv;
+PFNGLGETACTIVEUNIFORMSIVPROC      glGetActiveUniformsiv;
 PFNGLGETATTRIBLOCATIONPROC        glGetAttribLocation;
 PFNGLGETPROGRAMINFOLOGPROC        glGetProgramInfoLog;
 PFNGLGETPROGRAMINTERFACEIVPROC    glGetProgramInterfaceiv;
@@ -43,6 +46,8 @@ PFNGLGETPROGRAMIVPROC             glGetProgramiv;
 PFNGLGETSHADERINFOLOGPROC         glGetShaderInfoLog;
 PFNGLGETSHADERIVPROC              glGetShaderiv;
 PFNGLGETSTRINGIPROC               glGetStringi;
+PFNGLGETUNIFORMBLOCKINDEXPROC     glGetUniformBlockIndex;
+PFNGLGETUNIFORMINDICESPROC        glGetUniformIndices;
 PFNGLGETUNIFORMLOCATIONPROC       glGetUniformLocation;
 PFNGLLINKPROGRAMPROC              glLinkProgram;
 PFNGLNAMEDBUFFERDATAPROC          glNamedBufferData;
@@ -54,9 +59,10 @@ PFNGLUNIFORMMATRIX4FVPROC         glUniformMatrix4fv;
 PFNGLUSEPROGRAMPROC               glUseProgram;
 PFNGLVERTEXARRAYATTRIBBINDINGPROC glVertexArrayAttribBinding;
 PFNGLVERTEXARRAYATTRIBFORMATPROC  glVertexArrayAttribFormat;
+PFNGLVERTEXARRAYELEMENTBUFFERPROC glVertexArrayElementBuffer;
 PFNGLVERTEXARRAYVERTEXBUFFERPROC  glVertexArrayVertexBuffer;
 PFNGLVERTEXATTRIBPOINTERPROC      glVertexAttribPointer;
-//[[[end]]] (checksum: 4c7deb695c4eee591683445960714af7)
+//[[[end]]] (checksum: b9e54f4ce47be47fccd6a0121df601cd)
 
 const char* glsysGetDebugSourceString(GLenum source)
 {
@@ -253,6 +259,10 @@ void glsysDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, 
     const char* severityStr = glsysGetDebugSeverityString(severity);
     
     (void)printf("[%s][%s][%s](0x%08X): %s\n", sourceStr, typeStr, severityStr, id, message);
+    if (param != NULL) {
+        const GlsysDebugCallbackParam* callbackParam = (const GlsysDebugCallbackParam*)param;
+        assert(callbackParam->m_shouldAssert == false);
+    }
 }
 
 int glsysLoadFunctions(glsysFunctionLoader functionLoader)
@@ -271,6 +281,7 @@ int glsysLoadFunctions(glsysFunctionLoader functionLoader)
     glAttachShader             = (PFNGLATTACHSHADERPROC)functionLoader("glAttachShader");
     glBindAttribLocation       = (PFNGLBINDATTRIBLOCATIONPROC)functionLoader("glBindAttribLocation");
     glBindBuffer               = (PFNGLBINDBUFFERPROC)functionLoader("glBindBuffer");
+    glBindBufferBase           = (PFNGLBINDBUFFERBASEPROC)functionLoader("glBindBufferBase");
     glBindVertexArray          = (PFNGLBINDVERTEXARRAYPROC)functionLoader("glBindVertexArray");
     glBufferData               = (PFNGLBUFFERDATAPROC)functionLoader("glBufferData");
     glBufferSubData            = (PFNGLBUFFERSUBDATAPROC)functionLoader("glBufferSubData");
@@ -292,6 +303,8 @@ int glsysLoadFunctions(glsysFunctionLoader functionLoader)
     glGenBuffers               = (PFNGLGENBUFFERSPROC)functionLoader("glGenBuffers");
     glGenVertexArrays          = (PFNGLGENVERTEXARRAYSPROC)functionLoader("glGenVertexArrays");
     glGetActiveAttrib          = (PFNGLGETACTIVEATTRIBPROC)functionLoader("glGetActiveAttrib");
+    glGetActiveUniformBlockiv  = (PFNGLGETACTIVEUNIFORMBLOCKIVPROC)functionLoader("glGetActiveUniformBlockiv");
+    glGetActiveUniformsiv      = (PFNGLGETACTIVEUNIFORMSIVPROC)functionLoader("glGetActiveUniformsiv");
     glGetAttribLocation        = (PFNGLGETATTRIBLOCATIONPROC)functionLoader("glGetAttribLocation");
     glGetProgramInfoLog        = (PFNGLGETPROGRAMINFOLOGPROC)functionLoader("glGetProgramInfoLog");
     glGetProgramInterfaceiv    = (PFNGLGETPROGRAMINTERFACEIVPROC)functionLoader("glGetProgramInterfaceiv");
@@ -301,6 +314,8 @@ int glsysLoadFunctions(glsysFunctionLoader functionLoader)
     glGetShaderInfoLog         = (PFNGLGETSHADERINFOLOGPROC)functionLoader("glGetShaderInfoLog");
     glGetShaderiv              = (PFNGLGETSHADERIVPROC)functionLoader("glGetShaderiv");
     glGetStringi               = (PFNGLGETSTRINGIPROC)functionLoader("glGetStringi");
+    glGetUniformBlockIndex     = (PFNGLGETUNIFORMBLOCKINDEXPROC)functionLoader("glGetUniformBlockIndex");
+    glGetUniformIndices        = (PFNGLGETUNIFORMINDICESPROC)functionLoader("glGetUniformIndices");
     glGetUniformLocation       = (PFNGLGETUNIFORMLOCATIONPROC)functionLoader("glGetUniformLocation");
     glLinkProgram              = (PFNGLLINKPROGRAMPROC)functionLoader("glLinkProgram");
     glNamedBufferData          = (PFNGLNAMEDBUFFERDATAPROC)functionLoader("glNamedBufferData");
@@ -312,11 +327,13 @@ int glsysLoadFunctions(glsysFunctionLoader functionLoader)
     glUseProgram               = (PFNGLUSEPROGRAMPROC)functionLoader("glUseProgram");
     glVertexArrayAttribBinding = (PFNGLVERTEXARRAYATTRIBBINDINGPROC)functionLoader("glVertexArrayAttribBinding");
     glVertexArrayAttribFormat  = (PFNGLVERTEXARRAYATTRIBFORMATPROC)functionLoader("glVertexArrayAttribFormat");
+    glVertexArrayElementBuffer = (PFNGLVERTEXARRAYELEMENTBUFFERPROC)functionLoader("glVertexArrayElementBuffer");
     glVertexArrayVertexBuffer  = (PFNGLVERTEXARRAYVERTEXBUFFERPROC)functionLoader("glVertexArrayVertexBuffer");
     glVertexAttribPointer      = (PFNGLVERTEXATTRIBPOINTERPROC)functionLoader("glVertexAttribPointer");
     assert(glAttachShader             != NULL);
     assert(glBindAttribLocation       != NULL);
     assert(glBindBuffer               != NULL);
+    assert(glBindBufferBase           != NULL);
     assert(glBindVertexArray          != NULL);
     assert(glBufferData               != NULL);
     assert(glBufferSubData            != NULL);
@@ -338,6 +355,8 @@ int glsysLoadFunctions(glsysFunctionLoader functionLoader)
     assert(glGenBuffers               != NULL);
     assert(glGenVertexArrays          != NULL);
     assert(glGetActiveAttrib          != NULL);
+    assert(glGetActiveUniformBlockiv  != NULL);
+    assert(glGetActiveUniformsiv      != NULL);
     assert(glGetAttribLocation        != NULL);
     assert(glGetProgramInfoLog        != NULL);
     assert(glGetProgramInterfaceiv    != NULL);
@@ -347,6 +366,8 @@ int glsysLoadFunctions(glsysFunctionLoader functionLoader)
     assert(glGetShaderInfoLog         != NULL);
     assert(glGetShaderiv              != NULL);
     assert(glGetStringi               != NULL);
+    assert(glGetUniformBlockIndex     != NULL);
+    assert(glGetUniformIndices        != NULL);
     assert(glGetUniformLocation       != NULL);
     assert(glLinkProgram              != NULL);
     assert(glNamedBufferData          != NULL);
@@ -358,9 +379,10 @@ int glsysLoadFunctions(glsysFunctionLoader functionLoader)
     assert(glUseProgram               != NULL);
     assert(glVertexArrayAttribBinding != NULL);
     assert(glVertexArrayAttribFormat  != NULL);
+    assert(glVertexArrayElementBuffer != NULL);
     assert(glVertexArrayVertexBuffer  != NULL);
     assert(glVertexAttribPointer      != NULL);
-    //[[[end]]] (checksum: d0eb9894136fc661b4c1ed0d04ccafe4)
+    //[[[end]]] (checksum: 389bc3f6c7c15e41a1830bbde275cf3f)
 
     return 0;
 }

@@ -4,6 +4,7 @@
 extern "C" {
 #endif
 
+#include <stdbool.h>
 #include <GL/gl.h>
 #include "glext.h"
 
@@ -17,6 +18,7 @@ for function in functions:
 extern PFNGLATTACHSHADERPROC             glAttachShader;
 extern PFNGLBINDATTRIBLOCATIONPROC       glBindAttribLocation;
 extern PFNGLBINDBUFFERPROC               glBindBuffer;
+extern PFNGLBINDBUFFERBASEPROC           glBindBufferBase;
 extern PFNGLBINDVERTEXARRAYPROC          glBindVertexArray;
 extern PFNGLBUFFERDATAPROC               glBufferData;
 extern PFNGLBUFFERSUBDATAPROC            glBufferSubData;
@@ -38,6 +40,8 @@ extern PFNGLENABLEVERTEXATTRIBARRAYPROC  glEnableVertexAttribArray;
 extern PFNGLGENBUFFERSPROC               glGenBuffers;
 extern PFNGLGENVERTEXARRAYSPROC          glGenVertexArrays;
 extern PFNGLGETACTIVEATTRIBPROC          glGetActiveAttrib;
+extern PFNGLGETACTIVEUNIFORMBLOCKIVPROC  glGetActiveUniformBlockiv;
+extern PFNGLGETACTIVEUNIFORMSIVPROC      glGetActiveUniformsiv;
 extern PFNGLGETATTRIBLOCATIONPROC        glGetAttribLocation;
 extern PFNGLGETPROGRAMINFOLOGPROC        glGetProgramInfoLog;
 extern PFNGLGETPROGRAMINTERFACEIVPROC    glGetProgramInterfaceiv;
@@ -47,6 +51,8 @@ extern PFNGLGETPROGRAMIVPROC             glGetProgramiv;
 extern PFNGLGETSHADERINFOLOGPROC         glGetShaderInfoLog;
 extern PFNGLGETSHADERIVPROC              glGetShaderiv;
 extern PFNGLGETSTRINGIPROC               glGetStringi;
+extern PFNGLGETUNIFORMBLOCKINDEXPROC     glGetUniformBlockIndex;
+extern PFNGLGETUNIFORMINDICESPROC        glGetUniformIndices;
 extern PFNGLGETUNIFORMLOCATIONPROC       glGetUniformLocation;
 extern PFNGLLINKPROGRAMPROC              glLinkProgram;
 extern PFNGLNAMEDBUFFERDATAPROC          glNamedBufferData;
@@ -58,9 +64,10 @@ extern PFNGLUNIFORMMATRIX4FVPROC         glUniformMatrix4fv;
 extern PFNGLUSEPROGRAMPROC               glUseProgram;
 extern PFNGLVERTEXARRAYATTRIBBINDINGPROC glVertexArrayAttribBinding;
 extern PFNGLVERTEXARRAYATTRIBFORMATPROC  glVertexArrayAttribFormat;
+extern PFNGLVERTEXARRAYELEMENTBUFFERPROC glVertexArrayElementBuffer;
 extern PFNGLVERTEXARRAYVERTEXBUFFERPROC  glVertexArrayVertexBuffer;
 extern PFNGLVERTEXATTRIBPOINTERPROC      glVertexAttribPointer;
-//[[[end]]] (checksum: c9d5be75062171c33d5143340e1f3f82)
+//[[[end]]] (checksum: 375b8b32ec7c2491a00e34b6fc9bebf2)
 
 typedef void (*glsysFuncPtr)();
 typedef glsysFuncPtr (*glsysFunctionLoader)(const char*);
@@ -74,6 +81,12 @@ const char* glsysGetDebugSourceString(GLenum source);
 const char* glsysGetDebugTypeString(GLenum type);
 const char* glsysGetErrorString(GLenum error);
 const char* glsysGetTypeString(GLenum error);
+
+typedef struct GlsysDebugCallbackParam {
+    bool m_shouldAssert;
+} GlsysDebugCallbackParam;
+
+#define GLSYS_DEBUG_CALLBACK_PARAM_INITIALIZER {.m_shouldAssert=false}
 
 // a default callback that will just print a message
 void glsysDebugCallback(GLenum source,

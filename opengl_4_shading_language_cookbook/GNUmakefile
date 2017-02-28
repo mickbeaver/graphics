@@ -20,6 +20,7 @@ EXECUTABLES := $(EXECUTABLES) 025-sending_data/SendingData
 EXECUTABLES := $(EXECUTABLES) 034-active_attributes/ListActiveAttributes
 EXECUTABLES := $(EXECUTABLES) 037-using_uniforms/UsingUniforms
 EXECUTABLES := $(EXECUTABLES) 041-active_uniforms/ListActiveUniforms
+EXECUTABLES := $(EXECUTABLES) 043-uniform_blocks/UniformBlocks
 
 .PHONY: all clean
 
@@ -48,3 +49,6 @@ test/HelloWorld: test/HelloWorld.o $(GLSYS_O)
 037-using_uniforms/UsingUniforms: 037-using_uniforms/UsingUniforms.o common/FileUtil.o $(GLSYS_O)
 
 041-active_uniforms/ListActiveUniforms: 041-active_uniforms/ListActiveUniforms.o common/FileUtil.o $(GLSYS_O)
+
+043-uniform_blocks/UniformBlocks: 043-uniform_blocks/UniformBlocks.o common/FileUtil.o $(GLSYS_O)
+

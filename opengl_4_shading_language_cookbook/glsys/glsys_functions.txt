@@ -1,6 +1,7 @@
 glAttachShader
 glBindAttribLocation
 glBindBuffer
+glBindBufferBase
 glBindVertexArray
 glBufferData
 glBufferSubData
@@ -22,6 +23,8 @@ glEnableVertexAttribArray
 glGenBuffers
 glGenVertexArrays
 glGetActiveAttrib
+glGetActiveUniformBlockiv
+glGetActiveUniformsiv
 glGetAttribLocation
 glGetProgramInfoLog
 glGetProgramInterfaceiv
@@ -31,6 +34,8 @@ glGetProgramiv
 glGetShaderInfoLog
 glGetShaderiv
 glGetStringi
+glGetUniformBlockIndex
+glGetUniformIndices
 glGetUniformLocation
 glLinkProgram
 glNamedBufferData
@@ -42,5 +47,6 @@ glUniformMatrix4fv
 glUseProgram
 glVertexArrayAttribBinding
 glVertexArrayAttribFormat
+glVertexArrayElementBuffer
 glVertexArrayVertexBuffer
 glVertexAttribPointer
