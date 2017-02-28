@@ -5,7 +5,7 @@ SDL2_LIBS    := $(shell x86_64-w64-mingw32-pkg-config sdl2 --libs)
 SHARED_FLAGS := -g -O0 -Wall -Werror -pedantic-errors $(SDL2_CFLAGS)
 CFLAGS       := $(SHARED_FLAGS) -std=c11
 CXXFLAGS     := $(SHARED_FLAGS) -std=c++11
-CPPFLAGS     := -DDEBUG -Iglsys/include -Iexternal/glm-0.9.8.4
+CPPFLAGS     := -DDEBUG -Iglsys/include -Iexternal/glm-0.9.8.4 -Icommon
 GLSYS_O      := glsys/src/glsys.o
 LDLIBS       := -lopengl32 $(SDL2_LIBS)
 LINK.o       := $(LINK.cc)
@@ -19,6 +19,7 @@ EXECUTABLES := $(EXECUTABLES) 021-linking_a_shader/LinkingAShader
 EXECUTABLES := $(EXECUTABLES) 025-sending_data/SendingData
 EXECUTABLES := $(EXECUTABLES) 034-active_attributes/ListActiveAttributes
 EXECUTABLES := $(EXECUTABLES) 037-using_uniforms/UsingUniforms
+EXECUTABLES := $(EXECUTABLES) 041-active_uniforms/ListActiveUniforms
 
 .PHONY: all clean
 
@@ -36,12 +37,14 @@ test/HelloWorld: test/HelloWorld.o $(GLSYS_O)
 
 015-determining_version/DetermineVersion: 015-determining_version/DetermineVersion.o $(GLSYS_O)
 
-017-compiling_a_shader/CompilingAShader: 017-compiling_a_shader/CompilingAShader.o 017-compiling_a_shader/FileUtil.o $(GLSYS_O)
+017-compiling_a_shader/CompilingAShader: 017-compiling_a_shader/CompilingAShader.o common/FileUtil.o $(GLSYS_O)
 
-021-linking_a_shader/LinkingAShader: 021-linking_a_shader/LinkingAShader.o 021-linking_a_shader/FileUtil.o $(GLSYS_O)
+021-linking_a_shader/LinkingAShader: 021-linking_a_shader/LinkingAShader.o common/FileUtil.o $(GLSYS_O)
 
-025-sending_data/SendingData: 025-sending_data/SendingData.o 025-sending_data/FileUtil.o $(GLSYS_O)
+025-sending_data/SendingData: 025-sending_data/SendingData.o common/FileUtil.o $(GLSYS_O)
 
-034-active_attributes/ListActiveAttributes: 034-active_attributes/ListActiveAttributes.o 034-active_attributes/FileUtil.o $(GLSYS_O)
+034-active_attributes/ListActiveAttributes: 034-active_attributes/ListActiveAttributes.o common/FileUtil.o $(GLSYS_O)
 
-037-using_uniforms/UsingUniforms: 037-using_uniforms/UsingUniforms.o 037-using_uniforms/FileUtil.o $(GLSYS_O)
+037-using_uniforms/UsingUniforms: 037-using_uniforms/UsingUniforms.o common/FileUtil.o $(GLSYS_O)
+
+041-active_uniforms/ListActiveUniforms: 041-active_uniforms/ListActiveUniforms.o common/FileUtil.o $(GLSYS_O)

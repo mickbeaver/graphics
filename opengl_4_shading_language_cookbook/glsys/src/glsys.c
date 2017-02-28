@@ -178,6 +178,14 @@ const char* glsysGetTypeString(GLenum type)
         return "ivec3";
     case GL_INT_VEC4:
         return "ivec4";
+    case GL_BOOL:
+        return "bool";
+    case GL_BOOL_VEC2:
+        return "bec2";
+    case GL_BOOL_VEC3:
+        return "bvec3";
+    case GL_BOOL_VEC4:
+        return "bvec4";
     case GL_UNSIGNED_INT:
         return "uint";
     case GL_UNSIGNED_INT_VEC2:
@@ -212,6 +220,28 @@ const char* glsysGetTypeString(GLenum type)
         return "dmat4x2";
     case GL_DOUBLE_MAT4x3:
         return "dmat4x3";
+    case GL_SAMPLER_1D:
+        return "sampler1D";
+    case GL_SAMPLER_2D:
+        return "sampler2D";
+    case GL_SAMPLER_3D:
+        return "sampler3D";
+    case GL_SAMPLER_CUBE:
+        return "samplerCube";
+    case GL_SAMPLER_1D_SHADOW:
+        return "sampler1DShadow";
+    case GL_SAMPLER_2D_SHADOW:
+        return "sampler2DShadow";
+    case GL_SAMPLER_1D_ARRAY:
+        return "sampler1DArray";
+    case GL_SAMPLER_2D_ARRAY:
+        return "sampler2DArray";
+    case GL_SAMPLER_1D_ARRAY_SHADOW:
+        return "sampler1DArrayShadow";
+    case GL_SAMPLER_2D_ARRAY_SHADOW:
+        return "sampler2DArrayShadow";
+    case GL_SAMPLER_CUBE_SHADOW:
+        return "samplerCubeShadow";
     }
     return "<unknown type>";
 }

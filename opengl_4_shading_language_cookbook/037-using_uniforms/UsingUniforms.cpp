@@ -160,11 +160,8 @@ void Simulation::render()
                                            rotationAngle,
                                            glm::vec3(0.0f, 0.0f, 1.0f));
     GLint const location = glGetUniformLocation(m_programHandle, "RotationMatrix");
-    if (location >= 0) {
-        glUniformMatrix4fv(location, 1, GL_FALSE, &rotationMatrix[0][0]);
-    } else {
-        assert(0);
-    }
+    assert(location >= 0);
+    glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(rotationMatrix));
     
     glBindVertexArray(m_vaoHandle);
     glDrawArrays(GL_TRIANGLES, 0, 3);
