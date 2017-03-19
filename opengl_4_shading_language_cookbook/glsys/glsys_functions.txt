@@ -3,6 +3,7 @@ glBindAttribLocation
 glBindBuffer
 glBindBufferBase
 glBindVertexArray
+glBindVertexBuffer
 glBufferData
 glBufferSubData
 glCompileShader
@@ -49,4 +50,6 @@ glVertexArrayAttribBinding
 glVertexArrayAttribFormat
 glVertexArrayElementBuffer
 glVertexArrayVertexBuffer
+glVertexAttribBinding
+glVertexAttribFormat
 glVertexAttribPointer

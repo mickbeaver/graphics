@@ -20,6 +20,7 @@ extern PFNGLBINDATTRIBLOCATIONPROC       glBindAttribLocation;
 extern PFNGLBINDBUFFERPROC               glBindBuffer;
 extern PFNGLBINDBUFFERBASEPROC           glBindBufferBase;
 extern PFNGLBINDVERTEXARRAYPROC          glBindVertexArray;
+extern PFNGLBINDVERTEXBUFFERPROC         glBindVertexBuffer;
 extern PFNGLBUFFERDATAPROC               glBufferData;
 extern PFNGLBUFFERSUBDATAPROC            glBufferSubData;
 extern PFNGLCOMPILESHADERPROC            glCompileShader;
@@ -66,8 +67,10 @@ extern PFNGLVERTEXARRAYATTRIBBINDINGPROC glVertexArrayAttribBinding;
 extern PFNGLVERTEXARRAYATTRIBFORMATPROC  glVertexArrayAttribFormat;
 extern PFNGLVERTEXARRAYELEMENTBUFFERPROC glVertexArrayElementBuffer;
 extern PFNGLVERTEXARRAYVERTEXBUFFERPROC  glVertexArrayVertexBuffer;
+extern PFNGLVERTEXATTRIBBINDINGPROC      glVertexAttribBinding;
+extern PFNGLVERTEXATTRIBFORMATPROC       glVertexAttribFormat;
 extern PFNGLVERTEXATTRIBPOINTERPROC      glVertexAttribPointer;
-//[[[end]]] (checksum: 375b8b32ec7c2491a00e34b6fc9bebf2)
+//[[[end]]] (checksum: 71245e1ff080f360721bb31a95512feb)
 
 typedef void (*glsysFuncPtr)();
 typedef glsysFuncPtr (*glsysFunctionLoader)(const char*);

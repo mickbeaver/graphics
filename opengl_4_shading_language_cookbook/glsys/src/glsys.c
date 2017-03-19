@@ -15,6 +15,7 @@ PFNGLBINDATTRIBLOCATIONPROC       glBindAttribLocation;
 PFNGLBINDBUFFERPROC               glBindBuffer;
 PFNGLBINDBUFFERBASEPROC           glBindBufferBase;
 PFNGLBINDVERTEXARRAYPROC          glBindVertexArray;
+PFNGLBINDVERTEXBUFFERPROC         glBindVertexBuffer;
 PFNGLBUFFERDATAPROC               glBufferData;
 PFNGLBUFFERSUBDATAPROC            glBufferSubData;
 PFNGLCOMPILESHADERPROC            glCompileShader;
@@ -61,8 +62,10 @@ PFNGLVERTEXARRAYATTRIBBINDINGPROC glVertexArrayAttribBinding;
 PFNGLVERTEXARRAYATTRIBFORMATPROC  glVertexArrayAttribFormat;
 PFNGLVERTEXARRAYELEMENTBUFFERPROC glVertexArrayElementBuffer;
 PFNGLVERTEXARRAYVERTEXBUFFERPROC  glVertexArrayVertexBuffer;
+PFNGLVERTEXATTRIBBINDINGPROC      glVertexAttribBinding;
+PFNGLVERTEXATTRIBFORMATPROC       glVertexAttribFormat;
 PFNGLVERTEXATTRIBPOINTERPROC      glVertexAttribPointer;
-//[[[end]]] (checksum: b9e54f4ce47be47fccd6a0121df601cd)
+//[[[end]]] (checksum: abcd9e9a2d41fea3461f2d33a1ddb0e1)
 
 const char* glsysGetDebugSourceString(GLenum source)
 {
@@ -275,14 +278,15 @@ int glsysLoadFunctions(glsysFunctionLoader functionLoader)
         cog.outl('{0:<{width}} = ({1})functionLoader("{0}");'.format(function,
                                                                      'PFN' + function.upper() + 'PROC',
                                                                      width=width))
-    for function in functions:
-        cog.outl('assert({0:<{width}} != NULL);'.format(function, width=width));
+    #for function in functions:
+    #    cog.outl('assert({0:<{width}} != NULL);'.format(function, width=width));
     ]]]*/
     glAttachShader             = (PFNGLATTACHSHADERPROC)functionLoader("glAttachShader");
     glBindAttribLocation       = (PFNGLBINDATTRIBLOCATIONPROC)functionLoader("glBindAttribLocation");
     glBindBuffer               = (PFNGLBINDBUFFERPROC)functionLoader("glBindBuffer");
     glBindBufferBase           = (PFNGLBINDBUFFERBASEPROC)functionLoader("glBindBufferBase");
     glBindVertexArray          = (PFNGLBINDVERTEXARRAYPROC)functionLoader("glBindVertexArray");
+    glBindVertexBuffer         = (PFNGLBINDVERTEXBUFFERPROC)functionLoader("glBindVertexBuffer");
     glBufferData               = (PFNGLBUFFERDATAPROC)functionLoader("glBufferData");
     glBufferSubData            = (PFNGLBUFFERSUBDATAPROC)functionLoader("glBufferSubData");
     glCompileShader            = (PFNGLCOMPILESHADERPROC)functionLoader("glCompileShader");
@@ -329,60 +333,10 @@ int glsysLoadFunctions(glsysFunctionLoader functionLoader)
     glVertexArrayAttribFormat  = (PFNGLVERTEXARRAYATTRIBFORMATPROC)functionLoader("glVertexArrayAttribFormat");
     glVertexArrayElementBuffer = (PFNGLVERTEXARRAYELEMENTBUFFERPROC)functionLoader("glVertexArrayElementBuffer");
     glVertexArrayVertexBuffer  = (PFNGLVERTEXARRAYVERTEXBUFFERPROC)functionLoader("glVertexArrayVertexBuffer");
+    glVertexAttribBinding      = (PFNGLVERTEXATTRIBBINDINGPROC)functionLoader("glVertexAttribBinding");
+    glVertexAttribFormat       = (PFNGLVERTEXATTRIBFORMATPROC)functionLoader("glVertexAttribFormat");
     glVertexAttribPointer      = (PFNGLVERTEXATTRIBPOINTERPROC)functionLoader("glVertexAttribPointer");
-    assert(glAttachShader             != NULL);
-    assert(glBindAttribLocation       != NULL);
-    assert(glBindBuffer               != NULL);
-    assert(glBindBufferBase           != NULL);
-    assert(glBindVertexArray          != NULL);
-    assert(glBufferData               != NULL);
-    assert(glBufferSubData            != NULL);
-    assert(glCompileShader            != NULL);
-    assert(glCreateBuffers            != NULL);
-    assert(glCreateProgram            != NULL);
-    assert(glCreateShader             != NULL);
-    assert(glCreateVertexArrays       != NULL);
-    assert(glDebugMessageCallback     != NULL);
-    assert(glDebugMessageControl      != NULL);
-    assert(glDeleteBuffers            != NULL);
-    assert(glDeleteProgram            != NULL);
-    assert(glDeleteShader             != NULL);
-    assert(glDeleteVertexArrays       != NULL);
-    assert(glDetachShader             != NULL);
-    assert(glDisableVertexAttribArray != NULL);
-    assert(glEnableVertexArrayAttrib  != NULL);
-    assert(glEnableVertexAttribArray  != NULL);
-    assert(glGenBuffers               != NULL);
-    assert(glGenVertexArrays          != NULL);
-    assert(glGetActiveAttrib          != NULL);
-    assert(glGetActiveUniformBlockiv  != NULL);
-    assert(glGetActiveUniformsiv      != NULL);
-    assert(glGetAttribLocation        != NULL);
-    assert(glGetProgramInfoLog        != NULL);
-    assert(glGetProgramInterfaceiv    != NULL);
-    assert(glGetProgramResourceName   != NULL);
-    assert(glGetProgramResourceiv     != NULL);
-    assert(glGetProgramiv             != NULL);
-    assert(glGetShaderInfoLog         != NULL);
-    assert(glGetShaderiv              != NULL);
-    assert(glGetStringi               != NULL);
-    assert(glGetUniformBlockIndex     != NULL);
-    assert(glGetUniformIndices        != NULL);
-    assert(glGetUniformLocation       != NULL);
-    assert(glLinkProgram              != NULL);
-    assert(glNamedBufferData          != NULL);
-    assert(glShaderSource             != NULL);
-    assert(glUniform1f                != NULL);
-    assert(glUniform2f                != NULL);
-    assert(glUniform3f                != NULL);
-    assert(glUniformMatrix4fv         != NULL);
-    assert(glUseProgram               != NULL);
-    assert(glVertexArrayAttribBinding != NULL);
-    assert(glVertexArrayAttribFormat  != NULL);
-    assert(glVertexArrayElementBuffer != NULL);
-    assert(glVertexArrayVertexBuffer  != NULL);
-    assert(glVertexAttribPointer      != NULL);
-    //[[[end]]] (checksum: 389bc3f6c7c15e41a1830bbde275cf3f)
+    //[[[end]]] (checksum: e378da537ee818b4597296b2285174ce)
 
     return 0;
 }

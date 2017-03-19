@@ -6,11 +6,12 @@
 #include <SDL2/SDL.h>
 
 #include "glsys.h"
+#include "ArrayCount.h"
 #include "FileUtil.h"
 
 #define WINDOW_SIZE 640
 #define ARRAY_COUNT(array) (sizeof(array) / sizeof(array[0]))
-#define DSA_ENABLED 1
+#define DSA_ENABLED() 0
 
 struct ShaderProgramSource {
     GLenum shaderType;
@@ -33,7 +34,14 @@ GLuint compileShader(GLenum shaderType, const char* filename) {
     GLuint shaderHandle = glCreateShader(shaderType);
     if (shaderHandle != 0) {
         const GLchar* shaderCode = FileUtil::loadFileAsString(filename);
-        glShaderSource(shaderHandle, 1, &shaderCode, NULL);
+#if DSA_ENABLED()
+        const GLchar* srcArray[] = {"#version 450\n#line 2\n",
+                                    shaderCode};
+#else
+        const GLchar* srcArray[] = {"#version 430\n#line 2\n",
+                                    shaderCode};
+#endif
+        glShaderSource(shaderHandle, ArrayCount(srcArray), srcArray, NULL);
         delete [] shaderCode;
         glCompileShader(shaderHandle);
 
@@ -194,6 +202,7 @@ void Simulation::initializeBuffers()
         2, 1, 3
     };
 
+#if DSA_ENABLED()
     glCreateBuffers(1, &m_vertexBufferHandle);
     glCreateBuffers(1, &m_indexBufferHandle);
     glCreateBuffers(1, &m_uniformBufferHandle);
@@ -201,6 +210,7 @@ void Simulation::initializeBuffers()
 
     GLuint bindingIndex = 0;
     glNamedBufferData(m_vertexBufferHandle, sizeof(vertexData), vertexData, GL_STATIC_DRAW);
+
     glVertexArrayVertexBuffer(m_vaoHandle, bindingIndex, m_vertexBufferHandle, 0, vertexStride);
 
     glEnableVertexArrayAttrib(m_vaoHandle, positionAttribIndex);
@@ -214,6 +224,33 @@ void Simulation::initializeBuffers()
     glNamedBufferData(m_indexBufferHandle, sizeof(indices), indices, GL_STATIC_DRAW);
     m_numVertices = ARRAY_COUNT(indices);
     glVertexArrayElementBuffer(m_vaoHandle, m_indexBufferHandle);
+#else // DSA_ENABLED()
+    glGenBuffers(1, &m_vertexBufferHandle);
+    glGenBuffers(1, &m_indexBufferHandle);
+    glGenBuffers(1, &m_uniformBufferHandle);
+    glGenVertexArrays(1, &m_vaoHandle);
+
+    glBindVertexArray(m_vaoHandle);
+
+    GLuint bindingIndex = 0;
+    glBindBuffer(GL_ARRAY_BUFFER, m_vertexBufferHandle);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData, GL_STATIC_DRAW);
+
+    GLintptr const offset = 0;
+    glBindVertexBuffer(bindingIndex, m_vertexBufferHandle, offset, vertexStride);
+
+    glEnableVertexAttribArray(positionAttribIndex);
+    glVertexAttribBinding(positionAttribIndex, bindingIndex);
+    glVertexAttribFormat(positionAttribIndex, 3, GL_FLOAT, GL_FALSE, positionOffset);
+
+    glEnableVertexAttribArray(texCoordAttribIndex);
+    glVertexAttribBinding(texCoordAttribIndex, bindingIndex);
+    glVertexAttribFormat(texCoordAttribIndex, 2, GL_FLOAT, GL_FALSE, texCoordOffset);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferHandle);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    m_numVertices = ARRAY_COUNT(indices);
+#endif // DSA_ENABLED()
 
     GLuint blockIndex = glGetUniformBlockIndex(m_programHandle, "BlobSettings");
     (void)printf("BlobSettings is at block index=%u\n", blockIndex);
@@ -231,7 +268,12 @@ void Simulation::initializeBuffers()
                                        {0.0f, 0.0f, 0.0f, 0.0f},
                                        0.25f,
                                        0.45f};
+#if DSA_ENABLED()
     glNamedBufferData(m_uniformBufferHandle, sizeof(uniformBlock), &uniformBlock, GL_DYNAMIC_DRAW);
+#else // DSA_ENABLED()
+    glBindBuffer(GL_UNIFORM_BUFFER, m_uniformBufferHandle);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(uniformBlock), &uniformBlock, GL_DYNAMIC_DRAW);
+#endif // DSA_ENABLED()
 #else
     static GLfloat const innerColor[] = {1.0f, 1.0f, 0.75f, 1.0f};
     static GLfloat const outerColor[] = {0.0f, 0.0f, 0.0f, 0.0f};
@@ -255,7 +297,12 @@ void Simulation::initializeBuffers()
     (void)memcpy(blockBuffer + uniformOffsets[3], &outerRadius, sizeof(outerRadius));
     bool testBool = true;
     (void)memcpy(blockBuffer + uniformOffsets[4], &testBool, sizeof(testBool));
+#if DSA_ENABLED()
     glNamedBufferData(m_uniformBufferHandle, blockSize, blockBuffer, GL_DYNAMIC_DRAW);
+#else // DSA_ENABLED()
+    glBindBuffer(GL_UNIFORM_BUFFER, m_uniformBufferHandle);
+    glBufferData(GL_UNIFORM_BUFFER, blockSize, blockBuffer, GL_DYNAMIC_DRAW);
+#endif // DSA_ENABLED()
     delete [] blockBuffer;
 #endif
     GLint blockBindingIndex;
@@ -309,7 +356,11 @@ int main(int argc, char** argv)
 #endif
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, glContextFlags);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+#if DSA_ENABLED()
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
+#else
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+#endif
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
