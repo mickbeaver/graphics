@@ -1,13 +1,13 @@
 CC           := x86_64-w64-mingw32-gcc
 CXX          := x86_64-w64-mingw32-g++
 SDL2_CFLAGS  := $(shell x86_64-w64-mingw32-pkg-config sdl2 --cflags)
-SDL2_LIBS    := $(shell x86_64-w64-mingw32-pkg-config sdl2 --libs)
+SDL2_LIBS    := $(shell x86_64-w64-mingw32-pkg-config sdl2 --libs --static)
 SHARED_FLAGS := -g -O0 -Wall -Werror -pedantic-errors $(SDL2_CFLAGS)
 CFLAGS       := $(SHARED_FLAGS) -std=c11
 CXXFLAGS     := $(SHARED_FLAGS) -std=c++11
 CPPFLAGS     := -DDEBUG -Iglsys/include -Iexternal/glm-0.9.8.4 -Icommon
 GLSYS_O      := glsys/src/glsys.o
-LDLIBS       := -lopengl32 $(SDL2_LIBS)
+LDLIBS       := -lopengl32 $(SDL2_LIBS) -static
 LINK.o       := $(LINK.cc)
 
 EXECUTABLES := test/HelloWorld
