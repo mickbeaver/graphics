@@ -143,7 +143,7 @@ class GLSpec:
         feature_name = feature_node.attrib['name']
         enums = []
         commands = []
-        types = []
+        types = {}
         known_components = ('enum', 'command', 'type')
         for require in feature_node:
             for component in require:
@@ -156,12 +156,10 @@ class GLSpec:
                     command = self.commands[component_name]
                     commands.append(command)
                 else:
-                    gl_type = self.types[component_name]
-                    types.append(gl_type)
+                    types[component_name] = self.types[component_name]
 
         enums.sort()
         commands.sort()
-        types.sort()
         self.features[feature_name] = GLFeature(feature_name, types, enums, commands)
             
     #--------------------------------------------------------------------
@@ -211,10 +209,43 @@ class GLSpec:
                 self.process_type(typeNode)
 
 #------------------------------------------------------------------------
+def subcommand_list_features(parsed_args, spec):
+    for i, feature_name in enumerate(sorted(spec.features)):
+        feature = spec.features[feature_name]
+        print('{0:2}'.format(i + 1), feature.name)
+
+#------------------------------------------------------------------------
+def subcommand_write_glsys(parsed_args, spec):
+    feature = parsed_args.feature
+    assert feature in spec.features, 'Unknown feature "{0}"'.format(feature)
+    feature = spec.features[feature]
+    print('types')
+    for t in feature.types:
+        print('\t' + t)
+    print('enums/defines')
+    for e in feature.enums:
+        print('\t' + e.name)
+    print('commands/functions')
+    for c in feature.commands:
+        print('\t' + c.name)
+    
+#------------------------------------------------------------------------
 def parse_args(args):
     parser = argparse.ArgumentParser()
     parser.add_argument('-i', '--input', metavar='FILE', required=True,
                         dest='input_filename', help='Input XML spec.')
+    subparsers = parser.add_subparsers()
+
+    list_features = subparsers.add_parser('list-features')
+    list_features.set_defaults(subcommand_func=subcommand_list_features)
+
+    write_glsys = subparsers.add_parser('write-glsys')
+    write_glsys.add_argument('--feature', metavar='NAME', required=True,
+                             dest='feature', help='Feature name')
+    write_glsys.add_argument('--header', metavar='FILE', required=True,
+                             dest='header_filename', help='Output header filename')
+    write_glsys.set_defaults(subcommand_func=subcommand_write_glsys)
+
     args = parser.parse_args(args)
     return args
 
@@ -222,9 +253,13 @@ def parse_args(args):
 def main(argv=None):
     if argv is None:
         argv = sys.argv[1:]
-    args = parse_args(argv)
-    tree = xml.etree.ElementTree.parse(args.input_filename)
+    parsed_args = parse_args(argv)
+    tree = xml.etree.ElementTree.parse(parsed_args.input_filename)
     spec = GLSpec(tree)
+    if 'subcommand_func' in parsed_args:
+        parsed_args.subcommand_func(parsed_args, spec)
+
+    return 0
         
 #------------------------------------------------------------------------
 if __name__ == '__main__':
