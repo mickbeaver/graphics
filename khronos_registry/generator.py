@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import copy
+import os
 import sys
 import xml.etree.ElementTree
 
@@ -281,6 +282,13 @@ def subcommand_write_glcore(parsed_args, spec):
 
     #--------------------------------------------------------------------
     def write_glcore_header(filename, feature, lib_feature):
+        separator = '//' + ('-' * 70)
+        def print_sep(*args, **kwargs):
+            output_obj = kwargs.get('file')
+            print(separator, file=output_obj)
+            print(*args, **kwargs)
+            print(separator, file=output_obj)
+
         types = calculate_types(feature.api, feature.types, feature.commands)
         feature_func_names = set(feature.commands)
         lib_func_names = ((lib_feature and set(lib_feature.commands) & feature_func_names)
@@ -289,17 +297,14 @@ def subcommand_write_glcore(parsed_args, spec):
         lib_func_names = sorted(lib_func_names)
         feature_func_names = sorted(feature_func_names)
 
-        separator = '//' + ('-' * 70)
         with open(filename, 'w') as output_obj:
             print('/**', file=output_obj)
             for line in spec.header_comment.splitlines():
                 print(' *', line, file=output_obj)
             print(' */', file=output_obj)
-            print(separator, file=output_obj)
-            print('// Custom header for minimal feature', feature.name, file=output_obj)
-            print(separator, file=output_obj)
-            print('#ifndef GL_CORE_H', file=output_obj)
-            print('#define GL_CORE_H\n', file=output_obj)
+            print_sep('// Custom header for minimal feature', feature.name, file=output_obj)
+            print('#ifndef GL_CORE_H_INCLUDED', file=output_obj)
+            print('#define GL_CORE_H_INCLUDED\n', file=output_obj)
 
             for type_obj in types:
                   print(type_obj.definition, file=output_obj)
@@ -316,12 +321,16 @@ def subcommand_write_glcore(parsed_args, spec):
             print('extern "C" {', file=output_obj)
             print('#endif // __cplusplus', file=output_obj)
 
+            print_sep('// Function intialization/loading (single context only!)', file=output_obj)
+            print('typedef void (*glcoreFuncPtr)();', file=output_obj)
+            print('typedef glcoreFuncPtr (*glcoreFunctionLoader)(const char*);', file=output_obj)
+            print('int glcoreLoadFunctions(glcoreFunctionLoader functionLoader);', file=output_obj)
+            print(file=output_obj)
+
             if lib_func_names:
-                print(separator, file=output_obj)
-                print('// Functions contained in our system lib for feature',
-                      lib_feature.name,
-                      file=output_obj)
-                print(separator, file=output_obj)
+                print_sep('// Functions contained in our system lib for feature',
+                          lib_feature.name,
+                          file=output_obj)
             for func_name in lib_func_names:
                 command = spec.commands.get(func_name)
                 print(command.get_func_decl(), file=output_obj)
@@ -330,10 +339,8 @@ def subcommand_write_glcore(parsed_args, spec):
             feature_commands = [spec.commands.get(x) for x in feature_func_names]
             col_width = max([len(x.get_func_ptr_name()) for x in feature_commands], default=0)
             if feature_commands:
-                print(separator, file=output_obj)
-                print('// Function pointers to be retrieved for feature',
-                      feature.name, file=output_obj)
-                print(separator, file=output_obj)
+                print_sep('// Function pointers to be retrieved for feature',
+                          feature.name, file=output_obj)
             for command in feature_commands:
                 line = 'extern {0:{width}} {1};'.format(command.get_func_ptr_name(),
                                                         command.name,
@@ -343,8 +350,47 @@ def subcommand_write_glcore(parsed_args, spec):
             print('#ifdef __cplusplus', file=output_obj)
             print('}', file=output_obj)
             print('#endif // __cplusplus', file=output_obj)
-            print('#endif // GL_CORE_H', file=output_obj)
+            print('#endif // GL_CORE_H_INCLUDED', file=output_obj)
         
+    #--------------------------------------------------------------------
+    def write_glcore_c_module(filename, header_filename, feature, lib_feature):
+        feature_func_names = set(feature.commands)
+        lib_func_names = ((lib_feature and set(lib_feature.commands) & feature_func_names)
+                          or set())
+        feature_func_names -= lib_func_names
+        lib_func_names = sorted(lib_func_names)
+        feature_func_names = sorted(feature_func_names)
+
+        with open(filename, 'w') as output_obj:
+            print('#include <assert.h>', file=output_obj)
+            print('#include "{0}"\n'.format(os.path.basename(header_filename)), file=output_obj)
+            feature_commands = [spec.commands.get(x) for x in feature_func_names]
+            col_width = max([len(x.get_func_ptr_name()) for x in feature_commands], default=0)
+
+            for command in feature_commands:
+                line = '{0:{width}} {1};'.format(command.get_func_ptr_name(),
+                                                 command.name,
+                                                 width=col_width)
+                print(line, file=output_obj)
+            print(file=output_obj)
+
+            print('int glcoreLoadFunctions(glcoreFunctionLoader functionLoader)', file=output_obj)
+            print('{', file=output_obj)
+            col_width = max([len(x.name) for x in feature_commands], default=0)
+            for command in feature_commands:
+                line = '    {name:{width}} = ({type})functionLoader("{name}");'
+                line = line.format(name=command.name,
+                                   type=command.get_func_ptr_name(),
+                                   width=col_width)
+                print(line, file=output_obj)
+            print(file=output_obj)
+            for command in feature_commands:
+                line = '    assert({name:{width}} != NULL);'
+                line = line.format(name=command.name,
+                                   width=col_width)
+                print(line, file=output_obj)
+            print('}', file=output_obj)
+
     #--------------------------------------------------------------------
     # Feature level we are targeting
     feature = parsed_args.feature
@@ -356,7 +402,10 @@ def subcommand_write_glcore(parsed_args, spec):
     lib_feature = spec.features.get(lib_feature)
 
     write_glcore_header(parsed_args.header_filename, feature, lib_feature)
-
+    write_glcore_c_module(parsed_args.c_module_filename,
+                          parsed_args.header_filename,
+                          feature,
+                          lib_feature)
     
 #------------------------------------------------------------------------
 def parse_args(args):
