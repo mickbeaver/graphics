@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 import argparse
+import copy
 import sys
 import xml.etree.ElementTree
 
 #------------------------------------------------------------------------
 class GLType:
     #--------------------------------------------------------------------
-    def __init__(self, name, definition, api=None, requires=None):
+    def __init__(self, name, definition, api='gl', requires=None):
         self.name = name
         self.definition = definition
         self.api = api
@@ -68,9 +69,10 @@ class GLCommand:
 #------------------------------------------------------------------------
 class GLFeature:
     #--------------------------------------------------------------------
-    def __init__(self, name, types, enums, commands):
-        self.types = types
+    def __init__(self, name, api, types, enums, commands):
         self.name = name
+        self.api = api
+        self.types = types
         self.enums = enums
         self.commands = commands
 
@@ -88,6 +90,7 @@ class GLSpec:
         self.enums = {}
         self.commands = {}
         self.features = {}
+        self.__temp_api = {} # temp store for running api
 
         root = xml_tree.getroot()
         for child in root:
@@ -95,11 +98,20 @@ class GLSpec:
             if handler:
                 handler(child)
 
+        del self.__temp_api
+
     #--------------------------------------------------------------------
     def process_commands(self, commands_node):
         for command in commands_node:
             proto = command.find('proto')
-            return_type = proto.text
+            ptype_node = proto.find('ptype')
+            if ptype_node is None:
+                return_type = proto.text or 'void'
+            else:
+                return_type = ''.join((proto.text or '',
+                                       ptype_node.text or '',
+                                       ptype_node.tail or ''))
+            return_type = return_type.strip()
             name_node = proto.find('name')
             command_name = name_node.text
 
@@ -141,26 +153,27 @@ class GLSpec:
     #--------------------------------------------------------------------
     def process_feature(self, feature_node):
         feature_name = feature_node.attrib['name']
-        enums = []
-        commands = []
-        types = {}
+        feature_api = feature_node.attrib['api']
+        running_api = self.__temp_api.setdefault(feature_api, {'enum': set(),
+                                                               'command': set(),
+                                                               'type': set()})
         known_components = ('enum', 'command', 'type')
-        for require in feature_node:
-            for component in require:
-                assert component.tag in known_components, 'Unexpected require child "{0}"'.format(component.tag)
+        for operator in feature_node:
+            operation = operator.tag
+            assert operation in ('require', 'remove')
+            for component in operator:
+                assert component.tag in known_components, 'Unexpected require/remove child "{0}"'.format(component.tag)
                 component_name = component.attrib['name']
-                if component.tag == 'enum':
-                    enum = self.enums[component_name]
-                    enums.append(enum)
-                elif component.tag == 'command':
-                    command = self.commands[component_name]
-                    commands.append(command)
+                if operation == 'require':
+                    running_api[component.tag].add(component_name)
                 else:
-                    types[component_name] = self.types[component_name]
+                    running_api[component.tag].remove(component_name)
 
-        enums.sort()
-        commands.sort()
-        self.features[feature_name] = GLFeature(feature_name, types, enums, commands)
+        self.features[feature_name] = GLFeature(feature_name,
+                                                feature_api,
+                                                sorted(running_api['type']),
+                                                sorted(running_api['enum']),
+                                                sorted(running_api['command']))
             
     #--------------------------------------------------------------------
     def process_groups(self, groups_node):
@@ -219,15 +232,46 @@ def subcommand_write_glsys(parsed_args, spec):
     feature = parsed_args.feature
     assert feature in spec.features, 'Unknown feature "{0}"'.format(feature)
     feature = spec.features[feature]
-    print('types')
-    for t in feature.types:
-        print('\t' + t)
-    print('enums/defines')
-    for e in feature.enums:
-        print('\t' + e.name)
-    print('commands/functions')
-    for c in feature.commands:
-        print('\t' + c.name)
+    type_prereqs = set()
+    types = []
+    for type_name in feature.types:
+        type_list = spec.types.get(type_name)
+        for t in type_list:
+            if t.api == feature.api:
+                if t.requires:
+                    type_prereqs.add(t.requires)
+                types.append(t)
+                break
+        else:
+             types.append(t)
+             if t.requires:
+                 type_prereqs.add(t.requires)
+                
+    for prereq in type_prereqs:
+        type_list = spec.types.get(prereq)
+        for t in type_list:
+            if t.api == feature.api:
+                print(t.definition)
+                break
+        else:
+            print(t.definition)
+    for t in types:
+        print(t.definition)
+
+    print()
+    enum_column_len = len(max(feature.enums, key=lambda x: len(x)))
+    for enum_name in feature.enums:
+        enum = spec.enums.get(enum_name)
+        print('#define {0:{len}} {1}'.format(enum.name, enum.value, len=enum_column_len))
+
+    print()
+    for command_name in feature.commands:
+        command = spec.commands.get(command_name)
+        params = [x.type + ' ' + x.name for x in command.parameters]
+        param_str = ', '.join(params)
+        print('{0} {1}({2});'.format(command.return_type,
+                                     command.name,
+                                     param_str))
     
 #------------------------------------------------------------------------
 def parse_args(args):
