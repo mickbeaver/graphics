@@ -7,9 +7,10 @@ import xml.etree.ElementTree
 #------------------------------------------------------------------------
 class GLType:
     #--------------------------------------------------------------------
-    def __init__(self, name, definition, api='gl', requires=None):
+    def __init__(self, name, definition, sort_id, api='gl', requires=None):
         self.name = name
         self.definition = definition
+        self.sort_id = sort_id
         self.api = api
         self.requires = requires
 
@@ -26,7 +27,7 @@ class GLType:
 
     #--------------------------------------------------------------------
     def __lt__(self, other):
-        return self.name < other.name
+        return self.sort_id < other.sort_id
 
 #------------------------------------------------------------------------
 class GLEnum:
@@ -63,8 +64,21 @@ class GLCommand:
         self.return_type = return_type
         self.parameters = parameters
 
+    #--------------------------------------------------------------------
     def __lt__(self, other):
         return self.name < other.name
+
+    #--------------------------------------------------------------------
+    def get_func_decl(self):
+        params = [x.type + ' ' + x.name for x in self.parameters]
+        param_str = ', '.join(params)
+        return '{0} {1}({2});'.format(self.return_type,
+                                      self.name,
+                                      param_str)
+
+    #--------------------------------------------------------------------
+    def get_func_ptr_name(self):
+        return 'PFN' + self.name.upper() + 'PROC'
 
 #------------------------------------------------------------------------
 class GLFeature:
@@ -185,17 +199,17 @@ class GLSpec:
                 self.enums[enum_name] = GLEnum(enum_name, group_name)
 
     #--------------------------------------------------------------------
-    def process_type_chunk(self, type_chunk):
+    def process_type_chunk(self, type_chunk, sort_id):
         name = type_chunk.attrib['name']
         definition = type_chunk.text
         api = type_chunk.attrib.get('api')
         requires = type_chunk.attrib.get('requires')
         
         type_list = self.types.setdefault(name, [])
-        type_list.append(GLType(name, definition, api=api, requires=requires))
+        type_list.append(GLType(name, definition, sort_id, api=api, requires=requires))
 
     #--------------------------------------------------------------------
-    def process_type(self, typeNode):
+    def process_type(self, typeNode, sort_id):
         definition = [typeNode.text or '']
         for child in typeNode:
             if child.tag == 'apientry':
@@ -211,15 +225,15 @@ class GLSpec:
         api = typeNode.attrib.get('api')
         requires = typeNode.attrib.get('requires')
         type_list = self.types.setdefault(name, [])
-        type_list.append(GLType(name, definition, api=api, requires=requires))
+        type_list.append(GLType(name, definition, sort_id, api=api, requires=requires))
 
     #--------------------------------------------------------------------
     def process_types(self, types):
-        for typeNode in types:
+        for sort_id, typeNode in enumerate(types):
             if 'name' in typeNode.attrib:
-                self.process_type_chunk(typeNode)
+                self.process_type_chunk(typeNode, sort_id)
             else:
-                self.process_type(typeNode)
+                self.process_type(typeNode, sort_id)
 
 #------------------------------------------------------------------------
 def subcommand_list_features(parsed_args, spec):
@@ -228,7 +242,7 @@ def subcommand_list_features(parsed_args, spec):
         print('{0:2}'.format(i + 1), feature.name)
 
 #------------------------------------------------------------------------
-def subcommand_write_glsys(parsed_args, spec):
+def subcommand_write_glcore(parsed_args, spec):
     #--------------------------------------------------------------------
     def get_closest_type(api, type_name):
         type_name = type_name.replace('const', '').replace('*', '').strip()
@@ -236,51 +250,113 @@ def subcommand_write_glsys(parsed_args, spec):
         assert type_list, 'Did not get type list for "{0}"'.format(type_name)
         type_list.extend([x for x in type_list if x.api == api])
         return type_list[-1]
+
+    #--------------------------------------------------------------------
+    def calculate_types(api, feature_types, command_names):
+        type_names_needed = set(feature_types)
+        for command_name in command_names:
+            command = spec.commands.get(command_name)
+            if command.return_type.startswith('GL'):
+                type_names_needed.add(command.return_type)
+            for param in command.parameters:
+                if param.type.startswith('GL'):
+                    type_names_needed.add(param.type)
+
+        type_prereqs = set()
+        types_needed = set()
+        # Get types that we explicitly need via require and our commands
+        for type_name in type_names_needed:
+            closest_type = get_closest_type(api, type_name)
+            types_needed.add(closest_type)
+            if closest_type.requires:
+                # Just one level of prereq, not an actual tree
+                type_prereqs.add(closest_type.requires)
+
+        # Get types we are dependent on
+        for type_name in type_prereqs:
+            closest_type = get_closest_type(api, type_name)
+            types_needed.add(closest_type)
+
+        return sorted(types_needed)
+
+    #--------------------------------------------------------------------
+    def write_glcore_header(filename, feature, lib_feature):
+        types = calculate_types(feature.api, feature.types, feature.commands)
+        feature_func_names = set(feature.commands)
+        lib_func_names = ((lib_feature and set(lib_feature.commands) & feature_func_names)
+                          or set())
+        feature_func_names -= lib_func_names
+        lib_func_names = sorted(lib_func_names)
+        feature_func_names = sorted(feature_func_names)
+
+        separator = '//' + ('-' * 70)
+        with open(filename, 'w') as output_obj:
+            print('/**', file=output_obj)
+            for line in spec.header_comment.splitlines():
+                print(' *', line, file=output_obj)
+            print(' */', file=output_obj)
+            print(separator, file=output_obj)
+            print('// Custom header for minimal feature', feature.name, file=output_obj)
+            print(separator, file=output_obj)
+            print('#ifndef GL_CORE_H', file=output_obj)
+            print('#define GL_CORE_H\n', file=output_obj)
+
+            for type_obj in types:
+                  print(type_obj.definition, file=output_obj)
+            print(file=output_obj)
+
+            enum_column_len = len(max(feature.enums, key=lambda x: len(x)))
+            for enum_name in feature.enums:
+                enum = spec.enums.get(enum_name)
+                definition = '#define {0:{len}} {1}'.format(enum.name, enum.value, len=enum_column_len)
+                print(definition, file=output_obj)
+            print(file=output_obj)
+            
+            print('#ifdef __cplusplus', file=output_obj)
+            print('extern "C" {', file=output_obj)
+            print('#endif // __cplusplus', file=output_obj)
+
+            if lib_func_names:
+                print(separator, file=output_obj)
+                print('// Functions contained in our system lib for feature',
+                      lib_feature.name,
+                      file=output_obj)
+                print(separator, file=output_obj)
+            for func_name in lib_func_names:
+                command = spec.commands.get(func_name)
+                print(command.get_func_decl(), file=output_obj)
+            print(file=output_obj)
+
+            feature_commands = [spec.commands.get(x) for x in feature_func_names]
+            col_width = max([len(x.get_func_ptr_name()) for x in feature_commands], default=0)
+            if feature_commands:
+                print(separator, file=output_obj)
+                print('// Function pointers to be retrieved for feature',
+                      feature.name, file=output_obj)
+                print(separator, file=output_obj)
+            for command in feature_commands:
+                line = 'extern {0:{width}} {1};'.format(command.get_func_ptr_name(),
+                                                        command.name,
+                                                        width=col_width)
+                print(line, file=output_obj)
+            
+            print('#ifdef __cplusplus', file=output_obj)
+            print('}', file=output_obj)
+            print('#endif // __cplusplus', file=output_obj)
+            print('#endif // GL_CORE_H', file=output_obj)
         
+    #--------------------------------------------------------------------
+    # Feature level we are targeting
     feature = parsed_args.feature
     assert feature in spec.features, 'Unknown feature "{0}"'.format(feature)
     feature = spec.features[feature]
+    
+    # Feature level contained in our .dll/.so
+    lib_feature = parsed_args.lib_feature
+    lib_feature = spec.features.get(lib_feature)
 
-    type_names_needed = set(feature.types)
-    for command_name in feature.commands:
-        command = spec.commands.get(command_name)
-        if command.return_type.startswith('GL'):
-            type_names_needed.add(command.return_type)
-        for param in command.parameters:
-            if param.type.startswith('GL'):
-                type_names_needed.add(param.type)
+    write_glcore_header(parsed_args.header_filename, feature, lib_feature)
 
-    type_prereqs = set()
-    types_needed = set()
-    for type_name in type_names_needed:
-        closest_type = get_closest_type(feature.api, type_name)
-        types_needed.add(closest_type)
-        if closest_type.requires:
-            type_prereqs.add(closest_type.requires) # Just one level of prereq
-                
-    for type_name in type_prereqs:
-        closest_type = get_closest_type(feature.api, type_name)
-        types_needed.add(closest_type)
-
-    # Sorting by definition string happens to work out fine for
-    # now... not guaranteed, though.
-    for t in sorted(types_needed, key=lambda x: x.definition):
-        print(t.definition)
-
-    print()
-    enum_column_len = len(max(feature.enums, key=lambda x: len(x)))
-    for enum_name in feature.enums:
-        enum = spec.enums.get(enum_name)
-        print('#define {0:{len}} {1}'.format(enum.name, enum.value, len=enum_column_len))
-
-    print()
-    for command_name in feature.commands:
-        command = spec.commands.get(command_name)
-        params = [x.type + ' ' + x.name for x in command.parameters]
-        param_str = ', '.join(params)
-        print('{0} {1}({2});'.format(command.return_type,
-                                     command.name,
-                                     param_str))
     
 #------------------------------------------------------------------------
 def parse_args(args):
@@ -292,12 +368,17 @@ def parse_args(args):
     list_features = subparsers.add_parser('list-features')
     list_features.set_defaults(subcommand_func=subcommand_list_features)
 
-    write_glsys = subparsers.add_parser('write-glsys')
-    write_glsys.add_argument('--feature', metavar='NAME', required=True,
+    write_glcore = subparsers.add_parser('write-glcore')
+    write_glcore.add_argument('--feature', metavar='NAME', required=True,
                              dest='feature', help='Feature name')
-    write_glsys.add_argument('--header', metavar='FILE', required=True,
+    write_glcore.add_argument('--lib-feature', metavar='NAME',
+                              dest='lib_feature',
+                              help='Feature level contained in OpenGL lib')
+    write_glcore.add_argument('--header', metavar='FILE', required=True,
                              dest='header_filename', help='Output header filename')
-    write_glsys.set_defaults(subcommand_func=subcommand_write_glsys)
+    write_glcore.add_argument('--c-module', metavar='FILE', required=True,
+                             dest='c_module_filename', help='Output C module filename')
+    write_glcore.set_defaults(subcommand_func=subcommand_write_glcore)
 
     args = parser.parse_args(args)
     return args
