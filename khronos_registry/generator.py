@@ -229,33 +229,42 @@ def subcommand_list_features(parsed_args, spec):
 
 #------------------------------------------------------------------------
 def subcommand_write_glsys(parsed_args, spec):
+    #--------------------------------------------------------------------
+    def get_closest_type(api, type_name):
+        type_name = type_name.replace('const', '').replace('*', '').strip()
+        type_list = spec.types.get(type_name)
+        assert type_list, 'Did not get type list for "{0}"'.format(type_name)
+        type_list.extend([x for x in type_list if x.api == api])
+        return type_list[-1]
+        
     feature = parsed_args.feature
     assert feature in spec.features, 'Unknown feature "{0}"'.format(feature)
     feature = spec.features[feature]
+
+    type_names_needed = set(feature.types)
+    for command_name in feature.commands:
+        command = spec.commands.get(command_name)
+        if command.return_type.startswith('GL'):
+            type_names_needed.add(command.return_type)
+        for param in command.parameters:
+            if param.type.startswith('GL'):
+                type_names_needed.add(param.type)
+
     type_prereqs = set()
-    types = []
-    for type_name in feature.types:
-        type_list = spec.types.get(type_name)
-        for t in type_list:
-            if t.api == feature.api:
-                if t.requires:
-                    type_prereqs.add(t.requires)
-                types.append(t)
-                break
-        else:
-             types.append(t)
-             if t.requires:
-                 type_prereqs.add(t.requires)
+    types_needed = set()
+    for type_name in type_names_needed:
+        closest_type = get_closest_type(feature.api, type_name)
+        types_needed.add(closest_type)
+        if closest_type.requires:
+            type_prereqs.add(closest_type.requires) # Just one level of prereq
                 
-    for prereq in type_prereqs:
-        type_list = spec.types.get(prereq)
-        for t in type_list:
-            if t.api == feature.api:
-                print(t.definition)
-                break
-        else:
-            print(t.definition)
-    for t in types:
+    for type_name in type_prereqs:
+        closest_type = get_closest_type(feature.api, type_name)
+        types_needed.add(closest_type)
+
+    # Sorting by definition string happens to work out fine for
+    # now... not guaranteed, though.
+    for t in sorted(types_needed, key=lambda x: x.definition):
         print(t.definition)
 
     print()
