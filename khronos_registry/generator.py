@@ -81,6 +81,14 @@ class GLCommand:
     def get_func_ptr_name(self):
         return 'PFN' + self.name.upper() + 'PROC'
 
+    #--------------------------------------------------------------------
+    def get_func_ptr_typedef(self):
+        params = [x.type + ' ' + x.name for x in self.parameters]
+        param_str = ', '.join(params)
+        return 'typedef {0} (*{1})({2});'.format(self.return_type,
+                                                 self.get_func_ptr_name(),
+                                                 param_str)
+
 #------------------------------------------------------------------------
 class GLFeature:
     #--------------------------------------------------------------------
@@ -243,7 +251,7 @@ def subcommand_list_features(parsed_args, spec):
         print('{0:2}'.format(i + 1), feature.name)
 
 #------------------------------------------------------------------------
-def subcommand_write_glcore(parsed_args, spec):
+def subcommand_write_glsys(parsed_args, spec):
     #--------------------------------------------------------------------
     def get_closest_type(api, type_name):
         type_name = type_name.replace('const', '').replace('*', '').strip()
@@ -281,7 +289,7 @@ def subcommand_write_glcore(parsed_args, spec):
         return sorted(types_needed)
 
     #--------------------------------------------------------------------
-    def write_glcore_header(filename, feature, lib_feature):
+    def write_glsys_header(filename, feature, lib_feature):
         separator = '//' + ('-' * 70)
         def print_sep(*args, **kwargs):
             output_obj = kwargs.get('file')
@@ -303,13 +311,21 @@ def subcommand_write_glcore(parsed_args, spec):
                 print(' *', line, file=output_obj)
             print(' */', file=output_obj)
             print_sep('// Custom header for minimal feature', feature.name, file=output_obj)
-            print('#ifndef GL_CORE_H_INCLUDED', file=output_obj)
-            print('#define GL_CORE_H_INCLUDED\n', file=output_obj)
+            print('#ifndef GL_SYS_H_INCLUDED', file=output_obj)
+            print('#define GL_SYS_H_INCLUDED\n', file=output_obj)
 
+            # OpenGL types
             for type_obj in types:
                   print(type_obj.definition, file=output_obj)
             print(file=output_obj)
 
+            # OpenGL function pointer typedefs
+            feature_commands = [spec.commands.get(x) for x in feature_func_names]
+            for command in feature_commands:
+                print(command.get_func_ptr_typedef(), file=output_obj)
+            print(file=output_obj)
+
+            # Enums/defines
             enum_column_len = len(max(feature.enums, key=lambda x: len(x)))
             for enum_name in feature.enums:
                 enum = spec.enums.get(enum_name)
@@ -322,11 +338,12 @@ def subcommand_write_glcore(parsed_args, spec):
             print('#endif // __cplusplus', file=output_obj)
 
             print_sep('// Function intialization/loading (single context only!)', file=output_obj)
-            print('typedef void (*glcoreFuncPtr)();', file=output_obj)
-            print('typedef glcoreFuncPtr (*glcoreFunctionLoader)(const char*);', file=output_obj)
-            print('int glcoreLoadFunctions(glcoreFunctionLoader functionLoader);', file=output_obj)
+            print('typedef void (*glsysFuncPtr)();', file=output_obj)
+            print('typedef glsysFuncPtr (*glsysFunctionLoader)(const char*);', file=output_obj)
+            print('int glsysLoadFunctions(glsysFunctionLoader functionLoader);', file=output_obj)
             print(file=output_obj)
 
+            # Functions contained in our system lib
             if lib_func_names:
                 print_sep('// Functions contained in our system lib for feature',
                           lib_feature.name,
@@ -336,7 +353,7 @@ def subcommand_write_glcore(parsed_args, spec):
                 print(command.get_func_decl(), file=output_obj)
             print(file=output_obj)
 
-            feature_commands = [spec.commands.get(x) for x in feature_func_names]
+            # Function pointers to load from the driver
             col_width = max([len(x.get_func_ptr_name()) for x in feature_commands], default=0)
             if feature_commands:
                 print_sep('// Function pointers to be retrieved for feature',
@@ -350,10 +367,10 @@ def subcommand_write_glcore(parsed_args, spec):
             print('#ifdef __cplusplus', file=output_obj)
             print('}', file=output_obj)
             print('#endif // __cplusplus', file=output_obj)
-            print('#endif // GL_CORE_H_INCLUDED', file=output_obj)
+            print('#endif // GL_SYS_H_INCLUDED', file=output_obj)
         
     #--------------------------------------------------------------------
-    def write_glcore_c_module(filename, header_filename, feature, lib_feature):
+    def write_glsys_c_module(filename, header_filename, feature, lib_feature):
         feature_func_names = set(feature.commands)
         lib_func_names = ((lib_feature and set(lib_feature.commands) & feature_func_names)
                           or set())
@@ -374,7 +391,7 @@ def subcommand_write_glcore(parsed_args, spec):
                 print(line, file=output_obj)
             print(file=output_obj)
 
-            print('int glcoreLoadFunctions(glcoreFunctionLoader functionLoader)', file=output_obj)
+            print('int glsysLoadFunctions(glsysFunctionLoader functionLoader)', file=output_obj)
             print('{', file=output_obj)
             col_width = max([len(x.name) for x in feature_commands], default=0)
             for command in feature_commands:
@@ -401,8 +418,8 @@ def subcommand_write_glcore(parsed_args, spec):
     lib_feature = parsed_args.lib_feature
     lib_feature = spec.features.get(lib_feature)
 
-    write_glcore_header(parsed_args.header_filename, feature, lib_feature)
-    write_glcore_c_module(parsed_args.c_module_filename,
+    write_glsys_header(parsed_args.header_filename, feature, lib_feature)
+    write_glsys_c_module(parsed_args.c_module_filename,
                           parsed_args.header_filename,
                           feature,
                           lib_feature)
@@ -417,17 +434,17 @@ def parse_args(args):
     list_features = subparsers.add_parser('list-features')
     list_features.set_defaults(subcommand_func=subcommand_list_features)
 
-    write_glcore = subparsers.add_parser('write-glcore')
-    write_glcore.add_argument('--feature', metavar='NAME', required=True,
+    write_glsys = subparsers.add_parser('write-glsys')
+    write_glsys.add_argument('--feature', metavar='NAME', required=True,
                              dest='feature', help='Feature name')
-    write_glcore.add_argument('--lib-feature', metavar='NAME',
+    write_glsys.add_argument('--lib-feature', metavar='NAME',
                               dest='lib_feature',
                               help='Feature level contained in OpenGL lib')
-    write_glcore.add_argument('--header', metavar='FILE', required=True,
+    write_glsys.add_argument('--header', metavar='FILE', required=True,
                              dest='header_filename', help='Output header filename')
-    write_glcore.add_argument('--c-module', metavar='FILE', required=True,
+    write_glsys.add_argument('--c-module', metavar='FILE', required=True,
                              dest='c_module_filename', help='Output C module filename')
-    write_glcore.set_defaults(subcommand_func=subcommand_write_glcore)
+    write_glsys.set_defaults(subcommand_func=subcommand_write_glsys)
 
     args = parser.parse_args(args)
     return args
