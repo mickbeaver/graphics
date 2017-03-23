@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import copy
+import contextlib
 import os
 import sys
 import xml.etree.ElementTree
@@ -85,7 +86,7 @@ class GLCommand:
     def get_func_ptr_typedef(self):
         params = [x.type + ' ' + x.name for x in self.parameters]
         param_str = ', '.join(params)
-        return 'typedef {0} (*{1})({2});'.format(self.return_type,
+        return 'typedef {0} (* {1})({2});'.format(self.return_type,
                                                  self.get_func_ptr_name(),
                                                  param_str)
 
@@ -222,7 +223,8 @@ class GLSpec:
         definition = [typeNode.text or '']
         for child in typeNode:
             if child.tag == 'apientry':
-                definition.append('APIENTRY')
+                pass # ignored for now
+                #definition.append('APIENTRY')
             elif child.tag == 'name':
                 name = child.text
             else:
@@ -247,8 +249,7 @@ class GLSpec:
 #------------------------------------------------------------------------
 def subcommand_list_features(parsed_args, spec):
     for i, feature_name in enumerate(sorted(spec.features)):
-        feature = spec.features[feature_name]
-        print('{0:2}'.format(i + 1), feature.name)
+        print('{0:2}'.format(i + 1), feature_name)
 
 #------------------------------------------------------------------------
 def subcommand_write_glsys(parsed_args, spec):
@@ -257,19 +258,28 @@ def subcommand_write_glsys(parsed_args, spec):
         type_name = type_name.replace('const', '').replace('*', '').strip()
         type_list = spec.types.get(type_name)
         assert type_list, 'Did not get type list for "{0}"'.format(type_name)
-        type_list.extend([x for x in type_list if x.api == api])
-        return type_list[-1]
+
+        # If there is a type_obj that matches our API, we want that.
+        # Otherwise, the default type definition should be the first
+        # item in the list.
+        for type_obj in type_list:
+            if type_obj.api == api:
+                return type_obj
+        return type_list[0]
 
     #--------------------------------------------------------------------
     def calculate_types(api, feature_types, command_names):
         type_names_needed = set(feature_types)
+
+        # For each function we need, iterate over the return type and
+        # the parameters to grab necessary "GL"-prefixed types
         for command_name in command_names:
             command = spec.commands.get(command_name)
-            if command.return_type.startswith('GL'):
-                type_names_needed.add(command.return_type)
-            for param in command.parameters:
-                if param.type.startswith('GL'):
-                    type_names_needed.add(param.type)
+            types_to_check = [command.return_type] + [x.type for x in command.parameters]
+            for type_to_check in types_to_check:
+                for token in type_to_check.split():
+                    if token.startswith('GL'):
+                        type_names_needed.add(token)
 
         type_prereqs = set()
         types_needed = set()
@@ -292,10 +302,9 @@ def subcommand_write_glsys(parsed_args, spec):
     def write_glsys_header(filename, feature, lib_feature):
         separator = '//' + ('-' * 70)
         def print_sep(*args, **kwargs):
-            output_obj = kwargs.get('file')
-            print(separator, file=output_obj)
+            print(separator)
             print(*args, **kwargs)
-            print(separator, file=output_obj)
+            print(separator)
 
         types = calculate_types(feature.api, feature.types, feature.commands)
         feature_func_names = set(feature.commands)
@@ -305,43 +314,57 @@ def subcommand_write_glsys(parsed_args, spec):
         lib_func_names = sorted(lib_func_names)
         feature_func_names = sorted(feature_func_names)
 
-        with open(filename, 'w') as output_obj:
-            print('/**', file=output_obj)
+        output_obj = open(filename, 'w')
+        with contextlib.redirect_stdout(output_obj):
+            print('/**')
+            print(' * Below is the copyright that came with the spec XML:')
             for line in spec.header_comment.splitlines():
-                print(' *', line, file=output_obj)
-            print(' */', file=output_obj)
-            print_sep('// Custom header for minimal feature', feature.name, file=output_obj)
-            print('#ifndef GL_SYS_H_INCLUDED', file=output_obj)
-            print('#define GL_SYS_H_INCLUDED\n', file=output_obj)
+                print(' *', line)
+            print(' */')
+            print_sep('// Custom header for minimal feature', feature.name)
+            include_guard = 'GL_SYS_GENERATED_H_{0}_INCLUDED'.format(feature.name)
+            print('#ifndef', include_guard)
+            print('#define', include_guard, end='\n\n')
+            print('#ifdef __cplusplus')
+            print('extern "C" {')
+            print('#endif // __cplusplus', end='\n\n')
+
+            # Our selected feature
+            print('// Known features')
+            column_width = len(max(spec.features, key=len))
+            feature_names = sorted(spec.features)
+            for i, feature_name in enumerate(feature_names):
+                print('#define {0:{width}} {1}'.format(feature_name, i, width=column_width))
+            print('// Selected feature')
+            print('#define GLSYS_FEATURE_VERSION', feature.name)
+            major, minor = feature.name.split('_')[-2:]
+            print('#define GLSYS_FEATURE_MAJOR_VERSION', major)
+            print('#define GLSYS_FEATURE_MINOR_VERSION', minor)
+            print('#define GLSYS_FEATURE_VERSION_STRING "{0}"'.format(feature.name), end='\n\n')
 
             # OpenGL types
             for type_obj in types:
-                  print(type_obj.definition, file=output_obj)
-            print(file=output_obj)
+                  print(type_obj.definition)
+            print()
 
             # OpenGL function pointer typedefs
             feature_commands = [spec.commands.get(x) for x in feature_func_names]
             for command in feature_commands:
-                print(command.get_func_ptr_typedef(), file=output_obj)
-            print(file=output_obj)
+                print(command.get_func_ptr_typedef())
+            print()
 
             # Enums/defines
-            enum_column_len = len(max(feature.enums, key=lambda x: len(x)))
+            column_width = len(max(feature.enums, key=len))
             for enum_name in feature.enums:
                 enum = spec.enums.get(enum_name)
-                definition = '#define {0:{len}} {1}'.format(enum.name, enum.value, len=enum_column_len)
-                print(definition, file=output_obj)
-            print(file=output_obj)
+                definition = '#define {0:{width}} {1}'.format(enum.name, enum.value, width=column_width)
+                print(definition)
+            print()
             
-            print('#ifdef __cplusplus', file=output_obj)
-            print('extern "C" {', file=output_obj)
-            print('#endif // __cplusplus', file=output_obj)
-
-            print_sep('// Function intialization/loading (single context only!)', file=output_obj)
-            print('typedef void (*glsysFuncPtr)();', file=output_obj)
-            print('typedef glsysFuncPtr (*glsysFunctionLoader)(const char*);', file=output_obj)
-            print('int glsysLoadFunctions(glsysFunctionLoader functionLoader);', file=output_obj)
-            print(file=output_obj)
+            print_sep('// Function intialization/loading (single context only!)')
+            print('typedef void (*glsysFuncPtr)();')
+            print('typedef glsysFuncPtr (*glsysFunctionLoader)(const char*);')
+            print('int glsysLoadFunctions(glsysFunctionLoader functionLoader);', end='\n\n')
 
             # Functions contained in our system lib
             if lib_func_names:
@@ -350,24 +373,25 @@ def subcommand_write_glsys(parsed_args, spec):
                           file=output_obj)
             for func_name in lib_func_names:
                 command = spec.commands.get(func_name)
-                print(command.get_func_decl(), file=output_obj)
-            print(file=output_obj)
+                print(command.get_func_decl())
+            print()
 
             # Function pointers to load from the driver
-            col_width = max([len(x.get_func_ptr_name()) for x in feature_commands], default=0)
+            column_width = max([len(x.get_func_ptr_name()) for x in feature_commands], default=0)
             if feature_commands:
                 print_sep('// Function pointers to be retrieved for feature',
-                          feature.name, file=output_obj)
+                          feature.name)
             for command in feature_commands:
                 line = 'extern {0:{width}} {1};'.format(command.get_func_ptr_name(),
                                                         command.name,
-                                                        width=col_width)
-                print(line, file=output_obj)
+                                                        width=column_width)
+                print(line)
             
-            print('#ifdef __cplusplus', file=output_obj)
-            print('}', file=output_obj)
-            print('#endif // __cplusplus', file=output_obj)
-            print('#endif // GL_SYS_H_INCLUDED', file=output_obj)
+            print('#ifdef __cplusplus')
+            print('}')
+            print('#endif // __cplusplus')
+            print('#endif //', include_guard)
+        output_obj.close()
         
     #--------------------------------------------------------------------
     def write_glsys_c_module(filename, header_filename, feature, lib_feature):
@@ -378,9 +402,10 @@ def subcommand_write_glsys(parsed_args, spec):
         lib_func_names = sorted(lib_func_names)
         feature_func_names = sorted(feature_func_names)
 
-        with open(filename, 'w') as output_obj:
-            print('#include <assert.h>', file=output_obj)
-            print('#include "{0}"\n'.format(os.path.basename(header_filename)), file=output_obj)
+        output_obj = open(filename, 'w')
+        with contextlib.redirect_stdout(output_obj):
+            print('#include <assert.h>')
+            print('#include "{0}"\n'.format(os.path.basename(header_filename)))
             feature_commands = [spec.commands.get(x) for x in feature_func_names]
             col_width = max([len(x.get_func_ptr_name()) for x in feature_commands], default=0)
 
@@ -388,25 +413,26 @@ def subcommand_write_glsys(parsed_args, spec):
                 line = '{0:{width}} {1};'.format(command.get_func_ptr_name(),
                                                  command.name,
                                                  width=col_width)
-                print(line, file=output_obj)
-            print(file=output_obj)
+                print(line)
+            print()
 
-            print('int glsysLoadFunctions(glsysFunctionLoader functionLoader)', file=output_obj)
-            print('{', file=output_obj)
+            print('int glsysLoadFunctions(glsysFunctionLoader functionLoader)')
+            print('{')
             col_width = max([len(x.name) for x in feature_commands], default=0)
             for command in feature_commands:
                 line = '    {name:{width}} = ({type})functionLoader("{name}");'
                 line = line.format(name=command.name,
                                    type=command.get_func_ptr_name(),
                                    width=col_width)
-                print(line, file=output_obj)
-            print(file=output_obj)
+                print(line)
+            print()
             for command in feature_commands:
                 line = '    assert({name:{width}} != NULL);'
                 line = line.format(name=command.name,
                                    width=col_width)
-                print(line, file=output_obj)
-            print('}', file=output_obj)
+                print(line)
+            print('    return 0;')
+            print('}')
 
     #--------------------------------------------------------------------
     # Feature level we are targeting
@@ -420,9 +446,9 @@ def subcommand_write_glsys(parsed_args, spec):
 
     write_glsys_header(parsed_args.header_filename, feature, lib_feature)
     write_glsys_c_module(parsed_args.c_module_filename,
-                          parsed_args.header_filename,
-                          feature,
-                          lib_feature)
+                         parsed_args.header_filename,
+                         feature,
+                         lib_feature)
     
 #------------------------------------------------------------------------
 def parse_args(args):
