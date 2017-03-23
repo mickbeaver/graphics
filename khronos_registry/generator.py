@@ -255,7 +255,15 @@ def subcommand_list_features(parsed_args, spec):
 def subcommand_write_glsys(parsed_args, spec):
     #--------------------------------------------------------------------
     def get_closest_type(api, type_name):
-        type_name = type_name.replace('const', '').replace('*', '').strip()
+        tokens = type_name.split()
+        for token in type_name.split():
+            if token.startswith('GL'):
+                type_name = token
+                break
+        else:
+            assert len(tokens) == 1, '"{0}" does not appear to specify a GL type'.format(type_name)
+            type_name = tokens[0]
+
         type_list = spec.types.get(type_name)
         assert type_list, 'Did not get type list for "{0}"'.format(type_name)
 
