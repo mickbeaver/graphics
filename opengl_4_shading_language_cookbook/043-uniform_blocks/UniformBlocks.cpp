@@ -11,7 +11,7 @@
 
 #define WINDOW_SIZE 640
 #define ARRAY_COUNT(array) (sizeof(array) / sizeof(array[0]))
-#define DSA_ENABLED() 0
+#define DSA_ENABLED() (GLSYS_FEATURE_VERSION == GL_VERSION_4_5)
 
 struct ShaderProgramSource {
     GLenum shaderType;

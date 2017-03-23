@@ -11,11 +11,12 @@
 #include <SDL2/SDL.h>
 
 #include "glsys.h"
+#include "ArrayCount.h"
 #include "FileUtil.h"
 
 #define WINDOW_SIZE 640
 #define ARRAY_COUNT(array) (sizeof(array) / sizeof(array[0]))
-#define DSA_ENABLED 1
+#define DSA_ENABLED() (GLSYS_FEATURE_VERSION == GL_VERSION_4_5)
 
 struct ShaderProgramSource {
     GLenum shaderType;
@@ -38,7 +39,14 @@ GLuint compileShader(GLenum shaderType, const char* filename) {
     GLuint shaderHandle = glCreateShader(shaderType);
     if (shaderHandle != 0) {
         const GLchar* shaderCode = FileUtil::loadFileAsString(filename);
-        glShaderSource(shaderHandle, 1, &shaderCode, NULL);
+#if DSA_ENABLED()
+        const GLchar* srcArray[] = {"#version 450\n#line 2\n",
+                                    shaderCode};
+#else
+        const GLchar* srcArray[] = {"#version 430\n#line 2\n",
+                                    shaderCode};
+#endif
+        glShaderSource(shaderHandle, ArrayCount(srcArray), srcArray, NULL);
         delete [] shaderCode;
         glCompileShader(shaderHandle);
 
@@ -202,7 +210,7 @@ void Simulation::initializeBuffers()
     const size_t colorStride = 3 * sizeof(GLfloat);
     const GLuint colorAttribIndex = 1;
 
-#if DSA_ENABLED
+#if DSA_ENABLED()
     glCreateBuffers(ARRAY_COUNT(m_vboHandles), m_vboHandles);
     GLuint& positionBufferHandle = m_vboHandles[0];
     GLuint& colorBufferHandle = m_vboHandles[1];
@@ -221,7 +229,7 @@ void Simulation::initializeBuffers()
     glVertexArrayVertexBuffer(m_vaoHandle, bindingIndex, colorBufferHandle, 0, colorStride);
     glVertexArrayAttribBinding(m_vaoHandle, colorAttribIndex, bindingIndex);
     glVertexArrayAttribFormat(m_vaoHandle, colorAttribIndex, 3, GL_FLOAT, GL_FALSE, 0);
-#else
+#else // DSA_ENABLED()
     glGenBuffers(ARRAY_COUNT(m_vboHandles), m_vboHandles);
     GLuint& positionBufferHandle = m_vboHandles[0];
     GLuint& colorBufferHandle = m_vboHandles[1];
@@ -282,8 +290,8 @@ int main(int argc, char** argv)
     glContextFlags |= SDL_GL_CONTEXT_DEBUG_FLAG;
 #endif
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, glContextFlags);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, GLSYS_FEATURE_MAJOR_VERSION);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, GLSYS_FEATURE_MINOR_VERSION);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
