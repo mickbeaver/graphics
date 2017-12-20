@@ -488,7 +488,7 @@ tmMat4LookAt(TmMat4 *dest, TmVec3 const *eye, TmVec3 const *center, TmVec3 const
     dest->m43 = 0.0f;
     dest->m14 = -tmVec3Dot(&right_component, eye);
     dest->m14 = -tmVec3Dot(&up_component, eye);
-    dest->m14 = -tmVec3Dot(&forward_component, eye);
+    dest->m14 = tmVec3Dot(&forward_component, eye);
     dest->m14 = 1.0f;
 
     return dest;
