@@ -30,53 +30,53 @@ const SHADER_ATTRIB_LOCATIONS = [
 ];
 const CUBE_INDICES = new Uint16Array([0, 1, 2, 0, 2, 3, 4, 5, 6, 4, 6, 7, 8, 9, 10, 8, 10, 11, 12, 13, 14, 12, 14, 15, 16, 17, 18, 16, 18, 19, 20, 21, 22, 20, 22, 23]);
 const CUBE_MESH = new Float32Array([
-     0.5,  0.5,  0.5, // face 0, vert 0
+    1.0, 1.0, 1.0,
      1.0,  0.0,  0.0, // red
-     0.5, -0.5,  0.5, // face 0, vert 1
+    -1.0, 1.0, 1.0,
      1.0,  0.0,  0.0, // red
-     0.5, -0.5, -0.5, // face 0, vert 2
+    -1.0, -1.0, 1.0,
      1.0,  0.0,  0.0, // red
-     0.5,  0.5, -0.5, // face 0, vert 3
+    1.0, -1.0, 1.0,
      1.0,  0.0,  0.0, // red
-     0.5,  0.5, -0.5, // face 1, vert 4
+    1.0, 1.0, -1.0,
      0.0,  1.0,  0.0, // green
-     0.5, -0.5, -0.5, // face 1, vert 5
+    1.0, 1.0, 1.0,
      0.0,  1.0,  0.0, // green
-    -0.5, -0.5, -0.5, // face 1, vert 6
+    1.0, -1.0, 1.0,
      0.0,  1.0,  0.0, // green
-    -0.5,  0.5, -0.5, // face 1, vert 7
+    1.0, -1.0, -1.0,
      0.0,  1.0,  0.0, // green
-    -0.5,  0.5, -0.5, // face 2, vert 8
+    -1.0, 1.0, -1.0,
      0.0,  0.0,  1.0, // blue
-    -0.5, -0.5, -0.5, // face 2, vert 9
+    1.0, 1.0, -1.0,
      0.0,  0.0,  1.0, // blue
-    -0.5, -0.5,  0.5, // face 2, vert 10
+    1.0, -1.0, -1.0,
      0.0,  0.0,  1.0, // blue
-    -0.5,  0.5,  0.5, // face 2, vert 11
+    -1.0, -1.0, -1.0,
      0.0,  0.0,  1.0, // blue
-    -0.5,  0.5,  0.5, // face 3, vert 12
+    -1.0, 1.0, 1.0,
+    1.0,  1.0,  0.0, // yellow
+    -1.0, 1.0, -1.0,
      1.0,  1.0,  0.0, // yellow
-    -0.5, -0.5,  0.5, // face 3, vert 13
+    -1.0, -1.0, -1.0,
      1.0,  1.0,  0.0, // yellow
-     0.5, -0.5,  0.5, // face 3, vert 14
+    -1.0, -1.0, 1.0,
      1.0,  1.0,  0.0, // yellow
-     0.5,  0.5,  0.5, // face 3, vert 15
-     1.0,  1.0,  0.0, // yellow
-    -0.5,  0.5, -0.5, // face 4, vert 16
+    1.0, 1.0, -1.0,
      1.0,  0.0,  1.0, // magenta
-    -0.5,  0.5,  0.5, // face 4, vert 17
+    -1.0, 1.0, -1.0,
      1.0,  0.0,  1.0, // magenta
-     0.5,  0.5,  0.5, // face 4, vert 18
+    -1.0, 1.0, 1.0,
      1.0,  0.0,  1.0, // magenta
-     0.5,  0.5, -0.5, // face 4, vert 19
+    1.0, 1.0, 1.0,
      1.0,  0.0,  1.0, // magenta
-    -0.5, -0.5,  0.5, // face 5, vert 20
+    1.0, -1.0, 1.0,
      0.0,  1.0,  1.0, // cyan
-     0.5, -0.5,  0.5, // face 5, vert 21
+    -1.0, -1.0, 1.0,
      0.0,  1.0,  1.0, // cyan
-     0.5, -0.5, -0.5, // face 5, vert 22
+    -1.0, -1.0, -1.0,
      0.0,  1.0,  1.0, // cyan
-    -0.5, -0.5, -0.5, // face 5, vert 23
+    1.0, -1.0, -1.0,
      0.0,  1.0,  1.0, // cyan
 ]);
 const NUM_COMPONENTS_POSITION = 3;
@@ -424,6 +424,8 @@ function start() {
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.enable(gl.DEPTH_TEST)
     gl.clearDepth(1.0);
+    gl.enable(gl.CULL_FACE);
+    gl.cullFace(gl.BACK);
 
     var draw = function(timeInMilliseconds) {
         
@@ -454,7 +456,7 @@ function start() {
 
         rotation.setRotation(rotationAxis, 2 * Math.PI * rotationPercentage);
         //scale.setScale(1.0);
-        translation.setTranslation(0.0, 0.0, -2.0);
+        translation.setTranslation(0.0, 0.0, -3.0);
         var modelTransform = translation.leftMultiply(rotation.leftMultiply(scale));
         gl.uniformMatrix4fv(modelTransformUniformLoc, false, modelTransform.toFloat32Array());
 
