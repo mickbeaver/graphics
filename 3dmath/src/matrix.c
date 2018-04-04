@@ -152,7 +152,7 @@ tmMat3Determinant(TmMat3 const *a)
 
     // Rule of Sarrus
     result = ((a->m11 * a->m22 * a->m33) +
-              (a->m12 * a->m23 + a->m31) +
+              (a->m12 * a->m23 * a->m31) +
               (a->m13 * a->m21 * a->m32) -
               (a->m31 * a->m22 * a->m13) -
               (a->m32 * a->m23 * a->m11) -
