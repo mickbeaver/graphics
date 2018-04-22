@@ -3,8 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+
 #include "SDL.h"
-#include "glsys.h"
 
 #define sdl_print_error_and_exit(user_message) sdl_print_error_and_exit_func(__FILE__, __LINE__, user_message)
 #ifdef NDEBUG
@@ -18,7 +20,7 @@ static void		 sdl_print_error_and_exit_func(const char *_function_name, int _lin
 static void		 print_sdl_info(void);
 static int		 strings_qsort_cmp_func(void const *, void const *);
 static void		 print_gl_info(void);
-static void		 print_sorted_gl_exts(const GLubyte *);
+static void		 print_sorted_gl_exts(void);
 static char		*local_strdup(const char *_original);
 
 static char *
@@ -73,14 +75,70 @@ strings_qsort_cmp_func(void const *arg1, void const *arg2)
 	return (strcmp(string1, string2));
 }
 
+static const char *
+get_compressed_format_name(GLenum format)
+{
+	switch (format) {
+	case GL_ETC1_RGB8_OES: 
+		return "GL_ETC1_RGB8_OES";
+	case GL_PALETTE4_RGB8_OES:
+		return "GL_PALETTE4_RGB8_OES";
+	case GL_PALETTE4_RGBA8_OES:
+		return "GL_PALETTE4_RGBA8_OES";
+	case GL_PALETTE4_R5_G6_B5_OES:
+		return "GL_PALETTE4_R5_G6_B5_OES";
+	case GL_PALETTE4_RGBA4_OES:
+		return "GL_PALETTE4_RGBA4_OES";
+	case GL_PALETTE4_RGB5_A1_OES:
+		return "GL_PALETTE4_RGB5_A1_OES";
+	case GL_PALETTE8_RGB8_OES:
+		return "GL_PALETTE8_RGB8_OES";
+	case GL_PALETTE8_RGBA8_OES:
+		return "GL_PALETTE8_RGBA8_OES";
+	case GL_PALETTE8_R5_G6_B5_OES:
+		return "GL_PALETTE8_R5_G6_B5_OES";
+	case GL_PALETTE8_RGBA4_OES:
+		return "GL_PALETTE8_RGBA4_OES";
+	case GL_PALETTE8_RGB5_A1_OES:
+		return "GL_PALETTE8_RGB5_A1_OES";
+	default:
+		break;
+	};
+
+	return "<name unknown>";
+}
+
 static void
-print_sorted_gl_exts(const GLubyte *gl_exts)
+print_compressed_texture_formats(void)
+{
+	GLint	numFormats;
+	
+	glGetIntegerv(GL_NUM_COMPRESSED_TEXTURE_FORMATS, &numFormats);
+	printf("GL_NUM_COMPRESSED_TEXTURE_FORMATS = %d\n", numFormats);
+	
+	if (numFormats > 0) {
+		GLint *formats;
+
+		formats = (GLint*)malloc(sizeof(GLint) * numFormats);
+		glGetIntegerv(GL_COMPRESSED_TEXTURE_FORMATS, formats);
+		for (int i = 0; i < numFormats; i++) {
+			printf("\tformat %d = 0x%04X %s\n", i, formats[i], get_compressed_format_name(formats[i]));
+		}
+
+		free(formats);
+	}
+}
+
+static void
+print_sorted_gl_exts(void)
 {
 	size_t	 len_of_extensions_dup;
 	size_t	 num_extensions = 0;
 	char	*extensions_dup;
 	char	*current_char;
-        
+	const GLubyte *gl_exts;
+    
+	gl_exts = glGetString(GL_EXTENSIONS);
 	extensions_dup = local_strdup((char const *)gl_exts);
 	len_of_extensions_dup = strlen(extensions_dup);
 	current_char = extensions_dup;
@@ -120,48 +178,83 @@ print_sorted_gl_exts(const GLubyte *gl_exts)
 		}
             
 		free(extensions);
-	} else
+	} else {
 		printf("GL_EXTENSIONS = %s\n", "<no extensions>");
+	}
 
 	free(extensions_dup);
 }
 
+
+static void
+print_gl_float_range(GLenum pname, const char *name)
+{
+	GLfloat	results[2];
+	
+	glGetFloatv(pname, results);
+	printf("%s = %f to %f\n", name, results[0], results[1]);
+}
+
+static void
+print_gl_int(GLenum pname, const char *name)
+{
+	GLint	result;
+	
+	glGetIntegerv(pname, &result);
+	printf("%s = %d\n", name, result);
+}
+
+static void
+print_gl_string(GLenum pname, const char *name)
+{
+	const GLubyte	*result;
+    
+	result = glGetString(pname);
+	printf("%s = %s\n", name, result != NULL ? (const char *)result : "<ERROR>");
+}
+
+#define PRINT_GL_FLOAT_RANGE(name) print_gl_float_range(name, #name)
+#define PRINT_GL_INT(name) print_gl_int(name, #name)
+#define PRINT_GL_STRING(name) print_gl_string(name, #name)
+
 static void
 print_gl_info(void)
 {
-	GLint		 get_int_result;
-	GLfloat		 get_float_result[2];
-	const GLubyte	*get_string_result;
-    
-	get_string_result = glGetString(GL_VENDOR);
-	printf("GL_VENDOR = %s\n", get_string_result != 0 ? (const char *)get_string_result : "<ERROR>");
-	get_string_result = glGetString(GL_RENDERER);
-	printf("GL_RENDERER = %s\n", get_string_result != 0 ? (const char *)get_string_result : "<ERROR>");
-	get_string_result = glGetString(GL_VERSION);
-	printf("GL_VERSION = %s\n", get_string_result != 0 ? (const char *)get_string_result : "<ERROR>");
-	get_string_result = glGetString(GL_SHADING_LANGUAGE_VERSION);
-	printf("GL_SHADING_LANGUAGE_VERSION = %s\n", get_string_result != 0 ? (const char *)get_string_result : "<ERROR>");
-	get_string_result = glGetString(GL_EXTENSIONS);
-	if (get_string_result != 0)
-		print_sorted_gl_exts(get_string_result);
-	else
-		printf("GL_EXTENSIONS = %s\n", "<ERROR>");
-	glGetIntegerv(GL_NUM_SHADER_BINARY_FORMATS, &get_int_result);
-	printf("GL_NUM_SHADER_BINARY_FORMATS = %d\n", get_int_result);
+	PRINT_GL_STRING(GL_VENDOR);
+	PRINT_GL_STRING(GL_RENDERER);
+	PRINT_GL_STRING(GL_VERSION);
+	PRINT_GL_STRING(GL_SHADING_LANGUAGE_VERSION);
+	print_sorted_gl_exts();
 
-	glGetIntegerv(GL_MAX_VARYING_VECTORS, &get_int_result);
-	printf("GL_MAX_VARYING_VECTORS = %d\n", get_int_result);
-	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &get_int_result);
-	printf("GL_MAX_VERTEX_ATTRIBS = %d\n", get_int_result);
-	glGetIntegerv(GL_MAX_VERTEX_UNIFORM_VECTORS, &get_int_result);
-	printf("GL_MAX_VERTEX_UNIFORM_VECTORS = %d\n", get_int_result);
-	glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_VECTORS, &get_int_result);
-	printf("GL_MAX_FRAGMENT_UNIFORM_VECTORS = %d\n", get_int_result);
-	glGetFloatv(GL_ALIASED_LINE_WIDTH_RANGE, get_float_result);
-	printf("GL_ALIASED_LINE_WIDTH_RANGE = %f to %f\n", get_float_result[0], get_float_result[1]);
-	glGetFloatv(GL_ALIASED_POINT_SIZE_RANGE, get_float_result);
-	printf("GL_ALIASED_POINT_SIZE_RANGE = %f to %f\n", get_float_result[0], get_float_result[1]);
+	PRINT_GL_INT(GL_RED_BITS);
+	PRINT_GL_INT(GL_GREEN_BITS);
+	PRINT_GL_INT(GL_BLUE_BITS);
+	PRINT_GL_INT(GL_ALPHA_BITS);
+	PRINT_GL_INT(GL_DEPTH_BITS);
+
+	PRINT_GL_INT(GL_NUM_SHADER_BINARY_FORMATS);
+
+	print_compressed_texture_formats();
+
+	PRINT_GL_INT(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS);
+	PRINT_GL_INT(GL_MAX_CUBE_MAP_TEXTURE_SIZE);
+	PRINT_GL_INT(GL_MAX_FRAGMENT_UNIFORM_VECTORS);
+	PRINT_GL_INT(GL_MAX_RENDERBUFFER_SIZE);
+	PRINT_GL_INT(GL_MAX_TEXTURE_IMAGE_UNITS);
+	PRINT_GL_INT(GL_MAX_TEXTURE_SIZE);
+	PRINT_GL_INT(GL_MAX_VARYING_VECTORS);
+	PRINT_GL_INT(GL_MAX_VERTEX_ATTRIBS);
+	PRINT_GL_INT(GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS);
+	PRINT_GL_INT(GL_MAX_VERTEX_UNIFORM_VECTORS);
+
+	PRINT_GL_FLOAT_RANGE(GL_ALIASED_LINE_WIDTH_RANGE);
+	PRINT_GL_FLOAT_RANGE(GL_ALIASED_POINT_SIZE_RANGE);
+	PRINT_GL_FLOAT_RANGE(GL_DEPTH_RANGE);
 }
+
+#undef PRINT_GL_FLOAT_RANGE
+#undef PRINT_GL_INT
+#undef PRINT_GL_STRING
 
 int
 main(int argc, char *argv[])
